@@ -1,0 +1,219 @@
+﻿using TranslateWithDictCC.ViewModels;
+using System;
+using System.ComponentModel;
+using System.Threading.Tasks;
+using Windows.ApplicationModel.Resources;
+using Windows.UI.Core;
+using Windows.UI.Popups;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Navigation;
+
+namespace TranslateWithDictCC.Views
+{
+    public sealed partial class MainPage : Page
+    {
+        public MainPage()
+        {
+            InitializeComponent();
+
+            DataContext = MainViewModel.Instance;
+
+            CoreWindow.GetForCurrentThread().PointerPressed += MainPage_PointerPressed;
+
+            SystemNavigationManager.GetForCurrentView().BackRequested += SystemNavigationManager_BackRequested;
+
+            MainViewModel.Instance.NavigateToPageCommand = new RelayCommand<object>(NavigateToPage);
+            MainViewModel.Instance.GoBackToPageCommand = new RelayCommand<string>(GoBackToPage);
+
+            MainViewModel.Instance.PropertyChanged += MainViewModel_PropertyChanged;
+        }
+
+        private void MainViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(MainViewModel.Instance.SelectedDirection))
+                SetDirectionComboBoxSelectedItem(MainViewModel.Instance.SelectedDirection);
+        }
+
+        private void SetDirectionComboBoxSelectedItem(object selectedItem)
+        {
+            directionComboBox.SelectionChanged -= directionComboBox_SelectionChanged;
+
+            directionComboBox.SelectedItem = selectedItem;
+
+            directionComboBox.SelectionChanged += directionComboBox_SelectionChanged;
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            if (MainViewModel.Instance.AvailableDirections.Length == 0)
+                contentFrame.Navigate(typeof(SettingsPage));
+        }
+
+        private void GoBackToPage(string pageType)
+        {
+            GoBackToPage(typeof(SearchResultsPage));
+        }
+
+        private void GoBackToPage(Type pageType)
+        {
+            while (contentFrame.SourcePageType != pageType)
+            {
+                if (contentFrame.CanGoBack)
+                    contentFrame.GoBack();
+                else
+                    contentFrame.Navigate(pageType);
+            }
+        }
+
+        private void NavigateToPage(object pageTypeAndParameter)
+        {           
+            string pageType;
+            object parameter;
+
+            if (pageTypeAndParameter is string)
+            {
+                pageType = (string)pageTypeAndParameter;
+                parameter = null;
+            }
+            else
+            {
+                pageType = ((Tuple<string, object>)pageTypeAndParameter).Item1;
+                parameter = ((Tuple<string, object>)pageTypeAndParameter).Item2;
+            }
+
+            if (pageType == "SearchResultsPage")
+                contentFrame.Navigate(typeof(SearchResultsPage), parameter);
+            else if (pageType == "SettingsPage")
+                contentFrame.NavigateIfNeeded(typeof(SettingsPage), parameter);
+            else if (pageType == "AboutPage")
+                contentFrame.NavigateIfNeeded(typeof(AboutPage), parameter);
+        }
+
+        public void FocusSearchBox()
+        {
+            searchBox.Focus(FocusState.Programmatic);
+        }
+
+        private void MainPage_PointerPressed(CoreWindow sender, PointerEventArgs args)
+        {
+            if (args.CurrentPoint.Properties.IsXButton1Pressed)
+            {
+                if (contentFrame.CanGoBack)
+                {
+                    contentFrame.GoBack();
+                    args.Handled = true;
+                }
+            }
+            //else if (args.CurrentPoint.Properties.IsXButton2Pressed)
+            //{
+            //    if (contentFrame.CanGoForward)
+            //    {
+            //        contentFrame.GoForward();
+            //        args.Handled = true;
+            //    }
+            //}
+        }
+
+        private void SystemNavigationManager_BackRequested(object sender, BackRequestedEventArgs e)
+        {
+            if (contentFrame.CanGoBack)
+            {
+                contentFrame.GoBack();
+                e.Handled = true;
+            }
+        }
+
+        private async Task PerformQuery(bool dontSearchInBothDirections = false)
+        {
+            if (searchBox.Text.Trim() == string.Empty)
+                return;
+
+            try
+            {
+                await MainViewModel.Instance.PerformQuery(searchBox.Text, dontSearchInBothDirections);
+            }
+            catch
+            {
+                ResourceLoader resourceLoader = ResourceLoader.GetForCurrentView();
+
+                MessageDialog messageDialog = new MessageDialog(
+                    resourceLoader.GetString("Error_Performing_Query_Body"), 
+                    resourceLoader.GetString("Error_Performing_Query_Title"));
+
+                await messageDialog.ShowAsync();
+            }
+        }
+
+        private async void searchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+        {
+            await PerformQuery();
+        }      
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            splitView.IsPaneOpen = !splitView.IsPaneOpen;
+        }
+
+        private void contentFrame_Navigated(object sender, NavigationEventArgs e)
+        {
+            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
+                contentFrame.CanGoBack ? AppViewBackButtonVisibility.Visible : AppViewBackButtonVisibility.Collapsed;
+
+            if (e.SourcePageType == typeof(SearchResultsPage))
+            {
+                SearchResultsViewModel searchResultsViewModel = (SearchResultsViewModel)e.Parameter;
+
+                if (searchResultsViewModel != null)
+                {
+                    searchBox.Text = searchResultsViewModel.SearchContext.SearchQuery;
+                    SetDirectionComboBoxSelectedItem(searchResultsViewModel.SearchContext.SelectedDirection);
+                }
+            }
+        }
+
+        private async void directionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            MainViewModel.Instance.SelectedDirection = directionComboBox.SelectedItem as DirectionViewModel;
+
+            if (e.AddedItems.Count != 0 && e.RemovedItems.Count != 0)
+                await PerformQuery(dontSearchInBothDirections: true);
+        }
+
+        private void searchBox_Loaded(object sender, RoutedEventArgs e)
+        {
+            FocusSearchBox();
+        }
+
+        private void Button_Click_5(object sender, RoutedEventArgs e)
+        {
+            moreMenuFlyout.ShowAt((Button)sender);
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            splitView.IsPaneOpen = false;
+        }
+
+        private async void ToggleMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            await PerformQuery();
+        }
+
+        private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (e.NewSize.Width < 600 != e.PreviousSize.Width < 600)
+            {
+                if (e.NewSize.Width < 600)
+                    directionComboBox.ItemTemplate = (DataTemplate)Resources["DirectionComboBoxItemTemplateCompact"];
+                else
+                    directionComboBox.ItemTemplate = (DataTemplate)Resources["DirectionComboBoxItemTemplate"];
+
+                // force ComboBox to apply the new item template
+                DirectionViewModel selectedDirection = MainViewModel.Instance.SelectedDirection;
+                MainViewModel.Instance.SelectedDirection = null;
+                MainViewModel.Instance.SelectedDirection = selectedDirection;
+            }
+        }
+    }
+}

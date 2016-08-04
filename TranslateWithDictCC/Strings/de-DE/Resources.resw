@@ -1,0 +1,861 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AboutPage_DescriptionTextBlock.Text" xml:space="preserve">
+    <value>Inoffizielle App zum Durchsuchen und Verwalten von dict.cc-Offline-Wörterbüchern.</value>
+  </data>
+  <data name="AboutPage_GiveFeedbackButton.Content" xml:space="preserve">
+    <value>Feedback senden</value>
+  </data>
+  <data name="AboutPage_LicensesTextBlock.Text" xml:space="preserve">
+    <value>Lizenzen</value>
+  </data>
+  <data name="AboutPage_MITLicenceLink.Content" xml:space="preserve">
+    <value>MIT-Lizenz</value>
+  </data>
+  <data name="AboutPage_PrivacyStatementLink.Content" xml:space="preserve">
+    <value>Datenschutzbestimmungen</value>
+  </data>
+  <data name="AboutPage_PrivacyStatementLink.NavigateUri" xml:space="preserve">
+    <value>http://www.dict.cc/?s=about:&amp;amp;l=d</value>
+  </data>
+  <data name="AboutPage_TitleTextBlock.Text" xml:space="preserve">
+    <value>Info</value>
+  </data>
+  <data name="AboutPage_Version" xml:space="preserve">
+    <value>Version {0}</value>
+  </data>
+  <data name="App_Description" xml:space="preserve">
+    <value>Durchsuchen und Verwalten von dict.cc-Offline-Wörterbüchern.</value>
+  </data>
+  <data name="App_Display_Name" xml:space="preserve">
+    <value>Übersetzen mit dict.cc</value>
+  </data>
+  <data name="Audio_Recording_Not_Available_Body" xml:space="preserve">
+    <value>Auf dict.cc ist keine Sprachaufnahme für diesen Eintrag vorhanden.</value>
+  </data>
+  <data name="Audio_Recording_Not_Available_Title" xml:space="preserve">
+    <value>Sprachaufnahme nicht verfügbar</value>
+  </data>
+  <data name="DictionaryStatus_Installed" xml:space="preserve">
+    <value>{0} Einträge</value>
+  </data>
+  <data name="DictionaryStatus_Installing" xml:space="preserve">
+    <value>Wird importiert</value>
+  </data>
+  <data name="DictionaryStatus_Queued" xml:space="preserve">
+    <value>In Warteschlange</value>
+  </data>
+  <data name="Error_Performing_Query_Body" xml:space="preserve">
+    <value>Beim Durchsuchen des Wörterbuchs ist ein Fehler aufgetreten. Falls dieses Problem weiterhin besteht, versuchen Sie die App neu zu installieren und kontaktieren Sie den Author.</value>
+  </data>
+  <data name="Error_Performing_Query_Title" xml:space="preserve">
+    <value>Suche fehlgeschlagen</value>
+  </data>
+  <data name="Error_Retrieving_Audio_Recording_Body" xml:space="preserve">
+    <value>Beim Abfragen der Sprachaufnahme von dict.cc ist ein Fehler aufgetreten.</value>
+  </data>
+  <data name="Error_Retrieving_Audio_Recording_Title" xml:space="preserve">
+    <value>Sprachaufnahme konnte nicht abgefragt werden</value>
+  </data>
+  <data name="Import_Conflict_Body1" xml:space="preserve">
+    <value>Sie versuchen ein Wörterbuch für zwei Sprachen zu importieren, für die bereits ein Wörterbuch installiert ist.</value>
+  </data>
+  <data name="Import_Conflict_Body2" xml:space="preserve">
+    <value>Installiertes Wörterbuch: {0}-{1}, erstellt am {2}</value>
+  </data>
+  <data name="Import_Conflict_Body3" xml:space="preserve">
+    <value>Zu importierendes Wörterbuch: {0}-{1}, erstellt am {2}</value>
+  </data>
+  <data name="Import_Conflict_Replace" xml:space="preserve">
+    <value>Ersetzen</value>
+  </data>
+  <data name="Import_Conflict_Skip" xml:space="preserve">
+    <value>Überspringen</value>
+  </data>
+  <data name="Import_Conflict_Title" xml:space="preserve">
+    <value>Wörterbuch existiert bereits</value>
+  </data>
+  <data name="Import_Error_Body" xml:space="preserve">
+    <value>Wörterbuch {0}-{1} konnte nicht importiert werden. </value>
+  </data>
+  <data name="Import_Error_Title" xml:space="preserve">
+    <value>Import fehlgeschlagen</value>
+  </data>
+  <data name="Import_Header_Error_Body" xml:space="preserve">
+    <value>{0} konnte nicht importiert werden. Stellen Sie sicher, dass die Datei eine gültige Wörterbuchdatei von dict.cc ist.</value>
+  </data>
+  <data name="Import_Header_Error_Title" xml:space="preserve">
+    <value>Import fehlgeschlagen</value>
+  </data>
+  <data name="Import_In_Progress_Body" xml:space="preserve">
+    <value>Bitte warten Sie bis der laufende Importvorgang abgeschlossen ist, bevor Sie Wörterbücher entfernen.</value>
+  </data>
+  <data name="Import_In_Progress_Title" xml:space="preserve">
+    <value>Import läuft</value>
+  </data>
+  <data name="Language_Name_AA" xml:space="preserve">
+    <value>Afar</value>
+  </data>
+  <data name="Language_Name_AB" xml:space="preserve">
+    <value>Abchasisch</value>
+  </data>
+  <data name="Language_Name_AE" xml:space="preserve">
+    <value>Avestisch</value>
+  </data>
+  <data name="Language_Name_AF" xml:space="preserve">
+    <value>Afrikaans</value>
+  </data>
+  <data name="Language_Name_AK" xml:space="preserve">
+    <value>Akan</value>
+  </data>
+  <data name="Language_Name_AM" xml:space="preserve">
+    <value>Amharisch</value>
+  </data>
+  <data name="Language_Name_AN" xml:space="preserve">
+    <value>Aragonesisch</value>
+  </data>
+  <data name="Language_Name_AR" xml:space="preserve">
+    <value>Arabisch</value>
+  </data>
+  <data name="Language_Name_AS" xml:space="preserve">
+    <value>Assamesisch</value>
+  </data>
+  <data name="Language_Name_AV" xml:space="preserve">
+    <value>Awarisch</value>
+  </data>
+  <data name="Language_Name_AY" xml:space="preserve">
+    <value>Aymara</value>
+  </data>
+  <data name="Language_Name_AZ" xml:space="preserve">
+    <value>Aserbaidschanisch</value>
+  </data>
+  <data name="Language_Name_BA" xml:space="preserve">
+    <value>Baschkirisch</value>
+  </data>
+  <data name="Language_Name_BE" xml:space="preserve">
+    <value>Belorussisch</value>
+  </data>
+  <data name="Language_Name_BG" xml:space="preserve">
+    <value>Bulgarisch</value>
+  </data>
+  <data name="Language_Name_BH" xml:space="preserve">
+    <value>Biharisch</value>
+  </data>
+  <data name="Language_Name_BI" xml:space="preserve">
+    <value>Bislamisch</value>
+  </data>
+  <data name="Language_Name_BM" xml:space="preserve">
+    <value>Bambara</value>
+  </data>
+  <data name="Language_Name_BN" xml:space="preserve">
+    <value>Bengalisch</value>
+  </data>
+  <data name="Language_Name_BO" xml:space="preserve">
+    <value>Tibetanisch</value>
+  </data>
+  <data name="Language_Name_BR" xml:space="preserve">
+    <value>Bretonisch</value>
+  </data>
+  <data name="Language_Name_BS" xml:space="preserve">
+    <value>Bosnisch</value>
+  </data>
+  <data name="Language_Name_CA" xml:space="preserve">
+    <value>Katalanisch</value>
+  </data>
+  <data name="Language_Name_CE" xml:space="preserve">
+    <value>Chechen</value>
+  </data>
+  <data name="Language_Name_CH" xml:space="preserve">
+    <value>Chamorro</value>
+  </data>
+  <data name="Language_Name_CO" xml:space="preserve">
+    <value>Korsisch</value>
+  </data>
+  <data name="Language_Name_CR" xml:space="preserve">
+    <value>Cree</value>
+  </data>
+  <data name="Language_Name_CS" xml:space="preserve">
+    <value>Tschechisch</value>
+  </data>
+  <data name="Language_Name_CU" xml:space="preserve">
+    <value>Church Slavic</value>
+  </data>
+  <data name="Language_Name_CV" xml:space="preserve">
+    <value>Chuvash</value>
+  </data>
+  <data name="Language_Name_CY" xml:space="preserve">
+    <value>Walisisch</value>
+  </data>
+  <data name="Language_Name_DA" xml:space="preserve">
+    <value>Dänisch</value>
+  </data>
+  <data name="Language_Name_DE" xml:space="preserve">
+    <value>Deutsch</value>
+  </data>
+  <data name="Language_Name_DV" xml:space="preserve">
+    <value>Divehi</value>
+  </data>
+  <data name="Language_Name_DZ" xml:space="preserve">
+    <value>Bhutani</value>
+  </data>
+  <data name="Language_Name_EE" xml:space="preserve">
+    <value>Ewe</value>
+  </data>
+  <data name="Language_Name_EL" xml:space="preserve">
+    <value>Griechisch</value>
+  </data>
+  <data name="Language_Name_EN" xml:space="preserve">
+    <value>Englisch</value>
+  </data>
+  <data name="Language_Name_EO" xml:space="preserve">
+    <value>Esperanto</value>
+  </data>
+  <data name="Language_Name_ES" xml:space="preserve">
+    <value>Spanisch</value>
+  </data>
+  <data name="Language_Name_ET" xml:space="preserve">
+    <value>Estnisch</value>
+  </data>
+  <data name="Language_Name_EU" xml:space="preserve">
+    <value>Baskisch</value>
+  </data>
+  <data name="Language_Name_FA" xml:space="preserve">
+    <value>Persisch</value>
+  </data>
+  <data name="Language_Name_FF" xml:space="preserve">
+    <value>Fulah</value>
+  </data>
+  <data name="Language_Name_FI" xml:space="preserve">
+    <value>Finnisch</value>
+  </data>
+  <data name="Language_Name_FJ" xml:space="preserve">
+    <value>Fidschi</value>
+  </data>
+  <data name="Language_Name_FO" xml:space="preserve">
+    <value>Faröisch</value>
+  </data>
+  <data name="Language_Name_FR" xml:space="preserve">
+    <value>Französisch</value>
+  </data>
+  <data name="Language_Name_FY" xml:space="preserve">
+    <value>Friesisch</value>
+  </data>
+  <data name="Language_Name_GA" xml:space="preserve">
+    <value>Irisch</value>
+  </data>
+  <data name="Language_Name_GD" xml:space="preserve">
+    <value>Gälisch</value>
+  </data>
+  <data name="Language_Name_GL" xml:space="preserve">
+    <value>Galizisch</value>
+  </data>
+  <data name="Language_Name_GN" xml:space="preserve">
+    <value>Guarani</value>
+  </data>
+  <data name="Language_Name_GU" xml:space="preserve">
+    <value>Gujaratisch</value>
+  </data>
+  <data name="Language_Name_GV" xml:space="preserve">
+    <value>Manx</value>
+  </data>
+  <data name="Language_Name_HA" xml:space="preserve">
+    <value>Haussa</value>
+  </data>
+  <data name="Language_Name_HE" xml:space="preserve">
+    <value>Hebräisch</value>
+  </data>
+  <data name="Language_Name_HI" xml:space="preserve">
+    <value>Hindi</value>
+  </data>
+  <data name="Language_Name_HO" xml:space="preserve">
+    <value>Hiri Motu</value>
+  </data>
+  <data name="Language_Name_HR" xml:space="preserve">
+    <value>Kroatisch</value>
+  </data>
+  <data name="Language_Name_HT" xml:space="preserve">
+    <value>Haitisch</value>
+  </data>
+  <data name="Language_Name_HU" xml:space="preserve">
+    <value>Ungarisch</value>
+  </data>
+  <data name="Language_Name_HY" xml:space="preserve">
+    <value>Armenisch</value>
+  </data>
+  <data name="Language_Name_HZ" xml:space="preserve">
+    <value>Herero</value>
+  </data>
+  <data name="Language_Name_IA" xml:space="preserve">
+    <value>Interlingua</value>
+  </data>
+  <data name="Language_Name_ID" xml:space="preserve">
+    <value>Indonesisch</value>
+  </data>
+  <data name="Language_Name_IE" xml:space="preserve">
+    <value>Interlingue</value>
+  </data>
+  <data name="Language_Name_IG" xml:space="preserve">
+    <value>Igbo</value>
+  </data>
+  <data name="Language_Name_II" xml:space="preserve">
+    <value>Sichuan Yi</value>
+  </data>
+  <data name="Language_Name_IK" xml:space="preserve">
+    <value>Inupiak</value>
+  </data>
+  <data name="Language_Name_IO" xml:space="preserve">
+    <value>Ido</value>
+  </data>
+  <data name="Language_Name_IS" xml:space="preserve">
+    <value>Isländisch</value>
+  </data>
+  <data name="Language_Name_IT" xml:space="preserve">
+    <value>Italienisch</value>
+  </data>
+  <data name="Language_Name_IU" xml:space="preserve">
+    <value>Inuktitut</value>
+  </data>
+  <data name="Language_Name_JA" xml:space="preserve">
+    <value>Japanisch</value>
+  </data>
+  <data name="Language_Name_JV" xml:space="preserve">
+    <value>Javanisch</value>
+  </data>
+  <data name="Language_Name_KA" xml:space="preserve">
+    <value>Georgisch</value>
+  </data>
+  <data name="Language_Name_KG" xml:space="preserve">
+    <value>Kongo</value>
+  </data>
+  <data name="Language_Name_KI" xml:space="preserve">
+    <value>Kikuyu</value>
+  </data>
+  <data name="Language_Name_KJ" xml:space="preserve">
+    <value>Kwanyama</value>
+  </data>
+  <data name="Language_Name_KK" xml:space="preserve">
+    <value>Kasachisch</value>
+  </data>
+  <data name="Language_Name_KL" xml:space="preserve">
+    <value>Grönländisch</value>
+  </data>
+  <data name="Language_Name_KM" xml:space="preserve">
+    <value>Kambodschanisch</value>
+  </data>
+  <data name="Language_Name_KN" xml:space="preserve">
+    <value>Kannada</value>
+  </data>
+  <data name="Language_Name_KO" xml:space="preserve">
+    <value>Koreanisch</value>
+  </data>
+  <data name="Language_Name_KR" xml:space="preserve">
+    <value>Kanuri</value>
+  </data>
+  <data name="Language_Name_KS" xml:space="preserve">
+    <value>Kaschmirisch</value>
+  </data>
+  <data name="Language_Name_KU" xml:space="preserve">
+    <value>Kurdisch</value>
+  </data>
+  <data name="Language_Name_KV" xml:space="preserve">
+    <value>Komi</value>
+  </data>
+  <data name="Language_Name_KW" xml:space="preserve">
+    <value>Cornish</value>
+  </data>
+  <data name="Language_Name_KY" xml:space="preserve">
+    <value>Kirgisisch</value>
+  </data>
+  <data name="Language_Name_LA" xml:space="preserve">
+    <value>Lateinisch</value>
+  </data>
+  <data name="Language_Name_LB" xml:space="preserve">
+    <value>Letzeburgisch</value>
+  </data>
+  <data name="Language_Name_LG" xml:space="preserve">
+    <value>Ganda</value>
+  </data>
+  <data name="Language_Name_LI" xml:space="preserve">
+    <value>Limburgisch</value>
+  </data>
+  <data name="Language_Name_LN" xml:space="preserve">
+    <value>Lingalisch</value>
+  </data>
+  <data name="Language_Name_LO" xml:space="preserve">
+    <value>Laotisch</value>
+  </data>
+  <data name="Language_Name_LT" xml:space="preserve">
+    <value>Litauisch</value>
+  </data>
+  <data name="Language_Name_LU" xml:space="preserve">
+    <value>Luba-Katanga</value>
+  </data>
+  <data name="Language_Name_LV" xml:space="preserve">
+    <value>Lettisch</value>
+  </data>
+  <data name="Language_Name_MG" xml:space="preserve">
+    <value>Malagasisch</value>
+  </data>
+  <data name="Language_Name_MH" xml:space="preserve">
+    <value>Marshall</value>
+  </data>
+  <data name="Language_Name_MI" xml:space="preserve">
+    <value>Maorisch</value>
+  </data>
+  <data name="Language_Name_MK" xml:space="preserve">
+    <value>Mazedonisch</value>
+  </data>
+  <data name="Language_Name_ML" xml:space="preserve">
+    <value>Malaysisch</value>
+  </data>
+  <data name="Language_Name_MN" xml:space="preserve">
+    <value>Mongolisch</value>
+  </data>
+  <data name="Language_Name_MR" xml:space="preserve">
+    <value>Marathi</value>
+  </data>
+  <data name="Language_Name_MS" xml:space="preserve">
+    <value>Malay</value>
+  </data>
+  <data name="Language_Name_MT" xml:space="preserve">
+    <value>Maltesisch</value>
+  </data>
+  <data name="Language_Name_MY" xml:space="preserve">
+    <value>Burmesisch</value>
+  </data>
+  <data name="Language_Name_NA" xml:space="preserve">
+    <value>Nauruisch</value>
+  </data>
+  <data name="Language_Name_NB" xml:space="preserve">
+    <value>Bokmål</value>
+  </data>
+  <data name="Language_Name_ND" xml:space="preserve">
+    <value>Nord-Ndebele</value>
+  </data>
+  <data name="Language_Name_NE" xml:space="preserve">
+    <value>Nepalisch</value>
+  </data>
+  <data name="Language_Name_NG" xml:space="preserve">
+    <value>Ndonga</value>
+  </data>
+  <data name="Language_Name_NL" xml:space="preserve">
+    <value>Niederländisch</value>
+  </data>
+  <data name="Language_Name_NN" xml:space="preserve">
+    <value>Nynorsk</value>
+  </data>
+  <data name="Language_Name_NO" xml:space="preserve">
+    <value>Norwegisch</value>
+  </data>
+  <data name="Language_Name_NR" xml:space="preserve">
+    <value>Süd-Ndebele</value>
+  </data>
+  <data name="Language_Name_NV" xml:space="preserve">
+    <value>Navajo</value>
+  </data>
+  <data name="Language_Name_NY" xml:space="preserve">
+    <value>Chichewa</value>
+  </data>
+  <data name="Language_Name_OC" xml:space="preserve">
+    <value>Okzitanisch</value>
+  </data>
+  <data name="Language_Name_OJ" xml:space="preserve">
+    <value>Ojibwa</value>
+  </data>
+  <data name="Language_Name_OM" xml:space="preserve">
+    <value>Oromo</value>
+  </data>
+  <data name="Language_Name_OR" xml:space="preserve">
+    <value>Orija</value>
+  </data>
+  <data name="Language_Name_OS" xml:space="preserve">
+    <value>Ossetisch</value>
+  </data>
+  <data name="Language_Name_PA" xml:space="preserve">
+    <value>Pundjabisch</value>
+  </data>
+  <data name="Language_Name_PI" xml:space="preserve">
+    <value>Pali</value>
+  </data>
+  <data name="Language_Name_PL" xml:space="preserve">
+    <value>Polnisch</value>
+  </data>
+  <data name="Language_Name_PS" xml:space="preserve">
+    <value>Paschtu</value>
+  </data>
+  <data name="Language_Name_PT" xml:space="preserve">
+    <value>Portugiesisch</value>
+  </data>
+  <data name="Language_Name_QU" xml:space="preserve">
+    <value>Quechua</value>
+  </data>
+  <data name="Language_Name_RM" xml:space="preserve">
+    <value>Rätoromanisch</value>
+  </data>
+  <data name="Language_Name_RN" xml:space="preserve">
+    <value>Kirundisch</value>
+  </data>
+  <data name="Language_Name_RO" xml:space="preserve">
+    <value>Rumänisch</value>
+  </data>
+  <data name="Language_Name_RU" xml:space="preserve">
+    <value>Russisch</value>
+  </data>
+  <data name="Language_Name_RW" xml:space="preserve">
+    <value>Ruanda</value>
+  </data>
+  <data name="Language_Name_SA" xml:space="preserve">
+    <value>Sanskrit</value>
+  </data>
+  <data name="Language_Name_SC" xml:space="preserve">
+    <value>Sardisch</value>
+  </data>
+  <data name="Language_Name_SD" xml:space="preserve">
+    <value>Zinti</value>
+  </data>
+  <data name="Language_Name_SE" xml:space="preserve">
+    <value>Nord-Sami</value>
+  </data>
+  <data name="Language_Name_SG" xml:space="preserve">
+    <value>Sango</value>
+  </data>
+  <data name="Language_Name_SI" xml:space="preserve">
+    <value>Singhalesisch</value>
+  </data>
+  <data name="Language_Name_SK" xml:space="preserve">
+    <value>Slowakisch</value>
+  </data>
+  <data name="Language_Name_SL" xml:space="preserve">
+    <value>Slowenisch</value>
+  </data>
+  <data name="Language_Name_SM" xml:space="preserve">
+    <value>Samoanisch</value>
+  </data>
+  <data name="Language_Name_SN" xml:space="preserve">
+    <value>Schonisch</value>
+  </data>
+  <data name="Language_Name_SO" xml:space="preserve">
+    <value>Somalisch</value>
+  </data>
+  <data name="Language_Name_SQ" xml:space="preserve">
+    <value>Albanisch</value>
+  </data>
+  <data name="Language_Name_SR" xml:space="preserve">
+    <value>Serbisch</value>
+  </data>
+  <data name="Language_Name_SS" xml:space="preserve">
+    <value>Swasiländisch</value>
+  </data>
+  <data name="Language_Name_ST" xml:space="preserve">
+    <value>Sesothisch</value>
+  </data>
+  <data name="Language_Name_SU" xml:space="preserve">
+    <value>Sudanesisch</value>
+  </data>
+  <data name="Language_Name_SV" xml:space="preserve">
+    <value>Schwedisch</value>
+  </data>
+  <data name="Language_Name_SW" xml:space="preserve">
+    <value>Suaheli</value>
+  </data>
+  <data name="Language_Name_TA" xml:space="preserve">
+    <value>Tamilisch</value>
+  </data>
+  <data name="Language_Name_TE" xml:space="preserve">
+    <value>Telugu</value>
+  </data>
+  <data name="Language_Name_TG" xml:space="preserve">
+    <value>Tadschikisch</value>
+  </data>
+  <data name="Language_Name_TH" xml:space="preserve">
+    <value>Thai</value>
+  </data>
+  <data name="Language_Name_TI" xml:space="preserve">
+    <value>Tigrinja</value>
+  </data>
+  <data name="Language_Name_TK" xml:space="preserve">
+    <value>Turkmenisch</value>
+  </data>
+  <data name="Language_Name_TL" xml:space="preserve">
+    <value>Tagalog</value>
+  </data>
+  <data name="Language_Name_TN" xml:space="preserve">
+    <value>Sezuan</value>
+  </data>
+  <data name="Language_Name_TO" xml:space="preserve">
+    <value>Tongaisch</value>
+  </data>
+  <data name="Language_Name_TR" xml:space="preserve">
+    <value>Türkisch</value>
+  </data>
+  <data name="Language_Name_TS" xml:space="preserve">
+    <value>Tsongaisch</value>
+  </data>
+  <data name="Language_Name_TT" xml:space="preserve">
+    <value>Tatarisch</value>
+  </data>
+  <data name="Language_Name_TW" xml:space="preserve">
+    <value>Twi</value>
+  </data>
+  <data name="Language_Name_TY" xml:space="preserve">
+    <value>Tahitisch</value>
+  </data>
+  <data name="Language_Name_UG" xml:space="preserve">
+    <value>Uigurisch</value>
+  </data>
+  <data name="Language_Name_UK" xml:space="preserve">
+    <value>Ukrainisch</value>
+  </data>
+  <data name="Language_Name_UR" xml:space="preserve">
+    <value>Urdu</value>
+  </data>
+  <data name="Language_Name_UZ" xml:space="preserve">
+    <value>Usbekisch</value>
+  </data>
+  <data name="Language_Name_VE" xml:space="preserve">
+    <value>Venda</value>
+  </data>
+  <data name="Language_Name_VI" xml:space="preserve">
+    <value>Vietnamesisch</value>
+  </data>
+  <data name="Language_Name_VO" xml:space="preserve">
+    <value>Volapük</value>
+  </data>
+  <data name="Language_Name_WA" xml:space="preserve">
+    <value>Wallonisch</value>
+  </data>
+  <data name="Language_Name_WO" xml:space="preserve">
+    <value>Wolof</value>
+  </data>
+  <data name="Language_Name_XH" xml:space="preserve">
+    <value>Xhosa</value>
+  </data>
+  <data name="Language_Name_YI" xml:space="preserve">
+    <value>Jiddish</value>
+  </data>
+  <data name="Language_Name_YO" xml:space="preserve">
+    <value>Yoruba</value>
+  </data>
+  <data name="Language_Name_ZA" xml:space="preserve">
+    <value>Zhuang</value>
+  </data>
+  <data name="Language_Name_ZH" xml:space="preserve">
+    <value>Chinesisch</value>
+  </data>
+  <data name="Language_Name_ZU" xml:space="preserve">
+    <value>Zulu</value>
+  </data>
+  <data name="MainPage_AboutTextBlock.Text" xml:space="preserve">
+    <value>Info</value>
+  </data>
+  <data name="MainPage_CaseSensitiveSearchMenuItem.Text" xml:space="preserve">
+    <value>Groß-/Kleinschreibung unterscheiden</value>
+  </data>
+  <data name="MainPage_DirectionComboBox.PlaceholderText" xml:space="preserve">
+    <value>Kein Wörterbuch installiert</value>
+  </data>
+  <data name="MainPage_OptionsTextBlock.Text" xml:space="preserve">
+    <value>Optionen</value>
+  </data>
+  <data name="MainPage_SearchBox.PlaceholderText" xml:space="preserve">
+    <value>Suchbegriff eingeben...</value>
+  </data>
+  <data name="MainPage_SearchInBothDirectionsMenuItem.Text" xml:space="preserve">
+    <value>In beiden Richtungen suchen</value>
+  </data>
+  <data name="MainPage_SearchTextBlock.Text" xml:space="preserve">
+    <value>Suchen</value>
+  </data>
+  <data name="MainPage_SwitchDirectionOfTranslationMenuItem.Text" xml:space="preserve">
+    <value>Übersetzungsrichtung wechseln</value>
+  </data>
+  <data name="No_Dictionary_Installed_Body" xml:space="preserve">
+    <value>Da die Weitergabe von dict.cc-Wörterbüchern eingeschränkt ist, enthält diese App keine vorinstallierten Wörterbücher. Folgen Sie den Anweisungen in den Optionen um zu erfahren, wie Wörterbücher importiert werden können.</value>
+  </data>
+  <data name="No_Dictionary_Installed_Title" xml:space="preserve">
+    <value>Kein Wörterbuch installiert</value>
+  </data>
+  <data name="No_Internet_Access_Body" xml:space="preserve">
+    <value>Das Abspielen von Sprachaufnahmen setzt eine aktive Internetverbindung voraus.</value>
+  </data>
+  <data name="No_Internet_Access_Title" xml:space="preserve">
+    <value>Kein Internetzugriff</value>
+  </data>
+  <data name="Package_Display_Name" xml:space="preserve">
+    <value>Übersetzen mit dict.cc</value>
+  </data>
+  <data name="Remove_Dictionary_Confirmation_Body" xml:space="preserve">
+    <value>Wörterbuch {0}-{1} wirklich entfernen?</value>
+  </data>
+  <data name="Remove_Dictionary_Confirmation_Cancel" xml:space="preserve">
+    <value>Abbrechen</value>
+  </data>
+  <data name="Remove_Dictionary_Confirmation_Remove" xml:space="preserve">
+    <value>Entfernen</value>
+  </data>
+  <data name="SearchResultsPage_ResultCount" xml:space="preserve">
+    <value>{0} Treffer</value>
+  </data>
+  <data name="SearchResultsPage_SingleResult" xml:space="preserve">
+    <value>1 Treffer</value>
+  </data>
+  <data name="SettingsPage_AcquireDictionariesTextBlock.Text" xml:space="preserve">
+    <value>Folgen Sie dem Link unten, um Wörterbücher von dict.cc herunterzuladen. Nachdem Sie die Wörterbücher heruntergeladen haben, klicken Sie auf "Wörterbuch importieren" und wählen Sie die heruntergeladenen Dateien aus, um sie zu importieren.</value>
+  </data>
+  <data name="SettingsPage_AudioRecordingButtonToggleSwitch.Header" xml:space="preserve">
+    <value>Sprachaufnahmen</value>
+  </data>
+  <data name="SettingsPage_AudioRecordingButtonToggleSwitch.OffContent" xml:space="preserve">
+    <value>Nicht anzeigen</value>
+  </data>
+  <data name="SettingsPage_AudioRecordingButtonToggleSwitch.OnContent" xml:space="preserve">
+    <value>Anzeigen</value>
+  </data>
+  <data name="SettingsPage_DictionariesTextBlock.Text" xml:space="preserve">
+    <value>Wörterbücher</value>
+  </data>
+  <data name="SettingsPage_GetDictionariesLink.Content" xml:space="preserve">
+    <value>Wörterbücher herunterladen von dict.cc</value>
+  </data>
+  <data name="SettingsPage_GetDictionariesLink.NavigateUri" xml:space="preserve">
+    <value>http://www1.dict.cc/translation_file_request.php?l=d</value>
+  </data>
+  <data name="SettingsPage_ImportDictionaryButton.Content" xml:space="preserve">
+    <value>Wörterbuch importieren</value>
+  </data>
+  <data name="SettingsPage_RemoveDictionaryButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Wörterbuch entfernen</value>
+  </data>
+  <data name="SettingsPage_TitleTextBlock.Text" xml:space="preserve">
+    <value>Optionen</value>
+  </data>
+  <data name="SettingsPage_ViewTextBlock.Text" xml:space="preserve">
+    <value>Ansicht</value>
+  </data>
+  <data name="SettingsPage_WordClassesToggleSwitch.Header" xml:space="preserve">
+    <value>Wortarten</value>
+  </data>
+  <data name="SettingsPage_WordClassesToggleSwitch.OffContent" xml:space="preserve">
+    <value>Nicht anzeigen</value>
+  </data>
+  <data name="SettingsPage_WordClassesToggleSwitch.OnContent" xml:space="preserve">
+    <value>Anzeigen</value>
+  </data>
+</root>
