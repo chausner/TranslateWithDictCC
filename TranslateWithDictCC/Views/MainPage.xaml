@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:TranslateWithDictCC"
+    xmlns:controls="using:TranslateWithDictCC.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -35,19 +36,18 @@
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <Image Grid.Column="0" Source="{Binding OriginLanguageCode, Converter={StaticResource languageIconUrlValueConverter}}" Height="21" Margin="0,0,6,0" />
+                <Image Grid.Column="0" Source="{Binding OriginLanguageCode, Converter={StaticResource languageIconUrlValueConverter}}" Width="21" Height="21" Margin="0,0,6,0" />
                 <TextBlock Grid.Column="1" Text="{Binding OriginLanguageCode}" TextAlignment="Left" />
                 <TextBlock Grid.Column="2" Text="→" Margin="6,0,6,0" />
                 <TextBlock Grid.Column="3" Text="{Binding DestinationLanguageCode}" TextAlignment="Right" />
-                <Image Grid.Column="4" Source="{Binding DestinationLanguageCode, Converter={StaticResource languageIconUrlValueConverter}}" Height="21" Margin="6,0,0,0" />
+                <Image Grid.Column="4" Source="{Binding DestinationLanguageCode, Converter={StaticResource languageIconUrlValueConverter}}" Width="21" Height="21" Margin="6,0,0,0" />
             </Grid>
         </DataTemplate>
         <MenuFlyout x:Name="moreMenuFlyout">
-            <MenuFlyoutItem x:Uid="MainPage_SwitchDirectionOfTranslationMenuItem" Command="{Binding SwitchDirectionOfTranslationCommand}"
-                            Text="Switch direction of translation" />
+            <MenuFlyoutItem x:Uid="MainPage_SwitchDirectionOfTranslationMenuItem" Text="Switch direction of translation" Click="SwitchDirection_Click" />
             <ToggleMenuFlyoutItem x:Uid="MainPage_SearchInBothDirectionsMenuItem" Text="Search in both directions" IsChecked="{Binding SearchInBothDirections, Source={StaticResource settings}, Mode=TwoWay}" />
             <ToggleMenuFlyoutItem x:Uid="MainPage_CaseSensitiveSearchMenuItem" IsChecked="{Binding CaseSensitiveSearch, Source={StaticResource settings}, Mode=TwoWay}"
-                                  Text="Case-sensitive search" Click="ToggleMenuFlyoutItem_Click" />
+                                  Text="Case-sensitive search" Click="CaseSensitiveSearch_Click" />
         </MenuFlyout>
     </Page.Resources>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -62,21 +62,17 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="0" Width="48" Height="48" Background="Transparent" FontFamily="Segoe MDL2 Assets" FontSize="21" Content="&#xe700;"
-                    Style="{StaticResource flatButtonStyle}" Click="Button_Click" Margin="-8,-9,-8,-8"/>
+            <Button Name="hamburgerButton" Grid.Column="0" Width="48" Height="48" Background="Transparent" FontFamily="Segoe MDL2 Assets" FontSize="21" Content="&#xe700;"
+                    Style="{StaticResource flatButtonStyle}" Click="hamburgerButton_Click" Margin="-8,-9,-8,-8"/>
             <AutoSuggestBox x:Uid="MainPage_SearchBox" Name="searchBox" Grid.Column="1" VerticalAlignment="Stretch" Margin="0,0,8,0"
                             PlaceholderText="Enter search terms..." QueryIcon="Find" QuerySubmitted="searchBox_QuerySubmitted" 
                             Loaded="searchBox_Loaded" IsEnabled="{Binding AvailableDirections, Converter={StaticResource sourceNotEmptyValueConverter}}" />
             <ComboBox x:Uid="MainPage_DirectionComboBox" Name="directionComboBox" Grid.Column="2" VerticalAlignment="Stretch" Margin="0,0,8,0" HorizontalAlignment="Stretch"
                       PlaceholderText="No dictionary installed" ItemTemplate="{StaticResource DirectionComboBoxItemTemplateCompact}" SelectionChanged="directionComboBox_SelectionChanged" 
                       ItemsSource="{Binding AvailableDirections}"
-                      IsEnabled="{Binding AvailableDirections, Converter={StaticResource sourceNotEmptyValueConverter}}"  />
-            <!--<Button Grid.Column="3" Background="Transparent" FontFamily="Segoe MDL2 Assets" FontSize="21" Content="&#xE8AB;"
-                    Style="{StaticResource flatButtonStyle}"
-                    IsEnabled="{Binding IsEnabled, ElementName=directionComboBox}" ToolTipService.ToolTip="Switch direction of translation"
-                    Command="{Binding SwitchDirectionOfTranslationCommand}" />-->
-            <Button Grid.Column="3" VerticalAlignment="Stretch" Background="Transparent" FontFamily="Segoe MDL2 Assets" FontSize="21" Content="&#xE712;"
-                    Style="{StaticResource flatButtonStyle}" Click="Button_Click_5" />
+                      IsEnabled="{Binding AvailableDirections, Converter={StaticResource sourceNotEmptyValueConverter}}" />
+            <Button Name="moreButton" Grid.Column="3" VerticalAlignment="Stretch" Background="Transparent" FontFamily="Segoe MDL2 Assets" FontSize="21" Content="&#xE712;"
+                    Style="{StaticResource flatButtonStyle}" Click="moreButton_Click" />
         </Grid>
         <SplitView Grid.Row="1" Name="splitView" IsPaneOpen="False" DisplayMode="CompactOverlay" PaneBackground="Transparent">
             <SplitView.Pane>
@@ -88,33 +84,12 @@
                     <Border Grid.Row="0" Grid.RowSpan="99" Background="{StaticResource ApplicationPageBackgroundThemeBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
                     <Border Grid.Row="0" Grid.RowSpan="99" Background="{StaticResource SystemControlBackgroundBaseLowBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
                     <StackPanel Grid.Row="0">
-                        <!-- home &#xE10F; find &#xE11A; dictionary &#xE82D; -->
-                        <Button Style="{StaticResource flatButtonStyle}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Padding="-2" Background="Transparent"
-                                Command="{Binding GoBackToPageCommand}" CommandParameter="SearchResultsPage" Click="Button_Click_1">
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0">
-                                <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE11A;" Width="48" Height="48" Margin="0" Padding="0,16"
-                                       TextAlignment="Center" />
-                                <TextBlock x:Uid="MainPage_SearchTextBlock" Text="Search" VerticalAlignment="Center" />
-                            </StackPanel>
-                        </Button>                        
+                        <controls:HamburgerMenuItem x:Uid="MainPage_SearchHamburgerMenuItem" x:Name="searchHamburgerMenuItem" Icon="&#xE11A;" Content="Search" CheckRequested="searchHamburgerMenuItem_CheckRequested"
+                                                    IsChecked="True" />
                     </StackPanel>
                     <StackPanel Grid.Row="1">
-                        <Button Style="{StaticResource flatButtonStyle}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Padding="-2" Background="Transparent"
-                                Command="{Binding NavigateToPageCommand}" CommandParameter="SettingsPage" Click="Button_Click_1">
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0">
-                                <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE713;" Width="48" Height="48" Margin="0" Padding="0,16"
-                                       TextAlignment="Center" />
-                                <TextBlock x:Uid="MainPage_OptionsTextBlock" Text="Options" VerticalAlignment="Center" />
-                            </StackPanel>
-                        </Button>
-                        <Button Style="{StaticResource flatButtonStyle}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Padding="-2" Background="Transparent"
-                                Command="{Binding NavigateToPageCommand}" CommandParameter="AboutPage" Click="Button_Click_1">
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0">
-                                <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE897;" Width="48" Height="48" Margin="0" Padding="0,16"
-                                       TextAlignment="Center" />
-                                <TextBlock x:Uid="MainPage_AboutTextBlock" Text="About" VerticalAlignment="Center" />
-                            </StackPanel>
-                        </Button>
+                        <controls:HamburgerMenuItem x:Uid="MainPage_OptionsHamburgerMenuItem" x:Name="optionsHamburgerMenuItem" Icon="&#xE713;" Content="Options" CheckRequested="optionsHamburgerMenuItem_CheckRequested" />
+                        <controls:HamburgerMenuItem x:Uid="MainPage_AboutHamburgerMenuItem" x:Name="aboutHamburgerMenuItem" Icon="&#xE897;" Content="About" CheckRequested="aboutHamburgerMenuItem_CheckRequested" />
                     </StackPanel>
                 </Grid>
             </SplitView.Pane>            

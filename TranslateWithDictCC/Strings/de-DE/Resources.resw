@@ -762,7 +762,7 @@
   <data name="Language_Name_ZU" xml:space="preserve">
     <value>Zulu</value>
   </data>
-  <data name="MainPage_AboutTextBlock.Text" xml:space="preserve">
+  <data name="MainPage_AboutHamburgerMenuItem.Content" xml:space="preserve">
     <value>Info</value>
   </data>
   <data name="MainPage_CaseSensitiveSearchMenuItem.Text" xml:space="preserve">
@@ -771,17 +771,17 @@
   <data name="MainPage_DirectionComboBox.PlaceholderText" xml:space="preserve">
     <value>Kein Wörterbuch installiert</value>
   </data>
-  <data name="MainPage_OptionsTextBlock.Text" xml:space="preserve">
+  <data name="MainPage_OptionsHamburgerMenuItem.Content" xml:space="preserve">
     <value>Optionen</value>
   </data>
   <data name="MainPage_SearchBox.PlaceholderText" xml:space="preserve">
     <value>Suchbegriff eingeben...</value>
   </data>
+  <data name="MainPage_SearchHamburgerMenuItem.Content" xml:space="preserve">
+    <value>Suchen</value>
+  </data>
   <data name="MainPage_SearchInBothDirectionsMenuItem.Text" xml:space="preserve">
     <value>In beiden Richtungen suchen</value>
-  </data>
-  <data name="MainPage_SearchTextBlock.Text" xml:space="preserve">
-    <value>Suchen</value>
   </data>
   <data name="MainPage_SwitchDirectionOfTranslationMenuItem.Text" xml:space="preserve">
     <value>Übersetzungsrichtung wechseln</value>

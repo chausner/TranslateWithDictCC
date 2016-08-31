@@ -150,7 +150,7 @@ namespace TranslateWithDictCC.Views
             await PerformQuery();
         }      
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void hamburgerButton_Click(object sender, RoutedEventArgs e)
         {
             splitView.IsPaneOpen = !splitView.IsPaneOpen;
         }
@@ -170,6 +170,10 @@ namespace TranslateWithDictCC.Views
                     SetDirectionComboBoxSelectedItem(searchResultsViewModel.SearchContext.SelectedDirection);
                 }
             }
+
+            searchHamburgerMenuItem.IsChecked = e.SourcePageType == typeof(SearchResultsPage);
+            optionsHamburgerMenuItem.IsChecked = e.SourcePageType == typeof(SettingsPage);
+            aboutHamburgerMenuItem.IsChecked = e.SourcePageType == typeof(AboutPage);
         }
 
         private async void directionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -185,17 +189,12 @@ namespace TranslateWithDictCC.Views
             FocusSearchBox();
         }
 
-        private void Button_Click_5(object sender, RoutedEventArgs e)
+        private void moreButton_Click(object sender, RoutedEventArgs e)
         {
             moreMenuFlyout.ShowAt((Button)sender);
         }
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
-        {
-            splitView.IsPaneOpen = false;
-        }
-
-        private async void ToggleMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+        private async void CaseSensitiveSearch_Click(object sender, RoutedEventArgs e)
         {
             await PerformQuery();
         }
@@ -214,6 +213,34 @@ namespace TranslateWithDictCC.Views
                 MainViewModel.Instance.SelectedDirection = null;
                 MainViewModel.Instance.SelectedDirection = selectedDirection;
             }
+        }
+
+        private void searchHamburgerMenuItem_CheckRequested(object sender, EventArgs e)
+        {
+            splitView.IsPaneOpen = false;
+
+            GoBackToPage(typeof(SearchResultsPage));
+        }
+
+        private void optionsHamburgerMenuItem_CheckRequested(object sender, EventArgs e)
+        {
+            splitView.IsPaneOpen = false;
+
+            NavigateToPage("SettingsPage");
+        }
+
+        private void aboutHamburgerMenuItem_CheckRequested(object sender, EventArgs e)
+        {
+            splitView.IsPaneOpen = false;
+
+            NavigateToPage("AboutPage");
+        }
+
+        private async void SwitchDirection_Click(object sender, RoutedEventArgs e)
+        {
+            MainViewModel.Instance.SwitchDirectionOfTranslationCommand.Execute(null);
+
+            await PerformQuery(dontSearchInBothDirections: true);
         }
     }
 }
