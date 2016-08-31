@@ -28,7 +28,7 @@ namespace TranslateWithDictCC
             return ExecuteNonQuery("CREATE TABLE IF NOT EXISTS Dictionaries(ID INTEGER PRIMARY KEY NOT NULL, OriginLanguageCode VARCHAR(255) NOT NULL, DestinationLanguageCode VARCHAR(255) NOT NULL, CreationDate BIGINT NOT NULL, NumberOfEntries BIGINT NOT NULL)");
         }
 
-        private async Task<DbConnection> OpenConnection()
+        public async Task<DbConnection> OpenConnection()
         {
             DbConnection connection = SqliteFactory.Instance.CreateConnection();
 
@@ -39,7 +39,7 @@ namespace TranslateWithDictCC
             return connection;
         }
 
-        private async Task OpenTransactedConnection(Func<DbConnection, Task> action)
+        public async Task OpenTransactedConnection(Func<DbConnection, Task> action)
         {
             using (DbConnection connection = await OpenConnection())
             using (DbTransaction transaction = connection.BeginTransaction())
@@ -58,7 +58,7 @@ namespace TranslateWithDictCC
             }
         }
 
-        private async Task<int> ExecuteNonQuery(string commandText)
+        public async Task<int> ExecuteNonQuery(string commandText)
         {
             using (DbConnection connection = await OpenConnection())
             using (DbCommand command = connection.CreateCommand())
@@ -69,7 +69,18 @@ namespace TranslateWithDictCC
             }
         }
 
-        private async Task<List<T>> ExecuteReader<T>(string commandText, Func<DbDataReader, T> dataReaderFunc)
+        public async Task<object> ExecuteScalar(string commandText)
+        {
+            using (DbConnection connection = await OpenConnection())
+            using (DbCommand command = connection.CreateCommand())
+            {
+                command.CommandText = commandText;
+
+                return await command.ExecuteScalarAsync();
+            }
+        }
+
+        public async Task<List<T>> ExecuteReader<T>(string commandText, Func<DbDataReader, T> dataReaderFunc)
         {
             List<T> results = new List<T>();
 
@@ -168,6 +179,13 @@ namespace TranslateWithDictCC
                     await command.ExecuteNonQueryAsync();
                 }
 
+                using (DbCommand command = connection.CreateCommand())
+                {
+                    command.CommandText = "SELECT last_insert_rowid()";
+
+                    dictionary.ID = (int)(long)await command.ExecuteScalarAsync();
+                }
+
                 dictionaryViewModel.Dictionary = dictionary;
             });
 
@@ -252,7 +270,7 @@ namespace TranslateWithDictCC
 
                     await command.ExecuteNonQueryAsync();
                 }
-                
+
                 using (DbCommand command = connection.CreateCommand())
                 {
                     string tableName = GetDictionaryTableName(dictionary.OriginLanguageCode, dictionary.DestinationLanguageCode);
