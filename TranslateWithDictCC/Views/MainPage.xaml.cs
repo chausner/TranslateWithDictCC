@@ -126,7 +126,7 @@ namespace TranslateWithDictCC.Views
 
         private async Task PerformQuery(bool dontSearchInBothDirections = false)
         {
-            if (searchBox.Text.Trim() == string.Empty)
+            if (searchBox.Text.Trim() == string.Empty || MainViewModel.Instance.SelectedDirection == null)
                 return;
 
             try
