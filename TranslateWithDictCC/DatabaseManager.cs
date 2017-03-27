@@ -147,17 +147,29 @@ namespace TranslateWithDictCC
                     if (entries.Count == 0)
                         break;
 
-                    foreach (DictionaryEntry entry in entries)
+                    // run on the thread pool for better UI responsiveness
+                    await Task.Run(delegate ()
+                    {
                         using (DbCommand command = connection.CreateCommand())
                         {
                             command.CommandText = $"INSERT INTO {tableName}(Word1, Word2, WordClasses) VALUES (@Word1, @Word2, @WordClasses)";
-                            
-                            command.Parameters.Add(new SqliteParameter("@Word1", entry.Word1));
-                            command.Parameters.Add(new SqliteParameter("@Word2", entry.Word2));
-                            command.Parameters.Add(new SqliteParameter("@WordClasses", (object)entry.WordClasses ?? DBNull.Value));
 
-                            await command.ExecuteNonQueryAsync();
+                            command.Parameters.Add(new SqliteParameter("@Word1", SqliteType.Text, 512));
+                            command.Parameters.Add(new SqliteParameter("@Word2", SqliteType.Text, 512));
+                            command.Parameters.Add(new SqliteParameter("@WordClasses", SqliteType.Text, 64));
+
+                            command.Prepare();
+
+                            foreach (DictionaryEntry entry in entries)
+                            {
+                                command.Parameters[0].Value = entry.Word1;
+                                command.Parameters[1].Value = entry.Word2;
+                                command.Parameters[2].Value = (object)entry.WordClasses ?? DBNull.Value;
+
+                                command.ExecuteNonQuery();
+                            }
                         }
+                    });
 
                     dictionaryViewModel.NumberOfEntries += entries.Count;
                     dictionaryViewModel.ImportProgress = wordlistReader.Progress;
