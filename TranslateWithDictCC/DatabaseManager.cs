@@ -1,13 +1,14 @@
-﻿using TranslateWithDictCC.Models;
-using TranslateWithDictCC.ViewModels;
-using Microsoft.Data.Sqlite;
+﻿using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using TranslateWithDictCC.Models;
+using TranslateWithDictCC.ViewModels;
 using Windows.Storage;
 
 namespace TranslateWithDictCC
@@ -150,6 +151,9 @@ namespace TranslateWithDictCC
                     // run on the thread pool for better UI responsiveness
                     await Task.Run(delegate ()
                     {
+                        foreach (DictionaryEntry entry in entries)
+                            PreprocessDictionaryEntry(entry);
+
                         using (DbCommand command = connection.CreateCommand())
                         {
                             command.CommandText = $"INSERT INTO {tableName}(Word1, Word2, WordClasses) VALUES (@Word1, @Word2, @WordClasses)";
@@ -202,6 +206,16 @@ namespace TranslateWithDictCC
             });
 
             return dictionary;
+        }
+
+        private void PreprocessDictionaryEntry(DictionaryEntry entry)
+        {
+            // replace two or more spaces in words by a single space
+            if (entry.Word1.Contains("  "))
+                entry.Word1 = Regex.Replace(entry.Word1, @"\s\s+", " ");
+
+            if (entry.Word2.Contains("  "))
+                entry.Word2 = Regex.Replace(entry.Word2, @"\s\s+", " ");
         }
 
         public Task<List<DictionaryEntry>> QueryEntries(Dictionary dictionary, string searchQuery, bool reverseSearch)
