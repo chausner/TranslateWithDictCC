@@ -69,7 +69,24 @@
             <TextBlock Name="versionTextBlock" Margin="0,0,0,8" />            
             <TextBlock Text="Copyright © Christoph Hausner 2016" Margin="0,0,0,8" />
             <HyperlinkButton x:Uid="AboutPage_PrivacyStatementLink" Content="Privacy Statement" NavigateUri="http://www.dict.cc/?s=about:&amp;l=e" Margin="0,0,0,16" />
-            <Button x:Uid="AboutPage_GiveFeedbackButton" Content="Give feedback" Margin="0,0,0,32" Click="Button_Click" />            
+            <Button x:Uid="AboutPage_GiveFeedbackButton" Content="Give feedback" Margin="0,0,0,32" Click="Button_Click" />
+
+            <TextBlock x:Uid="AboutPage_KeyboardShortcutsTextBlock" Style="{StaticResource TitleTextBlockStyle}" Text="Keyboard shortcuts" Margin="0,0,0,16" />
+            <Grid HorizontalAlignment="Left" Margin="0,0,0,32">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <TextBlock x:Uid="AboutPage_SetFocusOnSearchBarShortcutTextBlock" Grid.Row="0" Grid.Column="0" Text="Ctrl + E" Margin="0,0,48,8" />
+                <TextBlock x:Uid="AboutPage_SetFocusOnSearchBarTextBlock" Grid.Row="0" Grid.Column="1" Text="Set focus on search bar" Margin="0,0,0,8" />
+                <TextBlock x:Uid="AboutPage_SwitchDirectionOfTranslationShortcutTextBlock" Grid.Row="1" Grid.Column="0" Text="Ctrl + S" Margin="0,0,48,0" />
+                <TextBlock x:Uid="AboutPage_SwitchDirectionOfTranslationTextBlock" Grid.Row="1" Grid.Column="1" Text="Switch direction of translation" />
+            </Grid>
+
             <TextBlock x:Uid="AboutPage_LicensesTextBlock" Style="{StaticResource TitleTextBlockStyle}" Text="Licenses" Margin="0,0,0,16" />
             <TextBlock>GoSquared Flag Icon Set</TextBlock>
             <TextBlock>Copyright (c) 2015 Go Squared Ltd. http://www.gosquared.com/</TextBlock>

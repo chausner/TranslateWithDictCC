@@ -27,6 +27,22 @@ namespace TranslateWithDictCC.Views
             MainViewModel.Instance.GoBackToPageCommand = new RelayCommand<string>(GoBackToPage);
 
             MainViewModel.Instance.PropertyChanged += MainViewModel_PropertyChanged;
+
+            KeyboardShortcutListener shortcutListener = new KeyboardShortcutListener();
+
+            shortcutListener.RegisterShortcutHandler(VirtualKeyModifiers.Control, VirtualKey.E, ControlEShortcut);
+            shortcutListener.RegisterShortcutHandler(VirtualKeyModifiers.Control, VirtualKey.S, ControlSShortcut);
+        }
+
+        private void ControlEShortcut(object sender, EventArgs e)
+        {
+            searchBox.Text = string.Empty;
+            FocusSearchBox();
+        }
+
+        private void ControlSShortcut(object sender, EventArgs e)
+        {
+            SwitchDirection_Click(sender, new RoutedEventArgs());
         }
 
         private void MainViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)

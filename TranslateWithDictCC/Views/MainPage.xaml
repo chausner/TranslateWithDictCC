@@ -44,7 +44,8 @@
             </Grid>
         </DataTemplate>
         <MenuFlyout x:Name="moreMenuFlyout">
-            <MenuFlyoutItem x:Uid="MainPage_SwitchDirectionOfTranslationMenuItem" Text="Switch direction of translation" Click="SwitchDirection_Click" />
+            <MenuFlyoutItem x:Uid="MainPage_SwitchDirectionOfTranslationMenuItem" Text="Switch direction of translation" Click="SwitchDirection_Click" 
+                            AutomationProperties.AcceleratorKey="Control S" />
             <ToggleMenuFlyoutItem x:Uid="MainPage_SearchInBothDirectionsMenuItem" Text="Search in both directions" IsChecked="{Binding SearchInBothDirections, Source={StaticResource settings}, Mode=TwoWay}" />
             <ToggleMenuFlyoutItem x:Uid="MainPage_CaseSensitiveSearchMenuItem" IsChecked="{Binding CaseSensitiveSearch, Source={StaticResource settings}, Mode=TwoWay}"
                                   Text="Case-sensitive search" Click="CaseSensitiveSearch_Click" />

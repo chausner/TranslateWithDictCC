@@ -123,6 +123,9 @@
   <data name="AboutPage_GiveFeedbackButton.Content" xml:space="preserve">
     <value>Feedback senden</value>
   </data>
+  <data name="AboutPage_KeyboardShortcutsTextBlock.Text" xml:space="preserve">
+    <value>Tastenkürzel</value>
+  </data>
   <data name="AboutPage_LicensesTextBlock.Text" xml:space="preserve">
     <value>Lizenzen</value>
   </data>
@@ -134,6 +137,18 @@
   </data>
   <data name="AboutPage_PrivacyStatementLink.NavigateUri" xml:space="preserve">
     <value>http://www.dict.cc/?s=about:&amp;amp;l=d</value>
+  </data>
+  <data name="AboutPage_SetFocusOnSearchBarShortcutTextBlock.Text" xml:space="preserve">
+    <value>Strg + E</value>
+  </data>
+  <data name="AboutPage_SetFocusOnSearchBarTextBlock.Text" xml:space="preserve">
+    <value>Fokus auf Suchfeld setzen</value>
+  </data>
+  <data name="AboutPage_SwitchDirectionOfTranslationShortcutTextBlock.Text" xml:space="preserve">
+    <value>Strg + S</value>
+  </data>
+  <data name="AboutPage_SwitchDirectionOfTranslationTextBlock.Text" xml:space="preserve">
+    <value>Übersetzungsrichtung wechseln</value>
   </data>
   <data name="AboutPage_TitleTextBlock.Text" xml:space="preserve">
     <value>Info</value>
