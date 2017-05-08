@@ -25,11 +25,12 @@ namespace TranslateWithDictCC
             {
                 T result = results[index];
 
-                if (result != null)
-                    return result;
+                if (result == null)
+                {
+                    result = generator(sources[index]);
+                    results[index] = result;
+                }
 
-                result = generator(sources[index]);
-                results[index] = result;
                 return result;
             }
         }
@@ -76,7 +77,7 @@ namespace TranslateWithDictCC
 
         public IEnumerator<T> GetEnumerator()
         {
-            return new MyEnumerator(this);
+            return new LazyEnumerator(this);
         }
 
         public bool Remove(T item)
@@ -86,7 +87,7 @@ namespace TranslateWithDictCC
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return new MyEnumerator(this);
+            return new LazyEnumerator(this);
         }
 
         private void GenerateAll()
@@ -96,13 +97,13 @@ namespace TranslateWithDictCC
                     results[i] = generator(sources[i]);
         }
 
-        private class MyEnumerator : IEnumerator<T>
+        private class LazyEnumerator : IEnumerator<T>
         {
             LazyCollection<Source, T> lazyCollection;
 
             int currentIndex = -1;            
 
-            public MyEnumerator(LazyCollection<Source, T> lazyCollection)
+            public LazyEnumerator(LazyCollection<Source, T> lazyCollection)
             {
                 this.lazyCollection = lazyCollection;
             }

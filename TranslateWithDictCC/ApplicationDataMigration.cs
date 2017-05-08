@@ -38,7 +38,7 @@ namespace TranslateWithDictCC
                         DateTimeOffset creationDate = new DateTimeOffset(dataReader.GetInt64(3), TimeSpan.Zero);
                         int numberOfEntries = dataReader.GetInt32(4);
 
-                        return new Tuple<int, string, string>(id, originLanguageCode, destinationLanguageCode);
+                        return Tuple.Create(id, originLanguageCode, destinationLanguageCode);
                     });
 
                 foreach (Tuple<int, string, string> dictionary in dictionaries)

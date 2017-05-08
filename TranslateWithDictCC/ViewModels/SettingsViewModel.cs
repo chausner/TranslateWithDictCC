@@ -22,9 +22,12 @@ namespace TranslateWithDictCC.ViewModels
 
         ResourceLoader resourceLoader = ResourceLoader.GetForCurrentView();
 
-        bool IsImportInProgress
+        private bool IsImportInProgress
         {
-            get { return importQueueProcessTask != null && !importQueueProcessTask.IsCompleted; }
+            get
+            {
+                return importQueueProcessTask != null && !importQueueProcessTask.IsCompleted;
+            }
         }
 
         public SettingsViewModel()

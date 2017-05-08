@@ -86,7 +86,7 @@ namespace TranslateWithDictCC
             }
         }
 
-        class MatchInfo
+        private class MatchInfo
         {
             public bool IsCaseSensitiveMatch { get; }
             public int AnnotationLength { get; }

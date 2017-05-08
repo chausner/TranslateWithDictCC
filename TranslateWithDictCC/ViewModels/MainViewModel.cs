@@ -75,8 +75,7 @@ namespace TranslateWithDictCC.ViewModels
 
             AvailableDirections =
                 (await DatabaseManager.Instance.GetDictionaries())
-                .SelectMany(dict =>
-                    new[] { new DirectionViewModel(dict, false), new DirectionViewModel(dict, true) })
+                .SelectMany(dict => new[] { new DirectionViewModel(dict, false), new DirectionViewModel(dict, true) })
                 .OrderBy(dvm => dvm.OriginLanguage)
                 .ToArray();
 
@@ -147,7 +146,8 @@ namespace TranslateWithDictCC.ViewModels
 
                 SearchResultsViewModel searchResultsViewModel = new SearchResultsViewModel(searchTask.Result, searchContext);
 
-                NavigateToPageCommand.Execute(new Tuple<string, object>("SearchResultsPage", searchResultsViewModel));
+                // explicit type parameters required here
+                NavigateToPageCommand.Execute(Tuple.Create<string, object>("SearchResultsPage", searchResultsViewModel));
             }
             finally
             {

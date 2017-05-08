@@ -5,11 +5,8 @@ namespace TranslateWithDictCC.Models
     class DictionaryEntry
     {
         public string Word1 { get; set; }
-
         public string Word2 { get; set; }
-
         public string WordClasses { get; set; }
-
         public TextSpan[] MatchSpans { get; set; }
     }
 
