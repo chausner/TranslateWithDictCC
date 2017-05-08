@@ -15,6 +15,8 @@ namespace TranslateWithDictCC.ViewModels
 {
     class SettingsViewModel
     {
+        public static readonly SettingsViewModel Instance = new SettingsViewModel();
+
         public ObservableCollection<DictionaryViewModel> Dictionaries { get; }
 
         Task importQueueProcessTask;
@@ -30,15 +32,15 @@ namespace TranslateWithDictCC.ViewModels
             }
         }
 
-        public SettingsViewModel()
+        private SettingsViewModel()
         {
             Dictionaries = new ObservableCollection<DictionaryViewModel>();
-
-            Load();
         }
 
-        private async Task Load()
+        public async Task Load()
         {
+            Dictionaries.Clear();
+
             foreach (Dictionary dictionary in await DatabaseManager.Instance.GetDictionaries())
                 Dictionaries.Add(new DictionaryViewModel(dictionary));
         }

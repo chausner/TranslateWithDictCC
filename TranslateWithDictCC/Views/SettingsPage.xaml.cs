@@ -10,18 +10,16 @@ namespace TranslateWithDictCC.Views
 {
     public sealed partial class SettingsPage : Page
     {
-        SettingsViewModel viewModel = new SettingsViewModel();
-
         public SettingsPage()
         {
             InitializeComponent();
 
-            DataContext = viewModel;
+            DataContext = SettingsViewModel.Instance;
         }
 
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
-            await viewModel.ImportDictionary();
+            await SettingsViewModel.Instance.ImportDictionary();
         }
 
         private async void Button_Click_1(object sender, RoutedEventArgs e)
@@ -46,7 +44,7 @@ namespace TranslateWithDictCC.Views
                     return;
             }
 
-            await viewModel.RemoveDictionary(dictionary);
+            await SettingsViewModel.Instance.RemoveDictionary(dictionary);
         }
     }
 }
