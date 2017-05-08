@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.Sqlite;
+using Microsoft.Data.Sqlite.Internal;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -19,14 +20,23 @@ namespace TranslateWithDictCC
 
         public static readonly DatabaseManager Instance = new DatabaseManager(Path.Combine(ApplicationData.Current.LocalFolder.Path, "dictionaries.db"));
 
+        bool initialized = false;
+
         private DatabaseManager(string databasePath)
         {
             DatabasePath = databasePath;
         }
 
-        public Task InitializeDb()
+        public async Task InitializeDb()
         {
-            return ExecuteNonQuery("CREATE TABLE IF NOT EXISTS Dictionaries(ID INTEGER PRIMARY KEY NOT NULL, OriginLanguageCode VARCHAR(255) NOT NULL, DestinationLanguageCode VARCHAR(255) NOT NULL, CreationDate BIGINT NOT NULL, NumberOfEntries BIGINT NOT NULL)");
+            if (initialized)
+                return;
+
+            initialized = true;
+
+            SqliteEngine.UseWinSqlite3();
+
+            await ExecuteNonQuery("CREATE TABLE IF NOT EXISTS Dictionaries(ID INTEGER PRIMARY KEY NOT NULL, OriginLanguageCode VARCHAR(255) NOT NULL, DestinationLanguageCode VARCHAR(255) NOT NULL, CreationDate BIGINT NOT NULL, NumberOfEntries BIGINT NOT NULL)");
         }
 
         public async Task<DbConnection> OpenConnection()

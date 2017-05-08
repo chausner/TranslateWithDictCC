@@ -21,7 +21,13 @@ namespace TranslateWithDictCC
 
         protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
-            await ApplicationDataMigration.Migrate();
+            if (e.PreviousExecutionState != ApplicationExecutionState.Suspended &&
+                e.PreviousExecutionState != ApplicationExecutionState.Running)
+            {
+                await ApplicationDataMigration.Migrate();
+                await DatabaseManager.Instance.InitializeDb();
+                await SettingsViewModel.Instance.Load();
+            }
 
             if (!Resources.ContainsKey("settings"))
                 Resources.Add("settings", Settings.Instance);
@@ -36,8 +42,7 @@ namespace TranslateWithDictCC
 
                 if (e.PreviousExecutionState != ApplicationExecutionState.Suspended &&
                     e.PreviousExecutionState != ApplicationExecutionState.Running)
-                {
-                    await DatabaseManager.Instance.InitializeDb();
+                {                    
                     await MainViewModel.Instance.UpdateDirection();
                     MainViewModel.Instance.LoadSettings();
                 }
