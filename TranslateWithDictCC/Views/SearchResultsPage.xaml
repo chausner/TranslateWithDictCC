@@ -22,7 +22,7 @@
                         VerticalAlignment="Center" Content="{Binding AudioRecordingState1, Converter={StaticResource audioRecordingButtonStateConverter}}" 
                         FontFamily="Segoe MDL2 Assets" FontSize="15" Background="Transparent" Margin="0,0,4,0" Padding="0"
                         Visibility="{Binding Source={StaticResource settings}, Path=ShowAudioRecordingButton, Converter={StaticResource booleanVisiblityConverter}}" 
-                        Click="Button_Click" />
+                        Click="audioRecordingButton1_Click" />
                 <Grid Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="0,8,8,8">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
@@ -42,7 +42,7 @@
                         VerticalAlignment="Center" Content="{Binding AudioRecordingState2, Converter={StaticResource audioRecordingButtonStateConverter}}" 
                         FontFamily="Segoe MDL2 Assets" FontSize="15" Background="Transparent" Margin="0,0,4,0" Padding="0"
                         Visibility="{Binding Source={StaticResource settings}, Path=ShowAudioRecordingButton, Converter={StaticResource booleanVisiblityConverter}}" 
-                        Click="Button_Click_1" />
+                        Click="audioRecordingButton2_Click" />
             </Grid>
         </DataTemplate>
         <Style x:Key="ListViewItemStyle" TargetType="ListViewItem">

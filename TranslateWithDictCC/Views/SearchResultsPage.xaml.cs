@@ -10,6 +10,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Windows.UI.Xaml.Data;
 
 namespace TranslateWithDictCC.Views
 {
@@ -53,7 +54,7 @@ namespace TranslateWithDictCC.Views
             }
         }
 
-        private async void Button_Click(object sender, RoutedEventArgs e)
+        private async void audioRecordingButton1_Click(object sender, RoutedEventArgs e)
         {
             DictionaryEntryViewModel dictionaryEntryViewModel = (DictionaryEntryViewModel)((FrameworkElement)sender).DataContext;
 
@@ -73,7 +74,7 @@ namespace TranslateWithDictCC.Views
             }      
         }
 
-        private async void Button_Click_1(object sender, RoutedEventArgs e)
+        private async void audioRecordingButton2_Click(object sender, RoutedEventArgs e)
         {
             DictionaryEntryViewModel dictionaryEntryViewModel = (DictionaryEntryViewModel)((FrameworkElement)sender).DataContext;
 

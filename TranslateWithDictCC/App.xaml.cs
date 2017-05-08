@@ -59,8 +59,8 @@ namespace TranslateWithDictCC
 
             if (!e.PrelaunchActivated)
             {
-                if (rootFrame.Content == null)
-                    rootFrame.Navigate(typeof(MainPage), e.Arguments);
+                //if (rootFrame.Content == null)
+                rootFrame.Navigate(typeof(MainPage), e.Arguments);
 
                 Window.Current.Activate();
             }

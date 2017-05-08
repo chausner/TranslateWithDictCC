@@ -220,7 +220,7 @@
     <value>Import fehlgeschlagen</value>
   </data>
   <data name="Import_In_Progress_Body" xml:space="preserve">
-    <value>Bitte warten Sie bis der laufende Importvorgang abgeschlossen ist, bevor Sie Wörterbücher entfernen.</value>
+    <value>Bitte warten Sie, bis der laufende Importvorgang abgeschlossen ist, bevor Sie Wörterbücher entfernen.</value>
   </data>
   <data name="Import_In_Progress_Title" xml:space="preserve">
     <value>Import läuft</value>
