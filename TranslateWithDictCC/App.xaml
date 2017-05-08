@@ -487,6 +487,7 @@
                     <SolidColorBrush x:Key="DictionaryEntryQueryThemeBrush" Color="Green" />
                     <!--<SolidColorBrush x:Key="DictionaryEntryQueryHighlightThemeBrush" Color="#FFFFB0" />-->
                     <SolidColorBrush x:Key="DictionaryEntryQueryHighlightThemeBrush" Color="#4000FF00" />
+                    <SolidColorBrush x:Key="ListViewItemPlaceholderBackgroundThemeBrush" Color="White" />
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Dark">
                     <Color x:Key="TitleBarBackgroundColor">DarkOrange</Color>
@@ -507,6 +508,7 @@
                     <SolidColorBrush x:Key="DictionaryEntryQueryThemeBrush" Color="LimeGreen" />
                     <SolidColorBrush x:Key="DictionaryEntryQueryHighlightThemeBrushX" Color="#353535" />
                     <SolidColorBrush x:Key="DictionaryEntryQueryHighlightThemeBrush" Color="#356035" />
+                    <SolidColorBrush x:Key="ListViewItemPlaceholderBackgroundThemeBrush" Color="Black" />
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
         </ResourceDictionary>

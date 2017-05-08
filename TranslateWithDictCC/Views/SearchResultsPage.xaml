@@ -75,7 +75,8 @@
             <Image Source="/Assets/Flags/DE.png" Width="128" Height="128" Margin="48,40,0,0" />
         </Grid>
         <ListView ItemsSource="{Binding DictionaryEntries}" ItemTemplate="{StaticResource DictionaryEntryDataTemplate}"
-                  HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" ContainerContentChanging="ListView_ContainerContentChanging" ItemContainerStyle="{StaticResource ListViewItemStyle}" />
+                  HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" ContainerContentChanging="ListView_ContainerContentChanging" ItemContainerStyle="{StaticResource ListViewItemStyle}"
+                  ShowsScrollingPlaceholders="False" />
         <MediaElement Name="mediaElement" Visibility="Collapsed" AudioCategory="Speech"
                       MediaOpened="mediaElement_MediaOpened" MediaEnded="mediaElement_MediaEnded" MediaFailed="mediaElement_MediaFailed" />
 
