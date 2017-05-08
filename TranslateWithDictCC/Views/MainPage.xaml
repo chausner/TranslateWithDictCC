@@ -82,8 +82,8 @@
                         <RowDefinition />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <Border Grid.Row="0" Grid.RowSpan="99" Background="{StaticResource ApplicationPageBackgroundThemeBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-                    <Border Grid.Row="0" Grid.RowSpan="99" Background="{StaticResource SystemControlBackgroundBaseLowBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                    <Border Grid.Row="0" Grid.RowSpan="99" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                    <Border Grid.Row="0" Grid.RowSpan="99" Background="{ThemeResource SystemControlBackgroundBaseLowBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
                     <StackPanel Grid.Row="0">
                         <controls:HamburgerMenuItem x:Uid="MainPage_SearchHamburgerMenuItem" x:Name="searchHamburgerMenuItem" Icon="&#xE11A;" Content="Search" CheckRequested="searchHamburgerMenuItem_CheckRequested"
                                                     IsChecked="True" />
