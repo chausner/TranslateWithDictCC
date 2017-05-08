@@ -19,6 +19,9 @@ namespace TranslateWithDictCC
             string word = selectedDirection.ReverseSearch ^ word2 ? 
                 dictionaryEntryViewModel.DictionaryEntry.Word2 : dictionaryEntryViewModel.DictionaryEntry.Word1;
 
+            string otherWord = !selectedDirection.ReverseSearch ^ word2 ?
+                dictionaryEntryViewModel.DictionaryEntry.Word2 : dictionaryEntryViewModel.DictionaryEntry.Word1;
+
             string originLanguageCode = word2 ? selectedDirection.DestinationLanguageCode : selectedDirection.OriginLanguageCode;
             string destinationLanguageCode = word2 ? selectedDirection.OriginLanguageCode : selectedDirection.DestinationLanguageCode;
 
@@ -36,9 +39,13 @@ namespace TranslateWithDictCC
 
             DictCCSearchResult[] dictCCSearchResults = ExtractDictCCSearchResults(response, originLanguageCode, destinationLanguageCode);
 
-            string wordWithoutAnnotations = RemoveAnnotations(word);
+            string wordJSLiteral = GetJSLiteralOfWord(word);
+            string otherWordJSLiteral = GetJSLiteralOfWord(otherWord);
 
-            DictCCSearchResult dictCCSearchResult = dictCCSearchResults.FirstOrDefault(result => result.Word1 == wordWithoutAnnotations);
+            DictCCSearchResult dictCCSearchResult = null;
+
+            if (wordJSLiteral != string.Empty || otherWordJSLiteral != string.Empty)
+                dictCCSearchResult = dictCCSearchResults.FirstOrDefault(result => result.Word1 == wordJSLiteral && result.Word2 == otherWordJSLiteral);
 
             if (dictCCSearchResult != null)
                 audioUri = GetAudioRecordingUri(dictCCSearchResult.ID, originLanguageCode, destinationLanguageCode, originLanguageCode);
@@ -50,9 +57,13 @@ namespace TranslateWithDictCC
             return audioUri;
         }
 
-        private static string RemoveAnnotations(string word)
+        private static string GetJSLiteralOfWord(string word)
         {
-            return Regex.Replace(word, @" ((\{.*?\})|(\[.*?\])|(\<.*?\>))", string.Empty).Trim();
+            word = Regex.Replace(word, @" ?((\{.*?\})|(\[.*?\])|(\<.*?\>))", string.Empty).Trim();
+
+            word = word.Replace("\\", "\\\\").Replace("'", "\\'").Replace("\"", "\\\"");
+
+            return word;
         }
 
         private static Uri GetSearchPageUri(string originLanguageCode, string destinationLanguageCode, string searchQuery)
