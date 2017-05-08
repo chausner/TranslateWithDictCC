@@ -36,6 +36,8 @@ namespace TranslateWithDictCC
 
             SqliteEngine.UseWinSqlite3();
 
+            await ExecuteNonQuery("PRAGMA journal_mode=WAL");
+
             await ExecuteNonQuery("CREATE TABLE IF NOT EXISTS Dictionaries(ID INTEGER PRIMARY KEY NOT NULL, OriginLanguageCode VARCHAR(255) NOT NULL, DestinationLanguageCode VARCHAR(255) NOT NULL, CreationDate BIGINT NOT NULL, NumberOfEntries BIGINT NOT NULL)");
         }
 
