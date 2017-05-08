@@ -1,8 +1,7 @@
 ﻿{
   "dependencies": {
-    "Microsoft.Data.SQLite": "1.0.0",
-    "Microsoft.NETCore.UniversalWindowsPlatform": "5.2.2",
-    "sqlite": "3.12.2"
+    "Microsoft.Data.Sqlite": "1.1.0",
+    "Microsoft.NETCore.UniversalWindowsPlatform": "5.3.3"
   },
   "frameworks": {
     "uap10.0": {}
