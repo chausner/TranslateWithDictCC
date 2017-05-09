@@ -32,9 +32,9 @@ namespace TranslateWithDictCC
             if (initialized)
                 return;
 
-            initialized = true;
-
             SqliteEngine.UseWinSqlite3();
+
+            initialized = true;
 
             await ExecuteNonQuery("PRAGMA journal_mode=WAL");
 

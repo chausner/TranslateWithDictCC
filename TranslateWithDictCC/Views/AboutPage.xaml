@@ -31,7 +31,7 @@
     <ScrollViewer>
         <StackPanel Margin="24,16">
             <TextBlock x:Uid="AboutPage_TitleTextBlock" Style="{StaticResource SubheaderTextBlockStyle}" Text="About" Margin="0,0,0,16"/>
-            <!--<ListView Margin="0,0,0,8" ItemTemplate="{StaticResource flagListDataTemplate}" ItemContainerStyle="{StaticResource flagListItemContainerStyle}">
+            <ListView Margin="0,0,0,8" ItemTemplate="{StaticResource flagListDataTemplate}" ItemContainerStyle="{StaticResource flagListItemContainerStyle}">
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
                         <ItemsWrapGrid Orientation="Horizontal"/>
@@ -47,7 +47,7 @@
                 <x:String>RO</x:String>
                 <x:String>PT</x:String>
                 <x:String>HU</x:String>
-                --><!--<x:String>LA</x:String>--><!--
+                <x:String>LA</x:String>
                 <x:String>NL</x:String>
                 <x:String>SK</x:String>
                 <x:String>ES</x:String>
@@ -61,10 +61,10 @@
                 <x:String>FI</x:String>
                 <x:String>EL</x:String>
                 <x:String>SR</x:String>
-                --><!--<x:String>EO</x:String>--><!--
+                <x:String>EO</x:String>
                 <x:String>BS</x:String>
                 <x:String>SQ</x:String>
-            </ListView>-->
+            </ListView>
             <TextBlock x:Uid="AboutPage_DescriptionTextBlock" Text="Unofficial app to search and manage offline dictionaries downloaded from dict.cc." Margin="0,0,0,8" TextWrapping="WrapWholeWords" />
             <TextBlock Name="versionTextBlock" Margin="0,0,0,8" />            
             <TextBlock Text="Copyright © Christoph Hausner 2016" Margin="0,0,0,8" />
