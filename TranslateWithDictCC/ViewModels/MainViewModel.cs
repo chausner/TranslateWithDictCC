@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Windows.UI.StartScreen;
 
 namespace TranslateWithDictCC.ViewModels
 {
@@ -85,6 +86,8 @@ namespace TranslateWithDictCC.ViewModels
 
             if (SelectedDirection == null)
                 SelectedDirection = AvailableDirections.FirstOrDefault();
+
+            await UpdateJumpList();
         }        
 
         private void SwitchDirectionOfTranslation()
@@ -152,6 +155,31 @@ namespace TranslateWithDictCC.ViewModels
 
                 querySemaphore.Release();
             }
+        }
+
+        private async Task UpdateJumpList()
+        {
+            if (!JumpList.IsSupported())
+                return;
+
+            JumpList jumpList = await JumpList.LoadCurrentAsync();
+
+            jumpList.SystemGroupKind = JumpListSystemGroupKind.None;
+            jumpList.Items.Clear();
+
+            foreach (DirectionViewModel directionViewModel in AvailableDirections)
+            {
+                string itemName = string.Format("{0} → {1}", directionViewModel.OriginLanguage, directionViewModel.DestinationLanguage);
+                string arguments = "dict:" + directionViewModel.OriginLanguageCode + directionViewModel.DestinationLanguageCode;
+
+                JumpListItem jumpListItem = JumpListItem.CreateWithArguments(arguments, itemName);
+
+                jumpListItem.Logo = new Uri("ms-appx://" + LanguageCodes.GetCountryFlagUri(directionViewModel.OriginLanguageCode));
+
+                jumpList.Items.Add(jumpListItem);
+            }
+
+            await jumpList.SaveAsync();
         }
     }
 }

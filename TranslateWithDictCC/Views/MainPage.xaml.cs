@@ -1,8 +1,12 @@
-﻿using TranslateWithDictCC.ViewModels;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
+using TranslateWithDictCC.Models;
+using TranslateWithDictCC.ViewModels;
 using Windows.ApplicationModel.Resources;
+using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
@@ -64,6 +68,29 @@ namespace TranslateWithDictCC.Views
         {
             if (MainViewModel.Instance.AvailableDirections.Length == 0)
                 contentFrame.Navigate(typeof(SettingsPage));
+            else
+            {
+                string launchArguments = e.Parameter as string;
+
+                if (!string.IsNullOrEmpty(launchArguments))
+                {
+                    if (launchArguments.StartsWith("dict:") && launchArguments.Length == 9)
+                    {
+                        string originLanguageCode = launchArguments.Substring(5, 2);
+                        string destinationLanguageCode = launchArguments.Substring(7, 2);
+
+                        DirectionViewModel directionViewModel =
+                            MainViewModel.Instance.AvailableDirections.FirstOrDefault(
+                                dvm => dvm.OriginLanguageCode == originLanguageCode && dvm.DestinationLanguageCode == destinationLanguageCode);
+
+                        if (directionViewModel != null)
+                        {
+                            MainViewModel.Instance.SelectedDirection = directionViewModel;
+                            searchBox.Text = string.Empty;
+                        }
+                    }
+                }
+            }
         }
 
         private void GoBackToPage(string pageType)
