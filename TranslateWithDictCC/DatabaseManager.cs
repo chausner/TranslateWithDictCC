@@ -232,11 +232,19 @@ namespace TranslateWithDictCC
 
         public Task<List<DictionaryEntry>> QueryEntries(Dictionary dictionary, string searchQuery, bool reverseSearch)
         {
+            return QueryEntries(dictionary, searchQuery, reverseSearch, -1);
+        }
+
+        public Task<List<DictionaryEntry>> QueryEntries(Dictionary dictionary, string searchQuery, bool reverseSearch, int maxResults)
+        {
             string tableName = GetDictionaryTableName(dictionary.OriginLanguageCode, dictionary.DestinationLanguageCode);
 
             string column = reverseSearch ? "Word2" : "Word1";
 
             string commandText = string.Format("SELECT *, offsets({0}) FROM {0} WHERE {1} MATCH '\"{2}\"'", tableName, column, SqlEscapeString(searchQuery));
+
+            if (maxResults >= 0)
+                commandText += " LIMIT " + maxResults;
 
             return ExecuteReader(commandText, dataReader =>
             {

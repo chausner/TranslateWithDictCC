@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
-using TranslateWithDictCC.Models;
 using TranslateWithDictCC.ViewModels;
 using Windows.ApplicationModel.Resources;
 using Windows.System;
@@ -190,6 +188,7 @@ namespace TranslateWithDictCC.Views
 
         private async void searchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
+            searchBox.Text = args.QueryText;
             await PerformQuery();
         }      
 
@@ -284,6 +283,27 @@ namespace TranslateWithDictCC.Views
             MainViewModel.Instance.SwitchDirectionOfTranslationCommand.Execute(null);
 
             await PerformQuery(dontSearchInBothDirections: true);
+        }
+
+        private async void searchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+        {
+            if (args.Reason != AutoSuggestionBoxTextChangeReason.UserInput)
+                return;
+
+            await MainViewModel.Instance.UpdateSearchSuggestions(searchBox.Text);
+        }
+
+        private void RichTextBlock_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
+        {
+            RichTextBlock richTextBlock = (RichTextBlock)sender;
+            SearchSuggestionViewModel searchSuggestionViewModel = (SearchSuggestionViewModel)args.NewValue;
+
+            richTextBlock.Blocks.Clear();
+
+            if (searchSuggestionViewModel == null)
+                return;
+
+            richTextBlock.Blocks.Add(searchSuggestionViewModel.Word);
         }
     }
 }

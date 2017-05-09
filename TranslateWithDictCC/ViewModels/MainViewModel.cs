@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.UI.StartScreen;
+using System.Collections.ObjectModel;
 
 namespace TranslateWithDictCC.ViewModels
 {
@@ -37,6 +38,14 @@ namespace TranslateWithDictCC.ViewModels
             set { SetProperty(ref isSearchInProgress, value); }
         }
 
+        ObservableCollection<SearchSuggestionViewModel> searchSuggestions;
+
+        public ObservableCollection<SearchSuggestionViewModel> SearchSuggestions
+        {
+            get { return searchSuggestions; }
+            set { SetProperty(ref searchSuggestions, value); }
+        }
+
         public ICommand SwitchDirectionOfTranslationCommand { get; }
         public ICommand NavigateToPageCommand { get; set; }
         public ICommand GoBackToPageCommand { get; set; }
@@ -45,6 +54,8 @@ namespace TranslateWithDictCC.ViewModels
 
         private MainViewModel()
         {
+            SearchSuggestions = new ObservableCollection<SearchSuggestionViewModel>();
+
             SwitchDirectionOfTranslationCommand = new RelayCommand(SwitchDirectionOfTranslation, CanSwitchDirectionOfTranslation);
         }
 
@@ -180,6 +191,57 @@ namespace TranslateWithDictCC.ViewModels
             }
 
             await jumpList.SaveAsync();
+        }
+
+        public async Task UpdateSearchSuggestions(string partialSearchQuery)
+        {
+            IList<SearchSuggestionViewModel> suggestions = await GetSearchSuggestions(partialSearchQuery);
+
+            SearchSuggestions.Clear();
+
+            if (suggestions != null)
+                foreach (SearchSuggestionViewModel suggestion in suggestions)
+                    SearchSuggestions.Add(suggestion);
+        }
+
+        private async Task<IList<SearchSuggestionViewModel>> GetSearchSuggestions(string partialSearchQuery)
+        {
+            const int maxResults = 1000;
+            const int maxSuggestionsShown = 100;
+
+            if (partialSearchQuery.Trim().Length < 3)
+                return null;
+
+            string searchQuery;
+
+            if (!partialSearchQuery.EndsWith(" ") && partialSearchQuery != string.Empty)
+                searchQuery = partialSearchQuery + "*";
+            else
+                searchQuery = partialSearchQuery;
+
+            List<DictionaryEntry> results = await DatabaseManager.Instance.QueryEntries(SelectedDirection.Dictionary, searchQuery, SelectedDirection.ReverseSearch, maxResults + 1);
+
+            if (results.Count == 0)
+                return null;
+            else if (results.Count <= maxResults)
+            {
+                return await Task.Run(delegate ()
+                {
+                    results.Sort(new DictionaryEntryComparer(searchQuery, SelectedDirection.ReverseSearch));
+
+                    SearchContext searchContext = new SearchContext(searchQuery, SelectedDirection);
+
+                    IEnumerable<SearchSuggestionViewModel> suggestions =
+                        results
+                        .DistinctBy(entry => searchContext.SelectedDirection.ReverseSearch ? entry.Word2 : entry.Word1)
+                        .Select(entry => new SearchSuggestionViewModel(entry, searchContext))
+                        .Take(maxSuggestionsShown);
+
+                    return suggestions.ToArray();
+                });
+            }
+            else
+                return null;
         }
     }
 }

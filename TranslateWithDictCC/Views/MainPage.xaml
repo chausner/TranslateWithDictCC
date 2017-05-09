@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:TranslateWithDictCC"
     xmlns:controls="using:TranslateWithDictCC.Controls"
+    xmlns:viewmodels="using:TranslateWithDictCC.ViewModels"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -11,6 +12,25 @@
     <Page.Resources>
         <local:LanguageIconUrlValueConverter x:Key="languageIconUrlValueConverter" />
         <local:SourceNotEmptyValueConverter x:Key="sourceNotEmptyValueConverter" />
+        <DataTemplate x:Key="SearchSuggestionDataTemplate" x:DataType="viewmodels:SearchSuggestionViewModel">
+            <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" IsHitTestVisible="False">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <RichTextBlock Grid.Column="0" VerticalAlignment="Center" Margin="0,0,8,0" DataContextChanged="RichTextBlock_DataContextChanged" />
+                <Grid Grid.Column="1" VerticalAlignment="Center" 
+                      Visibility="{Binding Source={StaticResource settings}, Path=ShowWordClasses}">
+                    <Border Background="{ThemeResource DictionaryEntryWordClassesThemeBrush}" Padding="5,2,5,2"
+                                Visibility="{x:Bind GetWordClass(DictionaryEntry.WordClasses)}">
+                        <TextBlock Text="{x:Bind DictionaryEntry.WordClasses}" />
+                    </Border>
+                </Grid>
+            </Grid>
+        </DataTemplate>
+        <Style x:Key="SearchSuggestionItemContainerStyle" TargetType="ListViewItem">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        </Style>
         <DataTemplate x:Key="DirectionComboBoxItemTemplate">
             <Grid HorizontalAlignment="Stretch">
                 <Grid.ColumnDefinitions>
@@ -66,7 +86,9 @@
             <Button Name="hamburgerButton" Grid.Column="0" Width="48" Height="48" Background="Transparent" FontFamily="Segoe MDL2 Assets" FontSize="21" Content="&#xe700;"
                     Style="{StaticResource flatButtonStyle}" Click="hamburgerButton_Click" Margin="-8,-9,-8,-8"/>
             <AutoSuggestBox x:Uid="MainPage_SearchBox" Name="searchBox" Grid.Column="1" VerticalAlignment="Stretch" Margin="0,0,8,0"
-                            PlaceholderText="Enter search terms..." QueryIcon="Find" QuerySubmitted="searchBox_QuerySubmitted" 
+                            ItemTemplate="{StaticResource SearchSuggestionDataTemplate}" ItemContainerStyle="{StaticResource SearchSuggestionItemContainerStyle}"
+                            TextMemberPath="WordText" ItemsSource="{Binding SearchSuggestions}"
+                            PlaceholderText="Enter search terms..." QueryIcon="Find" QuerySubmitted="searchBox_QuerySubmitted" TextChanged="searchBox_TextChanged"
                             Loaded="searchBox_Loaded" IsEnabled="{Binding AvailableDirections, Converter={StaticResource sourceNotEmptyValueConverter}}" />
             <ComboBox x:Uid="MainPage_DirectionComboBox" Name="directionComboBox" Grid.Column="2" VerticalAlignment="Stretch" Margin="0,0,8,0" HorizontalAlignment="Stretch"
                       PlaceholderText="No dictionary installed" ItemTemplate="{StaticResource DirectionComboBoxItemTemplateCompact}" SelectionChanged="directionComboBox_SelectionChanged" 

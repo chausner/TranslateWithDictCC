@@ -1,5 +1,4 @@
 ﻿using TranslateWithDictCC.ViewModels;
-using System;
 using Windows.Foundation.Collections;
 using Windows.Storage;
 

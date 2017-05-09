@@ -20,7 +20,7 @@
                 <Button Grid.Column="0" Width="32" Height="32" Style="{StaticResource flatButtonStyle}" 
                         VerticalAlignment="Center" Content="{x:Bind GetAudioRecordingButtonText(AudioRecordingState1), Mode=OneWay}" 
                         FontFamily="Segoe MDL2 Assets" FontSize="15" Background="Transparent" Margin="0,0,4,0" Padding="0"
-                        Visibility="{Binding Source={StaticResource settings}, Path=ShowAudioRecordingButton, Converter={StaticResource booleanVisiblityConverter}}" 
+                        Visibility="{Binding Source={StaticResource settings}, Path=ShowAudioRecordingButton}" 
                         Click="audioRecordingButton1_Click" />
                 <Grid Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="0,8,8,8">
                     <Grid.ColumnDefinitions>
