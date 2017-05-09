@@ -5,8 +5,6 @@
     xmlns:local="using:TranslateWithDictCC">
     <Application.Resources>
         <ResourceDictionary>
-            <local:BooleanVisibilityConverter x:Key="booleanVisiblityConverter" />
-
             <SolidColorBrush x:Key="SearchBoxButtonBackgroundThemeBrush" Color="#FFFF8C00" />
             <SolidColorBrush x:Key="SearchBoxButtonForegroundThemeBrush" Color="White" />
             <SolidColorBrush x:Key="SearchBoxButtonPointerOverForegroundThemeBrush" Color="#FFFFFFFF" />

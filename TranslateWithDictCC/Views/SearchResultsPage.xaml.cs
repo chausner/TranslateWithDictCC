@@ -10,7 +10,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Documents;
 
 namespace TranslateWithDictCC.Views
 {
@@ -172,10 +172,37 @@ namespace TranslateWithDictCC.Views
 
         private void ListView_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
+            void SetRichTextBlockContent(RichTextBlock richTextBlock, Block word)
+            {
+                if (richTextBlock.Blocks.Count == 0)
+                    richTextBlock.Blocks.Add(word);
+                else
+                {
+                    if (richTextBlock.Blocks[0] == word)
+                    {
+                        // clearing Blocks helps working around a bug with RichTextBlock when reusing Block elements
+                        richTextBlock.Blocks.Clear();
+                        return;
+                    }
+
+                    richTextBlock.Blocks[0] = word;
+                }
+            }
+
             if (args.ItemIndex % 2 == 0)
                 args.ItemContainer.ClearValue(Control.BackgroundProperty);
             else
                 args.ItemContainer.Background = altBackgroundThemeBrush;
+
+            DictionaryEntryViewModel viewModel = (DictionaryEntryViewModel)args.Item;
+
+            Grid templateRoot = (Grid)args.ItemContainer.ContentTemplateRoot;
+            Grid grid = (Grid)templateRoot.Children[1];
+            RichTextBlock word1RichTextBlock = (RichTextBlock)grid.Children[0];
+            RichTextBlock word2RichTextBlock = (RichTextBlock)templateRoot.Children[2];
+
+            SetRichTextBlockContent(word1RichTextBlock, viewModel.Word1);
+            SetRichTextBlockContent(word2RichTextBlock, viewModel.Word2);
         }
 
         private bool IsInternetAccessAvailable()

@@ -25,9 +25,7 @@ namespace TranslateWithDictCC
             string originLanguageCode = word2 ? selectedDirection.DestinationLanguageCode : selectedDirection.OriginLanguageCode;
             string destinationLanguageCode = word2 ? selectedDirection.OriginLanguageCode : selectedDirection.DestinationLanguageCode;
 
-            Uri audioUri;
-
-            if (urlCache.TryGetValue(new LanguageWordPair(originLanguageCode, word), out audioUri))
+            if (urlCache.TryGetValue(new LanguageWordPair(originLanguageCode, word), out Uri audioUri))
                 return audioUri;
 
             Uri requestUri = GetSearchPageUri(originLanguageCode, destinationLanguageCode, word);

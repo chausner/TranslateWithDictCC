@@ -3,14 +3,13 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:TranslateWithDictCC"
+    xmlns:viewmodels="using:TranslateWithDictCC.ViewModels"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     NavigationCacheMode="Required">
     <Page.Resources>
-        <local:WordClassesVisiblityValueConverter x:Key="wordClassesVisiblityConverter" />
-        <local:AudioRecordingButtonStateConverter x:Key="audioRecordingButtonStateConverter" />
-        <DataTemplate x:Key="DictionaryEntryDataTemplate">
+        <DataTemplate x:Key="DictionaryEntryDataTemplate" x:DataType="viewmodels:DictionaryEntryViewModel">
             <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -19,7 +18,7 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <Button Grid.Column="0" Width="32" Height="32" Style="{StaticResource flatButtonStyle}" 
-                        VerticalAlignment="Center" Content="{Binding AudioRecordingState1, Converter={StaticResource audioRecordingButtonStateConverter}}" 
+                        VerticalAlignment="Center" Content="{x:Bind GetAudioRecordingButtonText(AudioRecordingState1), Mode=OneWay}" 
                         FontFamily="Segoe MDL2 Assets" FontSize="15" Background="Transparent" Margin="0,0,4,0" Padding="0"
                         Visibility="{Binding Source={StaticResource settings}, Path=ShowAudioRecordingButton, Converter={StaticResource booleanVisiblityConverter}}" 
                         Click="audioRecordingButton1_Click" />
@@ -28,20 +27,20 @@
                         <ColumnDefinition />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <ContentPresenter Grid.Column="0" Content="{Binding Word1}" VerticalAlignment="Center" Margin="0,0,8,0" />
+                    <RichTextBlock Grid.Column="0" VerticalAlignment="Center" Margin="0,0,8,0" />
                     <Grid Grid.Column="1" VerticalAlignment="Center"
-                          Visibility="{Binding Source={StaticResource settings}, Path=ShowWordClasses, Converter={StaticResource booleanVisiblityConverter}}">
+                          Visibility="{Binding Source={StaticResource settings}, Path=ShowWordClasses}">
                         <Border Background="{ThemeResource DictionaryEntryWordClassesThemeBrush}" Padding="5,2,5,2"
-                                Visibility="{Binding DictionaryEntry.WordClasses, Converter={StaticResource wordClassesVisiblityConverter}}">
-                            <TextBlock Text="{Binding DictionaryEntry.WordClasses}" />
+                                Visibility="{x:Bind GetWordClass(DictionaryEntry.WordClasses)}">
+                            <TextBlock Text="{x:Bind DictionaryEntry.WordClasses}" />
                         </Border>
                     </Grid>
                 </Grid>             
-                <ContentPresenter Grid.Column="2" Content="{Binding Word2}" VerticalAlignment="Center" Margin="0,8,0,8" />
+                <RichTextBlock Grid.Column="2" VerticalAlignment="Center" Margin="0,8,0,8" />
                 <Button Grid.Column="3" Width="32" Height="32" Style="{StaticResource flatButtonStyle}"
-                        VerticalAlignment="Center" Content="{Binding AudioRecordingState2, Converter={StaticResource audioRecordingButtonStateConverter}}" 
+                        VerticalAlignment="Center" Content="{x:Bind GetAudioRecordingButtonText(AudioRecordingState2), Mode=OneWay}" 
                         FontFamily="Segoe MDL2 Assets" FontSize="15" Background="Transparent" Margin="0,0,4,0" Padding="0"
-                        Visibility="{Binding Source={StaticResource settings}, Path=ShowAudioRecordingButton, Converter={StaticResource booleanVisiblityConverter}}" 
+                        Visibility="{Binding Source={StaticResource settings}, Path=ShowAudioRecordingButton}" 
                         Click="audioRecordingButton2_Click" />
             </Grid>
         </DataTemplate>

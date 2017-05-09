@@ -34,15 +34,13 @@ namespace TranslateWithDictCC
                 searchResultY = y.Word2;
             }
 
-            MatchInfo matchInfoX, matchInfoY;
-
-            if (!matchInfos.TryGetValue(searchResultX, out matchInfoX))
+            if (!matchInfos.TryGetValue(searchResultX, out MatchInfo matchInfoX))
             {
                 matchInfoX = new MatchInfo(searchQuery, searchResultX, x.MatchSpans);
                 matchInfos.Add(searchResultX, matchInfoX);
             }
 
-            if (!matchInfos.TryGetValue(searchResultY, out matchInfoY))
+            if (!matchInfos.TryGetValue(searchResultY, out MatchInfo matchInfoY))
             {
                 matchInfoY = new MatchInfo(searchQuery, searchResultY, y.MatchSpans);
                 matchInfos.Add(searchResultY, matchInfoY);

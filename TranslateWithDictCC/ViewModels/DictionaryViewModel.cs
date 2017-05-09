@@ -12,12 +12,11 @@ namespace TranslateWithDictCC.ViewModels
         public string OriginLanguage { get { return LanguageCodes.GetLanguageName(OriginLanguageCode); } }
         public string DestinationLanguage { get { return LanguageCodes.GetLanguageName(DestinationLanguageCode); } }
 
-        DateTimeOffset creationDate;
+        public DateTimeOffset CreationDate { get; }
 
-        public DateTimeOffset CreationDate
+        public string CreationDateShort
         {
-            get { return creationDate; }
-            set { SetProperty(ref creationDate, value); }
+            get { return CreationDate.ToString("dd/MM/yyyy"); }
         }
 
         int numberOfEntries;

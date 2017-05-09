@@ -49,9 +49,7 @@ namespace TranslateWithDictCC
 
         public static string GetCountryFlagUri(string languageCode)
         {
-            string countryCode;
-
-            if (countryCodes.TryGetValue(languageCode, out countryCode))
+            if (countryCodes.TryGetValue(languageCode, out string countryCode))
                 return "/Assets/Flags/" + countryCode + ".ico";
             else
                 return "/Assets/Flags/_unknown.ico";

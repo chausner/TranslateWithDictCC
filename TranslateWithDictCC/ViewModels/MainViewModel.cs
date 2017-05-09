@@ -49,10 +49,7 @@ namespace TranslateWithDictCC.ViewModels
 
         public void LoadSettings()
         {
-            string originLanguageCode;
-            string destinationLanguageCode;
-
-            Settings.Instance.GetSelectedDirection(out originLanguageCode, out destinationLanguageCode);
+            Settings.Instance.GetSelectedDirection(out string originLanguageCode, out string destinationLanguageCode);
 
             SelectedDirection = AvailableDirections.FirstOrDefault(dvm =>
                 dvm.OriginLanguageCode == originLanguageCode &&

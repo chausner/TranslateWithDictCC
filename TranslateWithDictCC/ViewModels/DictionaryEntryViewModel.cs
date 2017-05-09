@@ -31,10 +31,10 @@ namespace TranslateWithDictCC.ViewModels
             set { SetProperty(ref audioRecordingState2, value); }
         }
 
-        RichTextBlock word1;
-        RichTextBlock word2;
+        Block word1;
+        Block word2;
 
-        public RichTextBlock Word1
+        public Block Word1
         {
             get
             {
@@ -45,7 +45,7 @@ namespace TranslateWithDictCC.ViewModels
             }
         }
 
-        public RichTextBlock Word2
+        public Block Word2
         {
             get
             {
@@ -75,11 +75,9 @@ namespace TranslateWithDictCC.ViewModels
             word2 = GenerateRichTextBlock(reverseSearch ? DictionaryEntry.Word1 : DictionaryEntry.Word2, SearchContext.SearchQuery, false);
         }
 
-        private RichTextBlock GenerateRichTextBlock(string word, string searchQuery, bool highlightQuery)
+        private Block GenerateRichTextBlock(string word, string searchQuery, bool highlightQuery)
         {
             TextSpan[] annotationSpans = GetAnnotationSpans(word);
-
-            RichTextBlock richTextBlock = new RichTextBlock();
 
             Paragraph paragraph = new Paragraph();
 
@@ -126,9 +124,7 @@ namespace TranslateWithDictCC.ViewModels
             if (betweenLength != 0)
                 GenerateRun(paragraph, word, betweenOffset, betweenLength, annotationSpans);
 
-            richTextBlock.Blocks.Add(paragraph);
-
-            return richTextBlock;
+            return paragraph;
         }
 
         private void GenerateRun(Paragraph paragraph, string word, int offset, int length, TextSpan[] annotationSpans)
@@ -182,6 +178,29 @@ namespace TranslateWithDictCC.ViewModels
                 .Cast<Match>()
                 .Select(match => new TextSpan(match.Index, match.Length))
                 .ToArray();
+        }
+
+        public char GetAudioRecordingButtonText(AudioRecordingState state)
+        {
+            switch (state)
+            {
+                case AudioRecordingState.Available:
+                    return (char)0xE767;
+                case AudioRecordingState.Playing:
+                    return (char)0xE769; // 0xE71A
+                case AudioRecordingState.Unavailable:
+                    return (char)0xE74F;
+                default:
+                    throw new ArgumentException();
+            }
+        }
+
+        public Visibility GetWordClass(string wordClasses)
+        {
+            if (!string.IsNullOrEmpty(wordClasses))
+                return Visibility.Visible;
+            else
+                return Visibility.Collapsed;
         }
     }
 
