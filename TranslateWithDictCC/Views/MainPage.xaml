@@ -84,7 +84,7 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <Button Name="hamburgerButton" Grid.Column="0" Width="48" Height="48" Background="Transparent" FontFamily="Segoe MDL2 Assets" FontSize="21" Content="&#xe700;"
-                    Style="{StaticResource flatButtonStyle}" Click="hamburgerButton_Click" Margin="-8,-9,-8,-8"/>
+                    Style="{StaticResource FlatButtonStyle}" Click="hamburgerButton_Click" Margin="-8,-9,-8,-8" />
             <AutoSuggestBox x:Uid="MainPage_SearchBox" Name="searchBox" Grid.Column="1" VerticalAlignment="Stretch" Margin="0,0,8,0"
                             ItemTemplate="{StaticResource SearchSuggestionDataTemplate}" ItemContainerStyle="{StaticResource SearchSuggestionItemContainerStyle}"
                             TextMemberPath="WordText" ItemsSource="{Binding SearchSuggestions}"
@@ -95,7 +95,7 @@
                       ItemsSource="{Binding AvailableDirections}"
                       IsEnabled="{Binding AvailableDirections, Converter={StaticResource sourceNotEmptyValueConverter}}" />
             <Button Name="moreButton" Grid.Column="3" VerticalAlignment="Stretch" Background="Transparent" FontFamily="Segoe MDL2 Assets" FontSize="21" Content="&#xE712;"
-                    Style="{StaticResource flatButtonStyle}" Click="moreButton_Click" />
+                    Style="{StaticResource FlatButtonStyle}" Click="moreButton_Click" />
         </Grid>
         <SplitView Grid.Row="1" Name="splitView" IsPaneOpen="False" DisplayMode="CompactOverlay" PaneBackground="Transparent">
             <SplitView.Pane>

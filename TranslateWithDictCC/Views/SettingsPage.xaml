@@ -35,7 +35,7 @@
                 <ProgressBar Grid.Row="0" Grid.ColumnSpan="3" VerticalAlignment="Bottom"
                              Minimum="0.0" Maximum="1.0" Value="{x:Bind ImportProgress, Mode=OneWay}" Visibility="{x:Bind ProgressBarVisibility, Mode=OneWay}" />
                 <Button x:Uid="SettingsPage_RemoveDictionaryButton" Grid.Column="3" Grid.RowSpan="2" VerticalAlignment="Center" FontFamily="Segoe MDL2 Assets" Content="&#xE711;" Width="48" Height="48" Margin="8,0,0,0"
-                        Style="{StaticResource flatButtonStyle}" Background="Transparent"
+                        Style="{StaticResource FlatButtonStyle}" Background="Transparent"
                         ToolTipService.ToolTip="Remove dictionary" Click="Button_Click_1" />
             </Grid>
         </DataTemplate>
@@ -61,7 +61,7 @@
                 <ProgressBar Grid.Row="0" Grid.ColumnSpan="3" VerticalAlignment="Bottom"
                              Minimum="0.0" Maximum="1.0" Value="{x:Bind ImportProgress, Mode=OneWay}" Visibility="{x:Bind ProgressBarVisibility, Mode=OneWay}" />
                 <Button x:Uid="SettingsPage_RemoveDictionaryButton" Grid.Column="3" Grid.RowSpan="2" VerticalAlignment="Center" FontFamily="Segoe MDL2 Assets" Content="&#xE711;" Width="48" Height="48" Margin="8,0,0,0"
-                        Style="{StaticResource flatButtonStyle}" Background="Transparent"
+                        Style="{StaticResource FlatButtonStyle}" Background="Transparent"
                         ToolTipService.ToolTip="Remove dictionary" Click="Button_Click_1" />
             </Grid>
         </DataTemplate>
