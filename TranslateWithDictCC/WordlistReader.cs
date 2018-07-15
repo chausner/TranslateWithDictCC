@@ -106,7 +106,7 @@ namespace TranslateWithDictCC
 
                 string[] s = line.Split('\t');
 
-                if (s.Length != 3)
+                if (s.Length < 3 || s.Length > 4)
                     continue;
 
                 DictionaryEntry entry = new DictionaryEntry();
