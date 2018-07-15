@@ -85,9 +85,7 @@ namespace TranslateWithDictCC.ViewModels
             SelectedDirection = null;
 
             if (previouslySelected != null)
-                SelectedDirection = AvailableDirections.FirstOrDefault(dvm =>
-                    dvm.OriginLanguageCode == previouslySelected.OriginLanguageCode &&
-                    dvm.DestinationLanguageCode == previouslySelected.DestinationLanguageCode);
+                SelectedDirection = AvailableDirections.FirstOrDefault(dvm => dvm.Equals(previouslySelected));
 
             if (SelectedDirection == null)
                 SelectedDirection = AvailableDirections.FirstOrDefault();
@@ -100,8 +98,7 @@ namespace TranslateWithDictCC.ViewModels
             if (SelectedDirection == null)
                 return;
 
-            SelectedDirection = AvailableDirections.First(dvm => dvm.Dictionary == selectedDirection.Dictionary && 
-                dvm.ReverseSearch == !selectedDirection.ReverseSearch);
+            SelectedDirection = AvailableDirections.First(dvm => dvm.EqualsReversed(selectedDirection));
         }
 
         private bool CanSwitchDirectionOfTranslation()
