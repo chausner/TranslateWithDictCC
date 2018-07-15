@@ -237,29 +237,33 @@ namespace TranslateWithDictCC.ViewModels
             else
                 searchQuery = partialSearchQuery;
 
-            List<DictionaryEntry> results = await DatabaseManager.Instance.QueryEntries(SelectedDirection.Dictionary, searchQuery, SelectedDirection.ReverseSearch, maxResults + 1);
+            bool reverseSearch = SelectedDirection.ReverseSearch;
 
-            if (results.Count == 0)
-                return null;
-            else if (results.Count <= maxResults)
+            List<DictionaryEntry> results = await DatabaseManager.Instance.QueryEntries(SelectedDirection.Dictionary, searchQuery, reverseSearch, maxResults + 1);
+
+            if (results.Count == 0 && Settings.Instance.SearchInBothDirections)
             {
-                return await Task.Run(delegate ()
-                {
-                    results.Sort(new DictionaryEntryComparer(searchQuery, SelectedDirection.ReverseSearch));
-
-                    SearchContext searchContext = new SearchContext(searchQuery, SelectedDirection);
-
-                    IEnumerable<SearchSuggestionViewModel> suggestions =
-                        results
-                        .DistinctBy(entry => searchContext.SelectedDirection.ReverseSearch ? entry.Word2 : entry.Word1)
-                        .Select(entry => new SearchSuggestionViewModel(entry, searchContext))
-                        .Take(maxSuggestionsShown);
-
-                    return suggestions.ToArray();
-                });
+                reverseSearch = !reverseSearch;
+                results = await DatabaseManager.Instance.QueryEntries(SelectedDirection.Dictionary, searchQuery, reverseSearch, maxResults + 1);
             }
-            else
+
+            if (results.Count == 0 || results.Count > maxResults)
                 return null;
+
+            return await Task.Run(delegate ()
+            {
+                results.Sort(new DictionaryEntryComparer(searchQuery, reverseSearch));
+
+                SearchContext searchContext = new SearchContext(searchQuery, new DirectionViewModel(SelectedDirection.Dictionary, reverseSearch));
+
+                IEnumerable<SearchSuggestionViewModel> suggestions =
+                    results
+                    .DistinctBy(entry => reverseSearch ? entry.Word2 : entry.Word1)
+                    .Select(entry => new SearchSuggestionViewModel(entry, searchContext))
+                    .Take(maxSuggestionsShown);
+
+                return suggestions.ToArray();
+            });
         }
     }
 }
