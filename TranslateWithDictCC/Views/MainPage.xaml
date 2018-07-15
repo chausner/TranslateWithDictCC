@@ -93,7 +93,8 @@
             <ComboBox x:Uid="MainPage_DirectionComboBox" Name="directionComboBox" Grid.Column="2" VerticalAlignment="Stretch" Margin="0,0,8,0" HorizontalAlignment="Stretch"
                       PlaceholderText="No dictionary installed" ItemTemplate="{StaticResource DirectionComboBoxItemTemplateCompact}" SelectionChanged="directionComboBox_SelectionChanged" 
                       ItemsSource="{Binding AvailableDirections}"
-                      IsEnabled="{Binding AvailableDirections, Converter={StaticResource sourceNotEmptyValueConverter}}" />
+                      IsEnabled="{Binding AvailableDirections, Converter={StaticResource sourceNotEmptyValueConverter}}"
+                      DropDownOpened="directionComboBox_DropDownOpened" DropDownClosed="directionComboBox_DropDownClosed" SizeChanged="directionComboBox_SizeChanged" />
             <Button Name="moreButton" Grid.Column="3" VerticalAlignment="Stretch" Background="Transparent" FontFamily="Segoe MDL2 Assets" FontSize="21" Content="&#xE712;"
                     Style="{StaticResource FlatButtonStyle}" Click="moreButton_Click" />
         </Grid>

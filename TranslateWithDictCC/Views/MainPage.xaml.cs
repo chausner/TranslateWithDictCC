@@ -305,5 +305,22 @@ namespace TranslateWithDictCC.Views
 
             richTextBlock.Blocks.Add(searchSuggestionViewModel.Word);
         }
+
+        private void directionComboBox_DropDownOpened(object sender, object e)
+        {
+            if (directionComboBox.Tag is double width)
+                directionComboBox.Width = width;
+        }
+
+        private void directionComboBox_DropDownClosed(object sender, object e)
+        {
+            directionComboBox.ClearValue(FrameworkElement.WidthProperty);
+        }
+
+        private void directionComboBox_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (!directionComboBox.IsDropDownOpen)
+                directionComboBox.Tag = directionComboBox.ActualWidth;
+        }
     }
 }
