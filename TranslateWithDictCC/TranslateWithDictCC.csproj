@@ -119,6 +119,7 @@
     <Compile Include="Settings.cs" />
     <Compile Include="KeyboardShortcutListener.cs" />
     <Compile Include="StreamPositionWrapper.cs" />
+    <Compile Include="ViewModels\AboutViewModel.cs" />
     <Compile Include="ViewModels\DictionaryViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\SearchContext.cs" />
@@ -152,6 +153,7 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\AboutLogo.png" />
     <Content Include="Assets\Flags\AL.ico" />
     <Content Include="Assets\Flags\BA.ico" />
     <Content Include="Assets\Flags\BG.ico" />

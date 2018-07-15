@@ -7,69 +7,23 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"    
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-    <Page.Resources>
-        <local:LanguageIconUrlValueConverter x:Key="languageIconUrlValueConverter" />
-        <local:LanguageNameValueConverter x:Key="languageNameValueConverter" />
-        <DataTemplate x:Key="flagListDataTemplate">
-            <Image Grid.Column="0" Source="{Binding Converter={StaticResource languageIconUrlValueConverter}}" Height="21" Margin="0,0,2,0" 
-                   ToolTipService.ToolTip="{Binding Converter={StaticResource languageNameValueConverter}}" />
-        </DataTemplate>
-        <Style x:Key="flagListItemContainerStyle" TargetType="ListViewItem">
-            <Setter Property="Padding" Value="0" />
-            <Setter Property="Margin" Value="0" />
-            <Setter Property="MinHeight" Value="0" />
-            <Setter Property="MinWidth" Value="0" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ListViewItem">
-                        <ListViewItemPresenter ContentMargin="0" Padding="0" />
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </Page.Resources>
     <ScrollViewer>
         <StackPanel Margin="24,16">
-            <TextBlock x:Uid="AboutPage_TitleTextBlock" Style="{StaticResource SubheaderTextBlockStyle}" Text="About" Margin="0,0,0,16"/>
-            <ListView Margin="0,0,0,8" ItemTemplate="{StaticResource flagListDataTemplate}" ItemContainerStyle="{StaticResource flagListItemContainerStyle}">
-                <ListView.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <ItemsWrapGrid Orientation="Horizontal"/>
-                    </ItemsPanelTemplate>
-                </ListView.ItemsPanel>
-                <x:String>DE</x:String>
-                <x:String>EN</x:String>
-                <x:String>SV</x:String>
-                <x:String>IS</x:String>
-                <x:String>IT</x:String>
-                <x:String>RU</x:String>
-                <x:String>FR</x:String>
-                <x:String>RO</x:String>
-                <x:String>PT</x:String>
-                <x:String>HU</x:String>
-                <x:String>LA</x:String>
-                <x:String>NL</x:String>
-                <x:String>SK</x:String>
-                <x:String>ES</x:String>
-                <x:String>HR</x:String>
-                <x:String>BG</x:String>
-                <x:String>NO</x:String>
-                <x:String>CS</x:String>
-                <x:String>TR</x:String>
-                <x:String>DA</x:String>
-                <x:String>PL</x:String>
-                <x:String>FI</x:String>
-                <x:String>EL</x:String>
-                <x:String>SR</x:String>
-                <x:String>EO</x:String>
-                <x:String>BS</x:String>
-                <x:String>SQ</x:String>
-            </ListView>
-            <TextBlock x:Uid="AboutPage_DescriptionTextBlock" Text="Unofficial app to search and manage offline dictionaries downloaded from dict.cc." Margin="0,0,0,8" TextWrapping="WrapWholeWords" />
-            <TextBlock Name="versionTextBlock" Margin="0,0,0,8" />            
-            <TextBlock Text="Copyright © Christoph Hausner 2016" Margin="0,0,0,8" />
+            <TextBlock x:Uid="AboutPage_TitleTextBlock" Style="{StaticResource SubheaderTextBlockStyle}" Text="About" Margin="0,0,0,16" />
+            <Grid Margin="0,0,0,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Image Grid.Column="0" Source="/Assets/AboutLogo.png" Width="75" Margin="0,0,16,0" VerticalAlignment="Top" />
+                <StackPanel Grid.Column="1">
+                    <TextBlock x:Uid="AboutPage_DescriptionTextBlock" Text="Unofficial app to search and manage offline dictionaries downloaded from dict.cc." Margin="0,0,0,8" TextWrapping="WrapWholeWords" />
+                    <TextBlock Text="{x:Bind ViewModel.AppVersion}" Margin="0,0,0,8" />
+                    <TextBlock Text="Copyright © Christoph Hausner 2016" Margin="0,0,0,8" />
+                </StackPanel>
+            </Grid>            
             <HyperlinkButton x:Uid="AboutPage_PrivacyStatementLink" Content="Privacy Statement" NavigateUri="http://www.dict.cc/?s=about:&amp;l=e" Margin="0,0,0,16" />
-            <Button x:Uid="AboutPage_GiveFeedbackButton" Content="Give feedback" Margin="0,0,0,32" Click="Button_Click" />
+            <Button x:Uid="AboutPage_GiveFeedbackButton" Content="Give feedback" Margin="0,0,0,32" Command="{x:Bind ViewModel.GiveFeedbackCommand}" />
 
             <TextBlock x:Uid="AboutPage_KeyboardShortcutsTextBlock" Style="{StaticResource TitleTextBlockStyle}" Text="Keyboard shortcuts" Margin="0,0,0,16" />
             <Grid HorizontalAlignment="Left" Margin="0,0,0,32">
