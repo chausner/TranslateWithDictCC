@@ -832,7 +832,7 @@
     <value>1 Treffer</value>
   </data>
   <data name="SettingsPage_AcquireDictionariesTextBlock.Text" xml:space="preserve">
-    <value>Folgen Sie dem Link unten, um Wörterbücher von dict.cc herunterzuladen. Nachdem Sie die Wörterbücher heruntergeladen haben, klicken Sie auf "Wörterbuch importieren" und wählen Sie die heruntergeladenen Dateien aus, um sie zu importieren.</value>
+    <value>Folgen Sie dem Link, um Wörterbücher von dict.cc herunterzuladen. Klicken Sie anschließend auf "Wörterbuch importieren" und wählen Sie die heruntergeladenen Dateien aus, um sie zu importieren.</value>
   </data>
   <data name="SettingsPage_AudioRecordingButtonToggleSwitch.Header" xml:space="preserve">
     <value>Sprachaufnahmen</value>

@@ -89,7 +89,7 @@
             <ToggleSwitch x:Uid="SettingsPage_AudioRecordingButtonToggleSwitch" OnContent="Show" OffContent="Hide" IsOn="{Binding Source={StaticResource settings}, Path=ShowAudioRecordingButton, Mode=TwoWay}">Audio recording button</ToggleSwitch>
             <ToggleSwitch x:Uid="SettingsPage_WordClassesToggleSwitch" OnContent="Show" OffContent="Hide" IsOn="{Binding Source={StaticResource settings}, Path=ShowWordClasses, Mode=TwoWay}">Word classes</ToggleSwitch>
             <TextBlock x:Uid="SettingsPage_DictionariesTextBlock" Style="{StaticResource TitleTextBlockStyle}" Text="Dictionaries" Margin="0,16,0,8" />
-            <TextBlock x:Uid="SettingsPage_AcquireDictionariesTextBlock" TextWrapping="WrapWholeWords" Margin="0,0,0,8">Follow the link below to acquire dictionaries from dict.cc. After you have downloaded the dictionaries you want, click on "Import dictionary" and select the files to start the import process.</TextBlock>
+            <TextBlock x:Uid="SettingsPage_AcquireDictionariesTextBlock" TextWrapping="WrapWholeWords" Margin="0,0,0,8">Follow the link below to acquire dictionaries from dict.cc. Then, click on "Import dictionary" and select the downloaded files to start the import process.</TextBlock>
             <HyperlinkButton x:Uid="SettingsPage_GetDictionariesLink" NavigateUri="http://www1.dict.cc/translation_file_request.php?l=e" Margin="0,0,0,16">Get dictionaries from dict.cc</HyperlinkButton>
             <Button x:Uid="SettingsPage_ImportDictionaryButton" Click="Button_Click" Margin="0,0,0,16">Import dictionary</Button>
             <ListView Name="dictionariesListView" ItemTemplate="{StaticResource LanguageItemDataTemplateCompact}" ItemContainerStyle="{StaticResource ListViewItemStyle}"

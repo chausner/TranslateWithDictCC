@@ -832,7 +832,7 @@
     <value>1 hit</value>
   </data>
   <data name="SettingsPage_AcquireDictionariesTextBlock.Text" xml:space="preserve">
-    <value>Follow the link below to acquire dictionaries from dict.cc. After you have downloaded the dictionaries you want, click on "Import dictionary" and select the downloaded files to start the import process.</value>
+    <value>Follow the link below to acquire dictionaries from dict.cc. Then, click on "Import dictionary" and select the downloaded files to start the import process.</value>
   </data>
   <data name="SettingsPage_AudioRecordingButtonToggleSwitch.Header" xml:space="preserve">
     <value>Audio recording button</value>
