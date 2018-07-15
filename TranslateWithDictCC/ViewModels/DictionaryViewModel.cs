@@ -2,6 +2,8 @@
 using System;
 using Windows.ApplicationModel.Resources;
 using Windows.UI.Xaml;
+using System.Windows.Input;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace TranslateWithDictCC.ViewModels
 {
@@ -9,8 +11,12 @@ namespace TranslateWithDictCC.ViewModels
     {
         public string OriginLanguageCode { get; }
         public string DestinationLanguageCode { get; }
+
         public string OriginLanguage { get { return LanguageCodes.GetLanguageName(OriginLanguageCode); } }
         public string DestinationLanguage { get { return LanguageCodes.GetLanguageName(DestinationLanguageCode); } }
+
+        public BitmapImage OriginLanguageImage { get { return LanguageCodes.GetCountryFlagImage(OriginLanguageCode); } }
+        public BitmapImage DestinationLanguageImage { get { return LanguageCodes.GetCountryFlagImage(DestinationLanguageCode); } }
 
         public DateTimeOffset CreationDate { get; }
 
@@ -62,9 +68,13 @@ namespace TranslateWithDictCC.ViewModels
         public Dictionary Dictionary { get; set; }
         public WordlistReader WordlistReader { get; set; }
 
+        public ICommand RemoveDictionaryCommand { get; }
+
         private DictionaryViewModel()
         {
             PropertyChanged += (sender, e) => { UpdateStatusText(); };
+
+            RemoveDictionaryCommand = new RelayCommand(RunRemoveDictionaryCommand);
         }
 
         public DictionaryViewModel(Dictionary dictionary) : this()
@@ -106,6 +116,11 @@ namespace TranslateWithDictCC.ViewModels
                     ProgressBarVisibility = Visibility.Collapsed;
                     break;
             }
+        }
+
+        private async void RunRemoveDictionaryCommand()
+        {
+            await SettingsViewModel.Instance.RemoveDictionary(this, false);
         }
     }
 

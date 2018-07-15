@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Windows.ApplicationModel.Resources;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace TranslateWithDictCC
 {
@@ -37,6 +39,8 @@ namespace TranslateWithDictCC
             { "TR", "TR" }
         };
 
+        static Dictionary<string, BitmapImage> flagImages = new Dictionary<string, BitmapImage>();
+
         public static string GetLanguageName(string languageCode)
         {
             string languageName = resourceLoader.GetString("Language_Name_" + languageCode);
@@ -47,12 +51,24 @@ namespace TranslateWithDictCC
                 return languageCode;
         }
 
-        public static string GetCountryFlagUri(string languageCode)
+        public static Uri GetCountryFlagUri(string languageCode)
         {
             if (countryCodes.TryGetValue(languageCode, out string countryCode))
-                return "/Assets/Flags/" + countryCode + ".ico";
+                return new Uri("ms-appx:///Assets/Flags/" + countryCode + ".ico");
             else
-                return "/Assets/Flags/_unknown.ico";
+                return new Uri("ms-appx:///Assets/Flags/_unknown.ico");
+        }
+
+        public static BitmapImage GetCountryFlagImage(string languageCode)
+        {
+            if (flagImages.TryGetValue(languageCode, out BitmapImage countryFlagImage))
+                return countryFlagImage;
+            else
+            {
+                countryFlagImage = new BitmapImage(GetCountryFlagUri(languageCode));
+                flagImages.Add(languageCode, countryFlagImage);
+                return countryFlagImage;
+            }
         }
     }
 }

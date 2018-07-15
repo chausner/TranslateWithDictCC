@@ -10,7 +10,6 @@
     mc:Ignorable="d"
     SizeChanged="Page_SizeChanged">
     <Page.Resources>
-        <local:LanguageIconUrlValueConverter x:Key="languageIconUrlValueConverter" />
         <local:SourceNotEmptyValueConverter x:Key="sourceNotEmptyValueConverter" />
         <DataTemplate x:Key="SearchSuggestionDataTemplate" x:DataType="viewmodels:SearchSuggestionViewModel">
             <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" IsHitTestVisible="False">
@@ -22,7 +21,7 @@
                 <Grid Grid.Column="1" VerticalAlignment="Center" 
                       Visibility="{Binding Source={StaticResource settings}, Path=ShowWordClasses}">
                     <Border Background="{ThemeResource DictionaryEntryWordClassesThemeBrush}" Padding="5,2,5,2"
-                                Visibility="{x:Bind GetWordClass(DictionaryEntry.WordClasses)}">
+                                Visibility="{x:Bind GetWordClassVisibility(DictionaryEntry.WordClasses)}">
                         <TextBlock Text="{x:Bind DictionaryEntry.WordClasses}" />
                     </Border>
                 </Grid>
@@ -31,7 +30,7 @@
         <Style x:Key="SearchSuggestionItemContainerStyle" TargetType="ListViewItem">
             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         </Style>
-        <DataTemplate x:Key="DirectionComboBoxItemTemplate">
+        <DataTemplate x:Key="DirectionComboBoxItemTemplate" x:DataType="viewmodels:DirectionViewModel">
             <Grid HorizontalAlignment="Stretch">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -40,14 +39,14 @@
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <Image Grid.Column="0" Source="{Binding OriginLanguageCode, Converter={StaticResource languageIconUrlValueConverter}}" Height="21" Margin="0,0,6,0" />
-                <TextBlock Grid.Column="1" Text="{Binding OriginLanguage}" TextAlignment="Left" />
+                <Image Grid.Column="0" Source="{x:Bind OriginLanguageImage}" Height="21" Margin="0,0,6,0" />
+                <TextBlock Grid.Column="1" Text="{x:Bind OriginLanguage}" TextAlignment="Left" />
                 <TextBlock Grid.Column="2" Text="→" Margin="6,0,6,0" />
-                <TextBlock Grid.Column="3" Text="{Binding DestinationLanguage}" TextAlignment="Right" />
-                <Image Grid.Column="4" Source="{Binding DestinationLanguageCode, Converter={StaticResource languageIconUrlValueConverter}}" Height="21" Margin="6,0,0,0" />
+                <TextBlock Grid.Column="3" Text="{x:Bind DestinationLanguage}" TextAlignment="Right" />
+                <Image Grid.Column="4" Source="{x:Bind DestinationLanguageImage}" Height="21" Margin="6,0,0,0" />
             </Grid>
         </DataTemplate>
-        <DataTemplate x:Key="DirectionComboBoxItemTemplateCompact">
+        <DataTemplate x:Key="DirectionComboBoxItemTemplateCompact" x:DataType="viewmodels:DirectionViewModel">
             <Grid HorizontalAlignment="Stretch">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -56,18 +55,18 @@
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <Image Grid.Column="0" Source="{Binding OriginLanguageCode, Converter={StaticResource languageIconUrlValueConverter}}" Width="21" Height="21" Margin="0,0,6,0" />
-                <TextBlock Grid.Column="1" Text="{Binding OriginLanguageCode}" TextAlignment="Left" />
+                <Image Grid.Column="0" Source="{x:Bind OriginLanguageImage}" Width="21" Height="21" Margin="0,0,6,0" />
+                <TextBlock Grid.Column="1" Text="{x:Bind OriginLanguageCode}" TextAlignment="Left" />
                 <TextBlock Grid.Column="2" Text="→" Margin="6,0,6,0" />
-                <TextBlock Grid.Column="3" Text="{Binding DestinationLanguageCode}" TextAlignment="Right" />
-                <Image Grid.Column="4" Source="{Binding DestinationLanguageCode, Converter={StaticResource languageIconUrlValueConverter}}" Width="21" Height="21" Margin="6,0,0,0" />
+                <TextBlock Grid.Column="3" Text="{x:Bind DestinationLanguageCode}" TextAlignment="Right" />
+                <Image Grid.Column="4" Source="{x:Bind DestinationLanguageImage}" Width="21" Height="21" Margin="6,0,0,0" />
             </Grid>
         </DataTemplate>
-        <MenuFlyout x:Name="moreMenuFlyout">
+        <MenuFlyout x:Key="moreMenuFlyout">
             <MenuFlyoutItem x:Uid="MainPage_SwitchDirectionOfTranslationMenuItem" Text="Switch direction of translation" Click="SwitchDirection_Click" 
                             AutomationProperties.AcceleratorKey="Control S" />
-            <ToggleMenuFlyoutItem x:Uid="MainPage_SearchInBothDirectionsMenuItem" Text="Search in both directions" IsChecked="{Binding SearchInBothDirections, Source={StaticResource settings}, Mode=TwoWay}" />
-            <ToggleMenuFlyoutItem x:Uid="MainPage_CaseSensitiveSearchMenuItem" IsChecked="{Binding CaseSensitiveSearch, Source={StaticResource settings}, Mode=TwoWay}"
+            <ToggleMenuFlyoutItem x:Uid="MainPage_SearchInBothDirectionsMenuItem" Text="Search in both directions" IsChecked="{x:Bind Settings.SearchInBothDirections, Mode=TwoWay}" />
+            <ToggleMenuFlyoutItem x:Uid="MainPage_CaseSensitiveSearchMenuItem" IsChecked="{x:Bind Settings.CaseSensitiveSearch, Mode=TwoWay}"
                                   Text="Case-sensitive search" Click="CaseSensitiveSearch_Click" />
         </MenuFlyout>
     </Page.Resources>
@@ -87,16 +86,16 @@
                     Style="{StaticResource FlatButtonStyle}" Click="hamburgerButton_Click" Margin="-8,-9,-8,-8" />
             <AutoSuggestBox x:Uid="MainPage_SearchBox" Name="searchBox" Grid.Column="1" VerticalAlignment="Stretch" Margin="0,0,8,0"
                             ItemTemplate="{StaticResource SearchSuggestionDataTemplate}" ItemContainerStyle="{StaticResource SearchSuggestionItemContainerStyle}"
-                            TextMemberPath="WordText" ItemsSource="{Binding SearchSuggestions}"
+                            TextMemberPath="WordText" ItemsSource="{x:Bind ViewModel.SearchSuggestions}"
                             PlaceholderText="Enter search terms..." QueryIcon="Find" QuerySubmitted="searchBox_QuerySubmitted" TextChanged="searchBox_TextChanged"
-                            Loaded="searchBox_Loaded" IsEnabled="{Binding AvailableDirections, Converter={StaticResource sourceNotEmptyValueConverter}}" />
+                            Loaded="searchBox_Loaded" IsEnabled="{x:Bind ViewModel.AvailableDirections, Converter={StaticResource sourceNotEmptyValueConverter}, Mode=OneWay}" />
             <ComboBox x:Uid="MainPage_DirectionComboBox" Name="directionComboBox" Grid.Column="2" VerticalAlignment="Stretch" Margin="0,0,8,0" HorizontalAlignment="Stretch"
                       PlaceholderText="No dictionary installed" ItemTemplate="{StaticResource DirectionComboBoxItemTemplateCompact}" SelectionChanged="directionComboBox_SelectionChanged" 
-                      ItemsSource="{Binding AvailableDirections}"
-                      IsEnabled="{Binding AvailableDirections, Converter={StaticResource sourceNotEmptyValueConverter}}"
+                      ItemsSource="{x:Bind ViewModel.AvailableDirections, Mode=OneWay}"
+                      IsEnabled="{x:Bind ViewModel.AvailableDirections, Converter={StaticResource sourceNotEmptyValueConverter}, Mode=OneWay}"
                       DropDownOpened="directionComboBox_DropDownOpened" DropDownClosed="directionComboBox_DropDownClosed" SizeChanged="directionComboBox_SizeChanged" />
-            <Button Name="moreButton" Grid.Column="3" VerticalAlignment="Stretch" Background="Transparent" FontFamily="Segoe MDL2 Assets" FontSize="21" Content="&#xE712;"
-                    Style="{StaticResource FlatButtonStyle}" Click="moreButton_Click" />
+            <Button Grid.Column="3" VerticalAlignment="Stretch" Background="Transparent" FontFamily="Segoe MDL2 Assets" FontSize="21" Content="&#xE712;"
+                    Style="{StaticResource FlatButtonStyle}" Flyout="{StaticResource moreMenuFlyout}" />
         </Grid>
         <SplitView Grid.Row="1" Name="splitView" IsPaneOpen="False" DisplayMode="CompactOverlay" PaneBackground="Transparent">
             <SplitView.Pane>
@@ -120,8 +119,8 @@
             <SplitView.Content>
                 <Grid>
                     <Frame Name="contentFrame" Navigated="contentFrame_Navigated" />
-                    <ProgressBar IsIndeterminate="{Binding IsSearchInProgress}" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="12"
-                                 Background="Transparent"/>
+                    <ProgressBar IsIndeterminate="{x:Bind ViewModel.IsSearchInProgress, Mode=OneWay}" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="12"
+                                 Background="Transparent" />
                 </Grid>
             </SplitView.Content>
         </SplitView>

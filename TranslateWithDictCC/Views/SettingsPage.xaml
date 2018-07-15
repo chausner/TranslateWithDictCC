@@ -10,7 +10,6 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     NavigationCacheMode="Required">
     <Page.Resources>
-        <local:LanguageIconUrlValueConverter x:Key="languageIconUrlValueConverter" />
         <DataTemplate x:Key="LanguageItemDataTemplate" x:DataType="viewmodels:DictionaryViewModel">
             <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
                 <Grid.ColumnDefinitions>
@@ -24,11 +23,11 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                    <Image Source="{Binding OriginLanguageCode, Converter={StaticResource languageIconUrlValueConverter}}" Height="21" Margin="0,0,6,0" />
+                    <Image Source="{x:Bind OriginLanguageImage}" Height="21" Margin="0,0,6,0" />
                     <TextBlock Text="{x:Bind OriginLanguage}" />
                     <TextBlock Text="↔" Margin="6,0,6,0" />
                     <TextBlock Text="{x:Bind DestinationLanguage}" />
-                    <Image Source="{Binding DestinationLanguageCode, Converter={StaticResource languageIconUrlValueConverter}}" Height="21" Margin="6,0,0,0" />
+                    <Image Source="{x:Bind DestinationLanguageImage}" Height="21" Margin="6,0,0,0" />
                 </StackPanel>
                 <TextBlock Grid.Column="1" VerticalAlignment="Center" Text="{x:Bind CreationDateShort}" />
                 <TextBlock Grid.Column="2" VerticalAlignment="Center" Text="{x:Bind StatusText, Mode=OneWay}" />
@@ -36,7 +35,7 @@
                              Minimum="0.0" Maximum="1.0" Value="{x:Bind ImportProgress, Mode=OneWay}" Visibility="{x:Bind ProgressBarVisibility, Mode=OneWay}" />
                 <Button x:Uid="SettingsPage_RemoveDictionaryButton" Grid.Column="3" Grid.RowSpan="2" VerticalAlignment="Center" FontFamily="Segoe MDL2 Assets" Content="&#xE711;" Width="48" Height="48" Margin="8,0,0,0"
                         Style="{StaticResource FlatButtonStyle}" Background="Transparent"
-                        ToolTipService.ToolTip="Remove dictionary" Click="Button_Click_1" />
+                        ToolTipService.ToolTip="Remove dictionary" Command="{x:Bind RemoveDictionaryCommand}" />
             </Grid>
         </DataTemplate>
         <DataTemplate x:Key="LanguageItemDataTemplateCompact" x:DataType="viewmodels:DictionaryViewModel">
@@ -52,22 +51,22 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                    <Image Source="{Binding OriginLanguageCode, Converter={StaticResource languageIconUrlValueConverter}}" Height="21" Margin="0,0,6,0" />
+                    <Image Source="{x:Bind OriginLanguageImage}" Height="21" Margin="0,0,6,0" />
                     <TextBlock Text="{x:Bind OriginLanguage}" />
                     <TextBlock Text="↔" Margin="6,0,6,0" />
                     <TextBlock Text="{x:Bind DestinationLanguage}" />
-                    <Image Source="{Binding DestinationLanguageCode, Converter={StaticResource languageIconUrlValueConverter}}" Height="21" Margin="6,0,0,0" />
+                    <Image Source="{x:Bind DestinationLanguageImage}" Height="21" Margin="6,0,0,0" />
                 </StackPanel>
                 <ProgressBar Grid.Row="0" Grid.ColumnSpan="3" VerticalAlignment="Bottom"
                              Minimum="0.0" Maximum="1.0" Value="{x:Bind ImportProgress, Mode=OneWay}" Visibility="{x:Bind ProgressBarVisibility, Mode=OneWay}" />
                 <Button x:Uid="SettingsPage_RemoveDictionaryButton" Grid.Column="3" Grid.RowSpan="2" VerticalAlignment="Center" FontFamily="Segoe MDL2 Assets" Content="&#xE711;" Width="48" Height="48" Margin="8,0,0,0"
                         Style="{StaticResource FlatButtonStyle}" Background="Transparent"
-                        ToolTipService.ToolTip="Remove dictionary" Click="Button_Click_1" />
+                        ToolTipService.ToolTip="Remove dictionary" Command="{x:Bind RemoveDictionaryCommand}" />
             </Grid>
         </DataTemplate>
         <Style x:Key="ListViewItemStyle" TargetType="ListViewItem">
-            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
         </Style>
     </Page.Resources>
     <ScrollViewer>
@@ -91,9 +90,9 @@
             <TextBlock x:Uid="SettingsPage_DictionariesTextBlock" Style="{StaticResource TitleTextBlockStyle}" Text="Dictionaries" Margin="0,16,0,8" />
             <TextBlock x:Uid="SettingsPage_AcquireDictionariesTextBlock" TextWrapping="WrapWholeWords" Margin="0,0,0,8">Follow the link below to acquire dictionaries from dict.cc. Then, click on "Import dictionary" and select the downloaded files to start the import process.</TextBlock>
             <HyperlinkButton x:Uid="SettingsPage_GetDictionariesLink" NavigateUri="http://www1.dict.cc/translation_file_request.php?l=e" Margin="0,0,0,16">Get dictionaries from dict.cc</HyperlinkButton>
-            <Button x:Uid="SettingsPage_ImportDictionaryButton" Click="Button_Click" Margin="0,0,0,16">Import dictionary</Button>
+            <Button x:Uid="SettingsPage_ImportDictionaryButton" Margin="0,0,0,16" Command="{x:Bind ViewModel.ImportDictionaryCommand}">Import dictionary</Button>
             <ListView Name="dictionariesListView" ItemTemplate="{StaticResource LanguageItemDataTemplateCompact}" ItemContainerStyle="{StaticResource ListViewItemStyle}"
-                      HorizontalContentAlignment="Stretch" ItemsSource="{Binding Dictionaries}" />
+                      HorizontalContentAlignment="Stretch" ItemsSource="{x:Bind ViewModel.Dictionaries}" />
         </StackPanel>
     </ScrollViewer>
 </Page>

@@ -81,7 +81,7 @@ namespace TranslateWithDictCC.ViewModels
             }
         }
 
-        public Visibility GetWordClass(string wordClasses)
+        public Visibility GetWordClassVisibility(string wordClasses)
         {
             if (!string.IsNullOrEmpty(wordClasses))
                 return Visibility.Visible;

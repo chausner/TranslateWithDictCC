@@ -42,7 +42,7 @@ namespace TranslateWithDictCC.ViewModels
             word = WordHighlighting.GenerateRichTextBlock(reverseSearch ? DictionaryEntry.Word2 : DictionaryEntry.Word1, SearchContext.SearchQuery, DictionaryEntry.MatchSpans, false);
         }
 
-        public Visibility GetWordClass(string wordClasses)
+        public Visibility GetWordClassVisibility(string wordClasses)
         {
             if (!string.IsNullOrEmpty(wordClasses))
                 return Visibility.Visible;

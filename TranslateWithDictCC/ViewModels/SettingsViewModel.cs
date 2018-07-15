@@ -10,14 +10,17 @@ using Windows.Globalization.DateTimeFormatting;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI.Popups;
+using System.Windows.Input;
 
 namespace TranslateWithDictCC.ViewModels
 {
-    class SettingsViewModel
+    class SettingsViewModel : ViewModel
     {
         public static readonly SettingsViewModel Instance = new SettingsViewModel();
 
         public ObservableCollection<DictionaryViewModel> Dictionaries { get; }
+
+        public ICommand ImportDictionaryCommand { get; }
 
         Task importQueueProcessTask;
         CancellationTokenSource cancellationTokenSource;
@@ -35,6 +38,8 @@ namespace TranslateWithDictCC.ViewModels
         private SettingsViewModel()
         {
             Dictionaries = new ObservableCollection<DictionaryViewModel>();
+
+            ImportDictionaryCommand = new RelayCommand(RunImportDictionaryCommand);
         }
 
         public async Task Load()
@@ -45,7 +50,7 @@ namespace TranslateWithDictCC.ViewModels
                 Dictionaries.Add(new DictionaryViewModel(dictionary));
         }
 
-        public async Task ImportDictionary()
+        private async void RunImportDictionaryCommand()
         {
             FileOpenPicker fileOpenPicker = new FileOpenPicker();
 

@@ -31,7 +31,7 @@
                     <Grid Grid.Column="1" VerticalAlignment="Center"
                           Visibility="{Binding Source={StaticResource settings}, Path=ShowWordClasses}">
                         <Border Background="{ThemeResource DictionaryEntryWordClassesThemeBrush}" Padding="5,2,5,2"
-                                Visibility="{x:Bind GetWordClass(DictionaryEntry.WordClasses)}">
+                                Visibility="{x:Bind GetWordClassVisibility(DictionaryEntry.WordClasses)}">
                             <TextBlock Text="{x:Bind DictionaryEntry.WordClasses}" />
                         </Border>
                     </Grid>

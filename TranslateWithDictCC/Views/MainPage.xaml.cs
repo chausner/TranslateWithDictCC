@@ -15,6 +15,10 @@ namespace TranslateWithDictCC.Views
 {
     public sealed partial class MainPage : Page
     {
+        MainViewModel ViewModel { get { return MainViewModel.Instance; } }
+
+        Settings Settings { get { return Settings.Instance; } }
+
         public MainPage()
         {
             InitializeComponent();
@@ -229,11 +233,6 @@ namespace TranslateWithDictCC.Views
         private void searchBox_Loaded(object sender, RoutedEventArgs e)
         {
             FocusSearchBox();
-        }
-
-        private void moreButton_Click(object sender, RoutedEventArgs e)
-        {
-            moreMenuFlyout.ShowAt((Button)sender);
         }
 
         private async void CaseSensitiveSearch_Click(object sender, RoutedEventArgs e)

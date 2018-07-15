@@ -38,13 +38,7 @@ namespace TranslateWithDictCC.ViewModels
             set { SetProperty(ref isSearchInProgress, value); }
         }
 
-        ObservableCollection<SearchSuggestionViewModel> searchSuggestions;
-
-        public ObservableCollection<SearchSuggestionViewModel> SearchSuggestions
-        {
-            get { return searchSuggestions; }
-            set { SetProperty(ref searchSuggestions, value); }
-        }
+        public ObservableCollection<SearchSuggestionViewModel> SearchSuggestions { get; }
 
         public ICommand SwitchDirectionOfTranslationCommand { get; }
         public ICommand NavigateToPageCommand { get; set; }
@@ -165,7 +159,7 @@ namespace TranslateWithDictCC.ViewModels
                 IsSearchInProgress = false;
 
                 querySemaphore.Release();
-            }
+            }            
         }
 
         private async Task UpdateJumpList()
@@ -185,7 +179,7 @@ namespace TranslateWithDictCC.ViewModels
 
                 JumpListItem jumpListItem = JumpListItem.CreateWithArguments(arguments, itemName);
 
-                jumpListItem.Logo = new Uri("ms-appx://" + LanguageCodes.GetCountryFlagUri(directionViewModel.OriginLanguageCode));
+                jumpListItem.Logo = LanguageCodes.GetCountryFlagUri(directionViewModel.OriginLanguageCode);
 
                 jumpList.Items.Add(jumpListItem);
             }

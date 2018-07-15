@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace TranslateWithDictCC.ViewModels
 {
-    class SearchResultsViewModel
+    class SearchResultsViewModel : ViewModel
     {
         public IReadOnlyList<DictionaryEntryViewModel> DictionaryEntries { get; }
         public SearchContext SearchContext { get; }
