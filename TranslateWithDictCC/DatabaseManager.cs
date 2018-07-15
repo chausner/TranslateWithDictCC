@@ -1,5 +1,4 @@
 ﻿using Microsoft.Data.Sqlite;
-using Microsoft.Data.Sqlite.Internal;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -31,8 +30,6 @@ namespace TranslateWithDictCC
         {
             if (initialized)
                 return;
-
-            SqliteEngine.UseWinSqlite3();
 
             initialized = true;
 
