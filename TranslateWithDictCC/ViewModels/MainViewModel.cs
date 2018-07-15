@@ -46,6 +46,8 @@ namespace TranslateWithDictCC.ViewModels
 
         SemaphoreSlim querySemaphore = new SemaphoreSlim(1);
 
+        string lastQuery;
+
         private MainViewModel()
         {
             SearchSuggestions = new ObservableCollection<SearchSuggestionViewModel>();
@@ -130,7 +132,13 @@ namespace TranslateWithDictCC.ViewModels
         {
             try
             {
-                await querySemaphore.WaitAsync();                
+                await querySemaphore.WaitAsync();
+
+                lastQuery = searchQuery;
+
+                // it may happen that the AutoSuggestBox does not hide search suggestions automatically after
+                // performing a query. For these cases, clear the suggestions manually
+                SearchSuggestions.Clear();
 
                 Task<List<DictionaryEntry>> searchTask = PerformQueryInner(searchQuery, dontSearchInBothDirections);
 
@@ -186,13 +194,32 @@ namespace TranslateWithDictCC.ViewModels
 
         public async Task UpdateSearchSuggestions(string partialSearchQuery)
         {
-            IList<SearchSuggestionViewModel> suggestions = await GetSearchSuggestions(partialSearchQuery);
+            try
+            {
+                await querySemaphore.WaitAsync();
 
-            SearchSuggestions.Clear();
+                // if the user types quickly and presses enter, the search suggestions may get triggered after the query
+                // in this case, don't show the suggestions
+                if (lastQuery == partialSearchQuery)
+                {
+                    SearchSuggestions.Clear();
+                    return;
+                }
 
-            if (suggestions != null)
-                foreach (SearchSuggestionViewModel suggestion in suggestions)
-                    SearchSuggestions.Add(suggestion);
+                IList<SearchSuggestionViewModel> suggestions = await GetSearchSuggestions(partialSearchQuery);
+
+                SearchSuggestions.Clear();
+
+                if (suggestions != null)
+                    foreach (SearchSuggestionViewModel suggestion in suggestions)
+                        SearchSuggestions.Add(suggestion);
+
+                lastQuery = null;
+            }
+            finally
+            {
+                querySemaphore.Release();
+            }
         }
 
         private async Task<IList<SearchSuggestionViewModel>> GetSearchSuggestions(string partialSearchQuery)
