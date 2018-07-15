@@ -67,8 +67,8 @@ namespace TranslateWithDictCC.ViewModels
                 }
                 catch
                 {
-                    wordlistReader.Dispose();    
-                                    
+                    wordlistReader.Dispose();
+
                     MessageDialog messageDialog = new MessageDialog(
                         string.Format(resourceLoader.GetString("Import_Header_Error_Body"), wordlistFile.Name),
                         resourceLoader.GetString("Import_Header_Error_Title"));
@@ -77,7 +77,9 @@ namespace TranslateWithDictCC.ViewModels
                     continue;
                 }
 
-                if (await CheckForConflictingDictionary(wordlistReader))
+                bool allConflictsResolved = await CheckForConflictingDictionary(wordlistReader);
+
+                if (allConflictsResolved)
                 {
                     DictionaryViewModel dictionaryViewModel = new DictionaryViewModel(wordlistReader);
 
@@ -124,7 +126,13 @@ namespace TranslateWithDictCC.ViewModels
             bool replace = await messageDialog.ShowAsync() == messageDialog.Commands[0];
 
             if (replace)
-                await RemoveDictionary(conflictingDictionary);
+            {
+                bool removedSuccessfully = await RemoveDictionary(conflictingDictionary, true);
+
+                // as long as another import is still in process, we cannot replace a dictionary
+                if (!removedSuccessfully)
+                    return false;
+            }
 
             return replace;
         }
@@ -175,8 +183,34 @@ namespace TranslateWithDictCC.ViewModels
             }
         }
 
-        public async Task RemoveDictionary(DictionaryViewModel dictionaryViewModel)
+        public async Task<bool> RemoveDictionary(DictionaryViewModel dictionaryViewModel, bool noConfirmation)
         {
+            if (dictionaryViewModel.Status == DictionaryStatus.Installed)
+                if (IsImportInProgress)
+                {
+                    MessageDialog messageDialog = new MessageDialog(
+                        resourceLoader.GetString("Import_In_Progress_Body"),
+                        resourceLoader.GetString("Import_In_Progress_Title"));
+
+                    await messageDialog.ShowAsync();
+                    return false;
+                }
+                else if (!noConfirmation)
+                {
+                    MessageDialog messageDialog = new MessageDialog(string.Format(
+                           resourceLoader.GetString("Remove_Dictionary_Confirmation_Body"),
+                           dictionaryViewModel.OriginLanguage, dictionaryViewModel.DestinationLanguage));
+
+                    messageDialog.Commands.Add(new UICommand(resourceLoader.GetString("Remove_Dictionary_Confirmation_Remove")));
+                    messageDialog.Commands.Add(new UICommand(resourceLoader.GetString("Remove_Dictionary_Confirmation_Cancel")));
+
+                    messageDialog.DefaultCommandIndex = 0;
+                    messageDialog.CancelCommandIndex = 1;
+
+                    if (await messageDialog.ShowAsync() != messageDialog.Commands[0])
+                        return false;
+                }
+
             switch (dictionaryViewModel.Status)
             {
                 case DictionaryStatus.Queued:
@@ -186,20 +220,13 @@ namespace TranslateWithDictCC.ViewModels
                     cancellationTokenSource.Cancel();
                     break;
                 case DictionaryStatus.Installed:
-                    if (IsImportInProgress)
-                    {
-                        MessageDialog messageDialog = new MessageDialog(
-                            resourceLoader.GetString("Import_In_Progress_Body"),
-                            resourceLoader.GetString("Import_In_Progress_Title"));
-
-                        await messageDialog.ShowAsync();
-                        break;
-                    }
                     await DatabaseManager.Instance.DeleteDictionary(dictionaryViewModel.Dictionary);
                     Dictionaries.Remove(dictionaryViewModel);
                     await MainViewModel.Instance.UpdateDirection();
                     break;
             }
+
+            return true;
         }
     }
 }

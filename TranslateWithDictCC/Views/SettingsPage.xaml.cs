@@ -43,7 +43,7 @@ namespace TranslateWithDictCC.Views
                     return;
             }
 
-            await SettingsViewModel.Instance.RemoveDictionary(dictionary);
+            await SettingsViewModel.Instance.RemoveDictionary(dictionary, false);
         }
     }
 }
