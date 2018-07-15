@@ -47,10 +47,10 @@ namespace TranslateWithDictCC.Views
                 else
                     statusTextBlock.Text = string.Format(resourceLoader.GetString("SearchResultsPage_ResultCount"), ((SearchResultsViewModel)e.Parameter).DictionaryEntries.Count);
 
-                animation.Stop();
-                animation.Seek(TimeSpan.Zero);
+                resultCountAnimation.Stop();
+                resultCountAnimation.Seek(TimeSpan.Zero);
                 await Task.Delay(250);
-                animation.Begin();
+                resultCountAnimation.Begin();
             }
         }
 
@@ -219,10 +219,10 @@ namespace TranslateWithDictCC.Views
             }
         }
 
-        private void Button_Click_2(object sender, RoutedEventArgs e)
+        private void hideResultCountButton_Click(object sender, RoutedEventArgs e)
         {
-            animation.Stop();
-            animation.Seek(TimeSpan.Zero);
+            resultCountAnimation.Stop();
+            resultCountAnimation.Seek(TimeSpan.Zero);
         }
 
         private void mediaElement_MediaOpened(object sender, RoutedEventArgs e)

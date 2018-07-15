@@ -36,17 +36,17 @@ namespace TranslateWithDictCC.Views
 
             KeyboardShortcutListener shortcutListener = new KeyboardShortcutListener();
 
-            shortcutListener.RegisterShortcutHandler(VirtualKeyModifiers.Control, VirtualKey.E, ControlEShortcut);
-            shortcutListener.RegisterShortcutHandler(VirtualKeyModifiers.Control, VirtualKey.S, ControlSShortcut);
+            shortcutListener.RegisterShortcutHandler(VirtualKeyModifiers.Control, VirtualKey.E, OnControlEShortcut);
+            shortcutListener.RegisterShortcutHandler(VirtualKeyModifiers.Control, VirtualKey.S, OnControlSShortcut);
         }
 
-        private void ControlEShortcut(object sender, EventArgs e)
+        private void OnControlEShortcut(object sender, EventArgs e)
         {
             searchBox.Text = string.Empty;
             FocusSearchBox();
         }
 
-        private void ControlSShortcut(object sender, EventArgs e)
+        private void OnControlSShortcut(object sender, EventArgs e)
         {
             SwitchDirection_Click(sender, new RoutedEventArgs());
         }

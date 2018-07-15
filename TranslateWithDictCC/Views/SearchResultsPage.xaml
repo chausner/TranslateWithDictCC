@@ -54,18 +54,18 @@
             <Setter Property="Padding" Value="12,0,12,0" />
             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
-            <Setter Property="MinWidth" Value="{ThemeResource ListViewItemMinWidth}"/>
-            <Setter Property="MinHeight" Value="{ThemeResource ListViewItemMinHeight}"/>
+            <Setter Property="MinWidth" Value="{ThemeResource ListViewItemMinWidth}" />
+            <Setter Property="MinHeight" Value="{ThemeResource ListViewItemMinHeight}" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ListViewItem">
-                        <ListViewItemPresenter CheckBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" ContentMargin="{TemplateBinding Padding}" CheckMode="Inline" ContentTransitions="{TemplateBinding ContentTransitions}" CheckBoxBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" DragForeground="{ThemeResource ListViewItemDragForegroundThemeBrush}" DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}" DragBackground="{ThemeResource ListViewItemDragBackgroundThemeBrush}" DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}" FocusBorderBrush="{ThemeResource SystemControlForegroundAltHighBrush}" FocusSecondaryBorderBrush="{ThemeResource SystemControlForegroundBaseHighBrush}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" PointerOverForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}" PressedBackground="{ThemeResource SystemControlHighlightListMediumBrush}" PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" PointerOverBackground="{ThemeResource SystemControlHighlightListLowBrush}" ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}" SelectedPressedBackground="{ThemeResource SystemControlHighlightListAccentHighBrush}" SelectionCheckMarkVisualEnabled="True" SelectedForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}" SelectedPointerOverBackground="{ThemeResource SystemControlHighlightListAccentMediumBrush}" SelectedBackground="{ThemeResource SystemControlHighlightListAccentLowBrush}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        <ListViewItemPresenter CheckBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" ContentMargin="{TemplateBinding Padding}" CheckMode="Inline" ContentTransitions="{TemplateBinding ContentTransitions}" CheckBoxBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" DragForeground="{ThemeResource ListViewItemDragForegroundThemeBrush}" DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}" DragBackground="{ThemeResource ListViewItemDragBackgroundThemeBrush}" DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}" FocusBorderBrush="{ThemeResource SystemControlForegroundAltHighBrush}" FocusSecondaryBorderBrush="{ThemeResource SystemControlForegroundBaseHighBrush}" HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}" PointerOverForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}" PressedBackground="{ThemeResource SystemControlHighlightListMediumBrush}" PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}" PointerOverBackground="{ThemeResource SystemControlHighlightListLowBrush}" ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}" SelectedPressedBackground="{ThemeResource SystemControlHighlightListAccentHighBrush}" SelectionCheckMarkVisualEnabled="True" SelectedForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}" SelectedPointerOverBackground="{ThemeResource SystemControlHighlightListAccentMediumBrush}" SelectedBackground="{ThemeResource SystemControlHighlightListAccentLowBrush}" VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
-        <Storyboard x:Name="animation">
-            <DoubleAnimation From="30" To="0" Duration="0:0:0.5" Storyboard.TargetName="border" Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)" />
+        <Storyboard x:Name="resultCountAnimation">
+            <DoubleAnimation From="30" To="0" Duration="0:0:0.5" Storyboard.TargetName="resultCountBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)" />
         </Storyboard>
     </Page.Resources>
     <Grid>
@@ -75,14 +75,14 @@
         <MediaElement Name="mediaElement" Visibility="Collapsed" AudioCategory="Speech"
                       MediaOpened="mediaElement_MediaOpened" MediaEnded="mediaElement_MediaEnded" MediaFailed="mediaElement_MediaFailed" />
 
-        <Border Name="border" Background="DarkOrange" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="8,4,4,4">
+        <Border Name="resultCountBorder" Background="DarkOrange" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="8,4,4,4">
             <Border.RenderTransform>
                 <TranslateTransform Y="100" />
             </Border.RenderTransform>
             <StackPanel Orientation="Horizontal">
                 <TextBlock Name="statusTextBlock" Style="{StaticResource CaptionTextBlockStyle}" />
-                <Button Style="{StaticResource FlatButtonStyle}" Background="Transparent" FontSize="12" Padding="0" Margin="4,0,0,0"
-                        FontFamily="Segoe MDL2 Assets" Content="&#xE711;" Click="Button_Click_2" />
+                <Button Name="hideResultCountButton" Style="{StaticResource FlatButtonStyle}" Background="Transparent" FontSize="12" Padding="0" Margin="4,0,0,0"
+                        FontFamily="Segoe MDL2 Assets" Content="&#xE711;" Click="hideResultCountButton_Click" />
             </StackPanel>
         </Border>
     </Grid>
