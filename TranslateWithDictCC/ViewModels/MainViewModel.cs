@@ -172,24 +172,32 @@ namespace TranslateWithDictCC.ViewModels
             if (!JumpList.IsSupported())
                 return;
 
-            JumpList jumpList = await JumpList.LoadCurrentAsync();
-
-            jumpList.SystemGroupKind = JumpListSystemGroupKind.None;
-            jumpList.Items.Clear();
-
-            foreach (DirectionViewModel directionViewModel in AvailableDirections)
+            try
             {
-                string itemName = string.Format("{0} → {1}", directionViewModel.OriginLanguage, directionViewModel.DestinationLanguage);
-                string arguments = "dict:" + directionViewModel.OriginLanguageCode + directionViewModel.DestinationLanguageCode;
+                JumpList jumpList = await JumpList.LoadCurrentAsync();
 
-                JumpListItem jumpListItem = JumpListItem.CreateWithArguments(arguments, itemName);
+                jumpList.SystemGroupKind = JumpListSystemGroupKind.None;
+                jumpList.Items.Clear();
 
-                jumpListItem.Logo = LanguageCodes.GetCountryFlagUri(directionViewModel.OriginLanguageCode);
+                foreach (DirectionViewModel directionViewModel in AvailableDirections)
+                {
+                    string itemName = string.Format("{0} → {1}", directionViewModel.OriginLanguage, directionViewModel.DestinationLanguage);
+                    string arguments = "dict:" + directionViewModel.OriginLanguageCode + directionViewModel.DestinationLanguageCode;
 
-                jumpList.Items.Add(jumpListItem);
+                    JumpListItem jumpListItem = JumpListItem.CreateWithArguments(arguments, itemName);
+
+                    jumpListItem.Logo = LanguageCodes.GetCountryFlagUri(directionViewModel.OriginLanguageCode);
+
+                    jumpList.Items.Add(jumpListItem);
+                }
+            
+                await jumpList.SaveAsync();
             }
-
-            await jumpList.SaveAsync();
+            catch
+            {
+                // in rare cases, SaveAsync may fail with HRESULT 0x80070497: "Unable to remove the file to be replaced."
+                // this appears to be a common problem without a solution, so we simply ignore any errors here
+            }
         }
 
         public async Task UpdateSearchSuggestions(string partialSearchQuery)
