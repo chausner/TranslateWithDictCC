@@ -23,11 +23,11 @@ namespace TranslateWithDictCC.Views
         {
             InitializeComponent();
 
-            DataContext = MainViewModel.Instance;
+            rootGrid.DataContext = MainViewModel.Instance;
 
-            CoreWindow.GetForCurrentThread().PointerPressed += MainPage_PointerPressed;
+            // CoreWindow.GetForCurrentThread().PointerPressed += MainPage_PointerPressed;
 
-            SystemNavigationManager.GetForCurrentView().BackRequested += SystemNavigationManager_BackRequested;
+            // SystemNavigationManager.GetForCurrentView().BackRequested += SystemNavigationManager_BackRequested;
 
             MainViewModel.Instance.NavigateToPageCommand = new RelayCommand<object>(NavigateToPage);
             MainViewModel.Instance.GoBackToPageCommand = new RelayCommand<string>(GoBackToPage);
@@ -66,7 +66,7 @@ namespace TranslateWithDictCC.Views
             directionComboBox.SelectionChanged += directionComboBox_SelectionChanged;
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        /*protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             if (MainViewModel.Instance.AvailableDirections.Length == 0)
                 contentFrame.Navigate(typeof(SettingsPage));
@@ -93,7 +93,7 @@ namespace TranslateWithDictCC.Views
                     }
                 }
             }
-        }
+        }*/
 
         private void GoBackToPage(string pageType)
         {
@@ -244,10 +244,10 @@ namespace TranslateWithDictCC.Views
         {
             if (e.NewSize.Width < 600 != e.PreviousSize.Width < 600)
             {
-                if (e.NewSize.Width < 600)
-                    directionComboBox.ItemTemplate = (DataTemplate)Resources["DirectionComboBoxItemTemplateCompact"];
+                /*if (e.NewSize.Width < 600)
+                    directionComboBox.ItemTemplate = (DataTemplate)rootGrid.Resources["DirectionComboBoxItemTemplateCompact"];
                 else
-                    directionComboBox.ItemTemplate = (DataTemplate)Resources["DirectionComboBoxItemTemplate"];
+                    directionComboBox.ItemTemplate = (DataTemplate)rootGrid.Resources["DirectionComboBoxItemTemplate"];*/
 
                 // force ComboBox to apply the new item template
                 DirectionViewModel selectedDirection = MainViewModel.Instance.SelectedDirection;

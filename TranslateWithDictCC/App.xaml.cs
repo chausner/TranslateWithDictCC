@@ -9,6 +9,8 @@ namespace TranslateWithDictCC
 {
     sealed partial class App : Application
     {
+        MainWindow mainWindow;
+
         public App()
         {
             InitializeComponent();
@@ -24,29 +26,13 @@ namespace TranslateWithDictCC
             if (!Resources.ContainsKey("settings"))
                 Resources.Add("settings", Settings.Instance);
 
-            // new way:
-            //m_window = new MainWindow();
-            //m_window.Activate();
+            await MainViewModel.Instance.UpdateDirection();
+            MainViewModel.Instance.LoadSettings();
 
-            Frame rootFrame = Window.Current.Content as Frame;
+            mainWindow = new MainWindow();
+            mainWindow.Activate();
 
-            if (rootFrame == null)
-            {
-                rootFrame = new Frame();
-
-                rootFrame.NavigationFailed += OnNavigationFailed;
-           
-                await MainViewModel.Instance.UpdateDirection();
-                MainViewModel.Instance.LoadSettings();
-
-                Window.Current.Content = rootFrame;
-
-                SetTitleBarColors();
-            }
-
-            rootFrame.Navigate(typeof(MainPage), e.Arguments);
-
-            Window.Current.Activate();
+            SetTitleBarColors();
         }
 
         private void OnNavigationFailed(object sender, NavigationFailedEventArgs e)

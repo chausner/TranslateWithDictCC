@@ -70,7 +70,7 @@
                                   Text="Case-sensitive search" Click="CaseSensitiveSearch_Click" />
         </MenuFlyout>
     </Page.Resources>
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Name="rootGrid" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />

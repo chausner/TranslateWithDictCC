@@ -16,8 +16,8 @@ namespace TranslateWithDictCC
 
         public KeyboardShortcutListener()
         {
-            Window.Current.CoreWindow.KeyDown += CoreWindow_KeyDown;
-            Window.Current.CoreWindow.KeyUp += CoreWindow_KeyUp;
+            // Window.Current.CoreWindow.KeyDown += CoreWindow_KeyDown;
+            // Window.Current.CoreWindow.KeyUp += CoreWindow_KeyUp;
         }
 
         private void CoreWindow_KeyDown(CoreWindow sender, KeyEventArgs args)
