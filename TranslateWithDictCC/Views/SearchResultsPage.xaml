@@ -72,8 +72,8 @@
         <ListView ItemsSource="{Binding DictionaryEntries}" ItemTemplate="{StaticResource DictionaryEntryDataTemplate}"
                   HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" ContainerContentChanging="ListView_ContainerContentChanging" ItemContainerStyle="{StaticResource ListViewItemStyle}"
                   ShowsScrollingPlaceholders="False" />
-        <MediaElement Name="mediaElement" Visibility="Collapsed" AudioCategory="Speech"
-                      MediaOpened="mediaElement_MediaOpened" MediaEnded="mediaElement_MediaEnded" MediaFailed="mediaElement_MediaFailed" />
+        <!--<MediaElement Name="mediaElement" Visibility="Collapsed" AudioCategory="Speech"
+                      MediaOpened="mediaElement_MediaOpened" MediaEnded="mediaElement_MediaEnded" MediaFailed="mediaElement_MediaFailed" />-->
 
         <Border Name="resultCountBorder" Background="DarkOrange" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="8,4,4,4">
             <Border.RenderTransform>

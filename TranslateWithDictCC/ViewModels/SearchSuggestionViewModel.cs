@@ -1,6 +1,6 @@
-﻿using TranslateWithDictCC.Models;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Documents;
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Documents;
+using TranslateWithDictCC.Models;
 
 namespace TranslateWithDictCC.ViewModels
 {

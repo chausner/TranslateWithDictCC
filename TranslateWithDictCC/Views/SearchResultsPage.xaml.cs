@@ -6,11 +6,11 @@ using Windows.ApplicationModel.Resources;
 using Windows.Media.Core;
 using Windows.Networking.Connectivity;
 using Windows.UI.Popups;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
-using Windows.UI.Xaml.Documents;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml.Documents;
 
 namespace TranslateWithDictCC.Views
 {
@@ -30,7 +30,7 @@ namespace TranslateWithDictCC.Views
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
-            mediaElement.Source = null; // for some reason needed to prevent MediaElement from playing when navigating back to a page
+            //mediaElement.Source = null; // for some reason needed to prevent MediaElement from playing when navigating back to a page
 
             ((MainPage)((Frame)Window.Current.Content).Content).FocusSearchBox();
 
@@ -64,8 +64,8 @@ namespace TranslateWithDictCC.Views
                     await PlayAudioRecording(dictionaryEntryViewModel, false);
                     break;
                 case AudioRecordingState.Playing:
-                    if (currentlyPlayingAudioRecording == dictionaryEntryViewModel)
-                        mediaElement.Stop();
+                    //if (currentlyPlayingAudioRecording == dictionaryEntryViewModel)
+                    //    mediaElement.Stop();
                     dictionaryEntryViewModel.AudioRecordingState1 = AudioRecordingState.Available;
                     break;
                 case AudioRecordingState.Unavailable:
@@ -84,8 +84,8 @@ namespace TranslateWithDictCC.Views
                     await PlayAudioRecording(dictionaryEntryViewModel, true);
                     break;
                 case AudioRecordingState.Playing:
-                    if (currentlyPlayingAudioRecording == dictionaryEntryViewModel)
-                        mediaElement.Stop();
+                    //if (currentlyPlayingAudioRecording == dictionaryEntryViewModel)
+                    //    mediaElement.Stop();
                     dictionaryEntryViewModel.AudioRecordingState2 = AudioRecordingState.Available;
                     break;
                 case AudioRecordingState.Unavailable:
@@ -114,7 +114,7 @@ namespace TranslateWithDictCC.Views
 
                 if (currentlyPlayingAudioRecording != null)
                 {
-                    mediaElement.Stop();
+                    //mediaElement.Stop();
                     if (currentlyPlayingAudioRecordingWord2)
                         currentlyPlayingAudioRecording.AudioRecordingState2 = AudioRecordingState.Available;
                     else
@@ -131,7 +131,7 @@ namespace TranslateWithDictCC.Views
 
                     MediaSource mediaSource = MediaSource.CreateFromUri(audioUri);
 
-                    mediaElement.SetPlaybackSource(mediaSource);
+                    //mediaElement.SetPlaybackSource(mediaSource);
                 }
                 else
                 {
@@ -225,7 +225,7 @@ namespace TranslateWithDictCC.Views
             resultCountAnimation.Seek(TimeSpan.Zero);
         }
 
-        private void mediaElement_MediaOpened(object sender, RoutedEventArgs e)
+        /*private void mediaElement_MediaOpened(object sender, RoutedEventArgs e)
         {
             if (currentlyPlayingAudioRecording != null)
                 if (currentlyPlayingAudioRecordingWord2)
@@ -256,6 +256,6 @@ namespace TranslateWithDictCC.Views
                     currentlyPlayingAudioRecording.AudioRecordingState1 = AudioRecordingState.Unavailable;
                 currentlyPlayingAudioRecording = null;
             }
-        }
+        }*/
     }
 }

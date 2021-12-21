@@ -1,7 +1,7 @@
 ﻿using TranslateWithDictCC.Models;
 using System;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Documents;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Documents;
 
 namespace TranslateWithDictCC.ViewModels
 {

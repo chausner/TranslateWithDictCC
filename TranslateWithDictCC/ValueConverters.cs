@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml.Data;
+using System;
 using System.Collections;
-using Windows.UI.Xaml.Data;
 
 namespace TranslateWithDictCC
 {

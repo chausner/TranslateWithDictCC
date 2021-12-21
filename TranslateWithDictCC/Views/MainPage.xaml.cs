@@ -7,9 +7,9 @@ using Windows.ApplicationModel.Resources;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Popups;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 
 namespace TranslateWithDictCC.Views
 {
@@ -217,9 +217,9 @@ namespace TranslateWithDictCC.Views
                 }
             }
 
-            searchHamburgerMenuItem.IsChecked = e.SourcePageType == typeof(SearchResultsPage);
+            /*searchHamburgerMenuItem.IsChecked = e.SourcePageType == typeof(SearchResultsPage);
             optionsHamburgerMenuItem.IsChecked = e.SourcePageType == typeof(SettingsPage);
-            aboutHamburgerMenuItem.IsChecked = e.SourcePageType == typeof(AboutPage);
+            aboutHamburgerMenuItem.IsChecked = e.SourcePageType == typeof(AboutPage);*/
         }
 
         private async void directionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -256,7 +256,7 @@ namespace TranslateWithDictCC.Views
             }
         }
 
-        private void searchHamburgerMenuItem_CheckRequested(object sender, EventArgs e)
+        /*private void searchHamburgerMenuItem_CheckRequested(object sender, EventArgs e)
         {
             splitView.IsPaneOpen = false;
 
@@ -275,7 +275,7 @@ namespace TranslateWithDictCC.Views
             splitView.IsPaneOpen = false;
 
             NavigateToPage("AboutPage");
-        }
+        }*/
 
         private async void SwitchDirection_Click(object sender, RoutedEventArgs e)
         {

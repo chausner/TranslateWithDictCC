@@ -1,0 +1,13 @@
+{
+  "profiles": {
+    "App1 (Package)": {
+      "commandName": "MsixPackage",
+      "alwaysReinstallApp": false,
+      "doNotLaunchApp": false,
+      "nativeDebugging": false
+    },
+    "App1 (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

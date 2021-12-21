@@ -1,9 +1,9 @@
 ﻿using TranslateWithDictCC.Models;
 using System;
 using Windows.ApplicationModel.Resources;
-using Windows.UI.Xaml;
 using System.Windows.Input;
-using Windows.UI.Xaml.Media.Imaging;
+using Microsoft.UI.Xaml.Media.Imaging;
+using Microsoft.UI.Xaml;
 
 namespace TranslateWithDictCC.ViewModels
 {

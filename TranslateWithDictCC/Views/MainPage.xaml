@@ -107,12 +107,12 @@
                     <Border Grid.Row="0" Grid.RowSpan="99" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
                     <Border Grid.Row="0" Grid.RowSpan="99" Background="{ThemeResource SystemControlBackgroundBaseLowBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
                     <StackPanel Grid.Row="0">
-                        <controls:HamburgerMenuItem x:Uid="MainPage_SearchHamburgerMenuItem" x:Name="searchHamburgerMenuItem" Icon="&#xE11A;" Content="Search" CheckRequested="searchHamburgerMenuItem_CheckRequested"
-                                                    IsChecked="True" />
+                        <!--<controls:HamburgerMenuItem x:Uid="MainPage_SearchHamburgerMenuItem" x:Name="searchHamburgerMenuItem" Icon="&#xE11A;" Content="Search" CheckRequested="searchHamburgerMenuItem_CheckRequested"
+                                                    IsChecked="True" />-->
                     </StackPanel>
                     <StackPanel Grid.Row="1">
-                        <controls:HamburgerMenuItem x:Uid="MainPage_OptionsHamburgerMenuItem" x:Name="optionsHamburgerMenuItem" Icon="&#xE713;" Content="Options" CheckRequested="optionsHamburgerMenuItem_CheckRequested" />
-                        <controls:HamburgerMenuItem x:Uid="MainPage_AboutHamburgerMenuItem" x:Name="aboutHamburgerMenuItem" Icon="&#xE897;" Content="About" CheckRequested="aboutHamburgerMenuItem_CheckRequested" />
+                        <!--<controls:HamburgerMenuItem x:Uid="MainPage_OptionsHamburgerMenuItem" x:Name="optionsHamburgerMenuItem" Icon="&#xE713;" Content="Options" CheckRequested="optionsHamburgerMenuItem_CheckRequested" />
+                        <controls:HamburgerMenuItem x:Uid="MainPage_AboutHamburgerMenuItem" x:Name="aboutHamburgerMenuItem" Icon="&#xE897;" Content="About" CheckRequested="aboutHamburgerMenuItem_CheckRequested" />-->
                     </StackPanel>
                 </Grid>
             </SplitView.Pane>            

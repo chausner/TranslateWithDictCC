@@ -1,33 +1,5 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:TranslateWithDictCC"
-    xmlns:controls="using:TranslateWithDictCC.Controls">
-    <Style TargetType="controls:HamburgerMenuItem">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="controls:HamburgerMenuItem">
-                    <Button Name="PART_TogglingButton" Style="{StaticResource FlatButtonStyle}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Padding="-2" Background="Transparent">
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="CheckStates">
-                                <VisualState x:Name="Unchecked" />
-                                <VisualState x:Name="Checked">
-                                    <VisualState.Setters>
-                                        <Setter Target="markRectangle.Visibility" Value="Visible" />
-                                        <Setter Target="iconTextBlock.Foreground" Value="{ThemeResource HamburgerMenuSelectionThemeBrush}" />
-                                        <Setter Target="contentPresenter.Foreground" Value="{ThemeResource HamburgerMenuSelectionThemeBrush}" />
-                                    </VisualState.Setters>
-                                </VisualState>
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0">
-                            <Rectangle Name="markRectangle" Fill="{ThemeResource HamburgerMenuSelectionThemeBrush}" Width="4" Height="24" Margin="0,0,-4,0" Visibility="Collapsed" />
-                            <TextBlock Name="iconTextBlock" FontFamily="Segoe MDL2 Assets" Text="{TemplateBinding Icon}" Width="48" Height="48" Margin="0" Padding="0,16" TextAlignment="Center" />
-                            <ContentPresenter Name="contentPresenter" Content="{TemplateBinding Content}" VerticalAlignment="Center" />
-                        </StackPanel>
-                    </Button>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
+    xmlns:local="using:TranslateWithDictCC">   
 </ResourceDictionary>

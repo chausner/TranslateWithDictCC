@@ -1,6 +1,5 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml.Media.Imaging;
 using TranslateWithDictCC.Models;
-using Windows.UI.Xaml.Media.Imaging;
 
 namespace TranslateWithDictCC.ViewModels
 {
