@@ -25,7 +25,7 @@ namespace TranslateWithDictCC.ViewModels
         Task importQueueProcessTask;
         CancellationTokenSource cancellationTokenSource;
 
-        ResourceLoader resourceLoader = ResourceLoader.GetForCurrentView();
+        ResourceLoader resourceLoader = ResourceLoader.GetForViewIndependentUse();
 
         private bool IsImportInProgress
         {
