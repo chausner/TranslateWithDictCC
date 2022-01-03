@@ -29,7 +29,7 @@ namespace TranslateWithDictCC
             {
                 await DatabaseManager.Instance.InitializeDb();
 
-                List<Tuple<int, string, string>> dictionaries =
+                List<(int Id, string OriginLanguageCode, string DestinationLanguageCode)> dictionaries =
                     await DatabaseManager.Instance.ExecuteReader("SELECT * FROM Dictionaries", dataReader =>
                     {
                         int id = dataReader.GetInt32(0);
@@ -38,17 +38,17 @@ namespace TranslateWithDictCC
                         DateTimeOffset creationDate = new DateTimeOffset(dataReader.GetInt64(3), TimeSpan.Zero);
                         int numberOfEntries = dataReader.GetInt32(4);
 
-                        return Tuple.Create(id, originLanguageCode, destinationLanguageCode);
+                        return (id, originLanguageCode, destinationLanguageCode);
                     });
 
-                foreach (Tuple<int, string, string> dictionary in dictionaries)
+                foreach (var dictionary in dictionaries)
                 {
-                    string tableName = string.Format("Dictionary{0}{1}", dictionary.Item2, dictionary.Item3);
+                    string tableName = string.Format("Dictionary{0}{1}", dictionary.OriginLanguageCode, dictionary.DestinationLanguageCode);
 
                     object result = await DatabaseManager.Instance.ExecuteScalar($"SELECT name FROM sqlite_master WHERE type='table' AND name='{tableName}'");
 
                     if (result == null)
-                        await DatabaseManager.Instance.ExecuteNonQuery($"DELETE FROM Dictionaries WHERE ID = {dictionary.Item1}");
+                        await DatabaseManager.Instance.ExecuteNonQuery($"DELETE FROM Dictionaries WHERE ID = {dictionary.Id}");
                 }
             }
             else
