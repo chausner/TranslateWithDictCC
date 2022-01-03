@@ -1,5 +1,4 @@
-﻿using Microsoft.UI.Xaml;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Windows.System;
 using Windows.UI.Core;
@@ -8,11 +7,13 @@ namespace TranslateWithDictCC
 {
     class KeyboardShortcutListener
     {
+        private record ShortcutHandler(VirtualKeyModifiers VirtualKeyModifiers, VirtualKey VirtualKey, EventHandler Handler);
+
         bool controlPressed;
         bool menuPressed;
         bool shiftPressed;
 
-        List<Tuple<VirtualKeyModifiers, VirtualKey, EventHandler>> shortcutHandlers = new List<Tuple<VirtualKeyModifiers, VirtualKey, EventHandler>>();
+        List<ShortcutHandler> shortcutHandlers = new List<ShortcutHandler>();
 
         public KeyboardShortcutListener()
         {
@@ -49,9 +50,9 @@ namespace TranslateWithDictCC
                 modifiers |= VirtualKeyModifiers.Shift;
 
             foreach (var shortcutHandler in shortcutHandlers)
-                if (shortcutHandler.Item1 == modifiers &&
-                    shortcutHandler.Item2 == args.VirtualKey)
-                    shortcutHandler.Item3(this, EventArgs.Empty);
+                if (shortcutHandler.VirtualKeyModifiers == modifiers &&
+                    shortcutHandler.VirtualKey == args.VirtualKey)
+                    shortcutHandler.Handler(this, EventArgs.Empty);
         }
 
         private void CoreWindow_KeyUp(CoreWindow sender, KeyEventArgs args)
@@ -76,7 +77,7 @@ namespace TranslateWithDictCC
 
         public void RegisterShortcutHandler(VirtualKeyModifiers modifiers, VirtualKey key, EventHandler handler)
         {
-            shortcutHandlers.Add(Tuple.Create(modifiers, key, handler));
+            shortcutHandlers.Add(new ShortcutHandler(modifiers, key, handler));
         }
     }
 }

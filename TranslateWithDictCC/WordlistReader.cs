@@ -51,20 +51,6 @@ namespace TranslateWithDictCC
                 streamReader = new StreamReader(stream, Encoding.UTF8);
         }
 
-        private void Close()
-        {
-            if (streamReader != null)
-            {
-                streamReader.Dispose();
-                streamReader = null;
-            }
-            if (zipArchive != null)
-            {
-                zipArchive.Dispose();
-                zipArchive = null;
-            }
-        }
-
         public async Task ReadHeader()
         {
             await Open();

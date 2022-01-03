@@ -5,9 +5,9 @@ namespace TranslateWithDictCC.Views
 {
     public sealed partial class SettingsPage : Page
     {
-        SettingsViewModel ViewModel { get { return SettingsViewModel.Instance; } }
+        SettingsViewModel ViewModel => SettingsViewModel.Instance;
 
-        Settings Settings { get { return Settings.Instance; } }
+        Settings Settings => Settings.Instance;
 
         public SettingsPage()
         {

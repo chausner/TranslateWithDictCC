@@ -1,12 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Linq;
 using System.Threading.Tasks;
 using TranslateWithDictCC.ViewModels;
 using Microsoft.Windows.ApplicationModel.Resources;
 using Windows.System;
 using Windows.UI.Core;
-using Windows.UI.Popups;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
@@ -16,9 +14,9 @@ namespace TranslateWithDictCC.Views
 {
     public sealed partial class MainPage : Page
     {
-        MainViewModel ViewModel { get { return MainViewModel.Instance; } }
+        MainViewModel ViewModel => MainViewModel.Instance;
 
-        Settings Settings { get { return Settings.Instance; } }
+        Settings Settings => Settings.Instance;
 
         public MainPage()
         {

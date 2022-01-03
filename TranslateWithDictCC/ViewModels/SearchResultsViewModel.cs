@@ -18,7 +18,7 @@ namespace TranslateWithDictCC.ViewModels
             // force the LazyCollection to have the first 15 items already cached
             for (int i = 0; i < 15 && i < results.Count; i++)
             {
-                var tmp = DictionaryEntries[i];
+                _ = DictionaryEntries[i];
             }
         }
     }

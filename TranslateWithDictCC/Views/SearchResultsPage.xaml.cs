@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.Windows.ApplicationModel.Resources;
 using Windows.Media.Core;
 using Windows.Networking.Connectivity;
-using Windows.UI.Popups;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;

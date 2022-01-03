@@ -8,14 +8,14 @@ namespace TranslateWithDictCC.ViewModels
         public Dictionary Dictionary { get; }
         public bool ReverseSearch { get; }
 
-        public string OriginLanguage { get { return LanguageCodes.GetLanguageName(OriginLanguageCode); } }
-        public string DestinationLanguage { get { return LanguageCodes.GetLanguageName(DestinationLanguageCode); } }
+        public string OriginLanguage => LanguageCodes.GetLanguageName(OriginLanguageCode);
+        public string DestinationLanguage => LanguageCodes.GetLanguageName(DestinationLanguageCode);
 
-        public string OriginLanguageCode { get { return ReverseSearch ? Dictionary.DestinationLanguageCode : Dictionary.OriginLanguageCode; } }
-        public string DestinationLanguageCode { get { return ReverseSearch ? Dictionary.OriginLanguageCode : Dictionary.DestinationLanguageCode; } }
+        public string OriginLanguageCode => ReverseSearch ? Dictionary.DestinationLanguageCode : Dictionary.OriginLanguageCode;
+        public string DestinationLanguageCode => ReverseSearch ? Dictionary.OriginLanguageCode : Dictionary.DestinationLanguageCode;
 
-        public BitmapImage OriginLanguageImage { get { return LanguageCodes.GetCountryFlagImage(OriginLanguageCode); } }
-        public BitmapImage DestinationLanguageImage { get { return LanguageCodes.GetCountryFlagImage(DestinationLanguageCode); } }
+        public BitmapImage OriginLanguageImage => LanguageCodes.GetCountryFlagImage(OriginLanguageCode);
+        public BitmapImage DestinationLanguageImage => LanguageCodes.GetCountryFlagImage(DestinationLanguageCode);
 
         public DirectionViewModel(Dictionary dictionary, bool reverseSearch)
         {

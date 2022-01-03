@@ -12,18 +12,15 @@ namespace TranslateWithDictCC.ViewModels
         public string OriginLanguageCode { get; }
         public string DestinationLanguageCode { get; }
 
-        public string OriginLanguage { get { return LanguageCodes.GetLanguageName(OriginLanguageCode); } }
-        public string DestinationLanguage { get { return LanguageCodes.GetLanguageName(DestinationLanguageCode); } }
+        public string OriginLanguage => LanguageCodes.GetLanguageName(OriginLanguageCode);
+        public string DestinationLanguage => LanguageCodes.GetLanguageName(DestinationLanguageCode);
 
-        public BitmapImage OriginLanguageImage { get { return LanguageCodes.GetCountryFlagImage(OriginLanguageCode); } }
-        public BitmapImage DestinationLanguageImage { get { return LanguageCodes.GetCountryFlagImage(DestinationLanguageCode); } }
+        public BitmapImage OriginLanguageImage => LanguageCodes.GetCountryFlagImage(OriginLanguageCode);
+        public BitmapImage DestinationLanguageImage => LanguageCodes.GetCountryFlagImage(DestinationLanguageCode);
 
         public DateTimeOffset CreationDate { get; }
 
-        public string CreationDateShort
-        {
-            get { return CreationDate.ToString("dd/MM/yyyy"); }
-        }
+        public string CreationDateShort => CreationDate.ToString("dd/MM/yyyy");
 
         int numberOfEntries;
 

@@ -10,45 +10,15 @@ namespace TranslateWithDictCC
         Stream stream;
         long position;
 
-        public override bool CanRead
-        {
-            get
-            {
-                return stream.CanRead;
-            }
-        }
+        public override bool CanRead => stream.CanRead;
 
-        public override bool CanSeek
-        {
-            get
-            {
-                return false;
-            }
-        }
+        public override bool CanSeek => false;
 
-        public override bool CanWrite
-        {
-            get
-            {
-                return stream.CanWrite;
-            }
-        }
+        public override bool CanWrite => stream.CanWrite;
 
-        public override bool CanTimeout
-        {
-            get
-            {
-                return stream.CanTimeout;
-            }
-        }
+        public override bool CanTimeout => stream.CanTimeout;
 
-        public override long Length
-        {
-            get
-            {
-                return stream.Length;
-            }
-        }
+        public override long Length => stream.Length;
 
         public override long Position
         {

@@ -68,17 +68,13 @@ namespace TranslateWithDictCC.ViewModels
 
         public char GetAudioRecordingButtonText(AudioRecordingState state)
         {
-            switch (state)
+            return state switch
             {
-                case AudioRecordingState.Available:
-                    return (char)0xE767;
-                case AudioRecordingState.Playing:
-                    return (char)0xE769; // 0xE71A
-                case AudioRecordingState.Unavailable:
-                    return (char)0xE74F;
-                default:
-                    throw new ArgumentException();
-            }
+                AudioRecordingState.Available => (char)0xE767,
+                AudioRecordingState.Playing => (char)0xE769,// 0xE71A
+                AudioRecordingState.Unavailable => (char)0xE74F,
+                _ => throw new ArgumentException(),
+            };
         }
 
         public Visibility GetWordClassVisibility(string wordClasses)

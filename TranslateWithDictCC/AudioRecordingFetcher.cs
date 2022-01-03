@@ -118,50 +118,23 @@ namespace TranslateWithDictCC
             bool word2 = originLanguageCode == "DE" || (originLanguageCode == "EN" && destinationLanguageCode != "DE");
 
             for (int i = 0; i < ids.Length; i++)
-                results[i] = new DictCCSearchResult(ids[i], word2 ? words2[i] : words1[i], word2 ? words1[i] : words2[i]);
+                results[i] = new DictCCSearchResult
+                {
+                    ID = ids[i],
+                    Word1 = word2 ? words2[i] : words1[i],
+                    Word2 = word2 ? words1[i] : words2[i]
+                };
 
             return results;
         }
 
-        private class DictCCSearchResult
+        private record DictCCSearchResult
         {
-            public int ID { get; }
-            public string Word1 { get; }
-            public string Word2 { get; }
-
-            public DictCCSearchResult(int id, string word1, string word2)
-            {
-                ID = id;
-                Word1 = word1;
-                Word2 = word2;
-            }
+            public int ID { get; init;  }
+            public string Word1 { get; init; }
+            public string Word2 { get; init; }
         }
 
-        private class LanguageWordPair
-        {
-            public string LanguageCode { get; }
-            public string Word { get; }
-
-            public LanguageWordPair(string languageCode, string word)
-            {
-                LanguageCode = languageCode;
-                Word = word;
-            }
-
-            public override bool Equals(object obj)
-            {
-                LanguageWordPair other = obj as LanguageWordPair;
-
-                if (other == null)
-                    return false;
-
-                return LanguageCode == other.LanguageCode && Word == other.Word;
-            }
-
-            public override int GetHashCode()
-            {
-                return LanguageCode.GetHashCode() ^ Word.GetHashCode();
-            }
-        }
+        private record LanguageWordPair(string LanguageCode, string Word);
     }
 }

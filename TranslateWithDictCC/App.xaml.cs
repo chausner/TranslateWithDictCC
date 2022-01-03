@@ -1,8 +1,6 @@
 ﻿using TranslateWithDictCC.ViewModels;
-using TranslateWithDictCC.Views;
 using System;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 
 namespace TranslateWithDictCC

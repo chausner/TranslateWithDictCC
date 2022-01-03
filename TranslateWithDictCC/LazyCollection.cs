@@ -35,21 +35,9 @@ namespace TranslateWithDictCC
             }
         }
 
-        public int Count
-        {
-            get
-            {
-                return results.Length;
-            }
-        }
+        public int Count => results.Length;
 
-        public bool IsReadOnly
-        {
-            get
-            {
-                return true;
-            }
-        }
+        public bool IsReadOnly => true;
 
         public void Add(T item)
         {
@@ -108,21 +96,9 @@ namespace TranslateWithDictCC
                 this.lazyCollection = lazyCollection;
             }
 
-            public T Current
-            {
-                get
-                {
-                    return lazyCollection[currentIndex];
-                }
-            }
+            public T Current => lazyCollection[currentIndex];
 
-            object IEnumerator.Current
-            {
-                get
-                {
-                    return lazyCollection[currentIndex];
-                }
-            }
+            object IEnumerator.Current => lazyCollection[currentIndex];
 
             public bool MoveNext()
             {
