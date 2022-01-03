@@ -1,13 +1,13 @@
 ﻿using Microsoft.UI.Xaml.Media.Imaging;
+using Microsoft.Windows.ApplicationModel.Resources;
 using System;
 using System.Collections.Generic;
-using Windows.ApplicationModel.Resources;
 
 namespace TranslateWithDictCC
 {
     static class LanguageCodes
     {
-        static ResourceLoader resourceLoader = ResourceLoader.GetForCurrentView();        
+        static ResourceLoader resourceLoader = new ResourceLoader();
 
         static Dictionary<string, string> countryCodes = new Dictionary<string, string> {
             { "BG", "BG" },

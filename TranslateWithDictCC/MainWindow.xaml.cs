@@ -13,6 +13,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using TranslateWithDictCC.Views;
+using Microsoft.Windows.ApplicationModel.Resources;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -24,9 +25,17 @@ namespace TranslateWithDictCC
     /// </summary>
     public sealed partial class MainWindow : Window
     {
+        public static MainWindow Instance { get; private set; }
+
         public MainWindow()
         {
             this.InitializeComponent();
+
+            Instance = this;
+
+            ResourceLoader resourceLoader = new ResourceLoader();
+
+            Title = resourceLoader.GetString("App_Display_Name");
 
             applicationFrame.Navigate(typeof(MainPage));
         }

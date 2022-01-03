@@ -3,7 +3,6 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:TranslateWithDictCC"
-    xmlns:controls="using:TranslateWithDictCC.Controls"
     xmlns:viewmodels="using:TranslateWithDictCC.ViewModels"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -97,32 +96,19 @@
             <Button Grid.Column="3" VerticalAlignment="Stretch" Background="Transparent" FontFamily="Segoe MDL2 Assets" FontSize="21" Content="&#xE712;"
                     Style="{StaticResource FlatButtonStyle}" Flyout="{StaticResource moreMenuFlyout}" />
         </Grid>
-        <SplitView Grid.Row="1" Name="splitView" IsPaneOpen="False" DisplayMode="CompactOverlay" PaneBackground="Transparent">
-            <SplitView.Pane>
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-                    <Border Grid.Row="0" Grid.RowSpan="99" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-                    <Border Grid.Row="0" Grid.RowSpan="99" Background="{ThemeResource SystemControlBackgroundBaseLowBrush}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-                    <StackPanel Grid.Row="0">
-                        <!--<controls:HamburgerMenuItem x:Uid="MainPage_SearchHamburgerMenuItem" x:Name="searchHamburgerMenuItem" Icon="&#xE11A;" Content="Search" CheckRequested="searchHamburgerMenuItem_CheckRequested"
-                                                    IsChecked="True" />-->
-                    </StackPanel>
-                    <StackPanel Grid.Row="1">
-                        <!--<controls:HamburgerMenuItem x:Uid="MainPage_OptionsHamburgerMenuItem" x:Name="optionsHamburgerMenuItem" Icon="&#xE713;" Content="Options" CheckRequested="optionsHamburgerMenuItem_CheckRequested" />
-                        <controls:HamburgerMenuItem x:Uid="MainPage_AboutHamburgerMenuItem" x:Name="aboutHamburgerMenuItem" Icon="&#xE897;" Content="About" CheckRequested="aboutHamburgerMenuItem_CheckRequested" />-->
-                    </StackPanel>
-                </Grid>
-            </SplitView.Pane>            
-            <SplitView.Content>
-                <Grid>
-                    <Frame Name="contentFrame" Navigated="contentFrame_Navigated" />
-                    <ProgressBar IsIndeterminate="{x:Bind ViewModel.IsSearchInProgress, Mode=OneWay}" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="12"
+        <NavigationView Grid.Row="1" Name="navigationView" IsPaneOpen="False" IsSettingsVisible="False" IsBackButtonVisible="Visible" ItemInvoked="navigationView_ItemInvoked">
+            <NavigationView.MenuItems>
+                <NavigationViewItem x:Uid="MainPage_SearchHamburgerMenuItem" x:Name="searchHamburgerMenuItem" Icon="Find" Content="Search" IsSelected="True"  />
+            </NavigationView.MenuItems>
+            <NavigationView.FooterMenuItems>
+                <NavigationViewItem x:Uid="MainPage_OptionsHamburgerMenuItem" x:Name="optionsHamburgerMenuItem" Icon="Setting" Content="Options" />
+                <NavigationViewItem x:Uid="MainPage_AboutHamburgerMenuItem" x:Name="aboutHamburgerMenuItem" Icon="Help" Content="About" />
+            </NavigationView.FooterMenuItems>
+            <Grid>
+                <Frame Name="contentFrame" Navigated="contentFrame_Navigated" />
+                <ProgressBar IsIndeterminate="{x:Bind ViewModel.IsSearchInProgress, Mode=OneWay}" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="12"
                                  Background="Transparent" />
-                </Grid>
-            </SplitView.Content>
-        </SplitView>
+            </Grid>
+        </NavigationView>
     </Grid>
 </Page>

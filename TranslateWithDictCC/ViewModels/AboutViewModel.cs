@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Microsoft.Windows.ApplicationModel.Resources;
+using System;
 using System.Reflection;
 using System.Windows.Input;
-using Windows.ApplicationModel.Resources;
 using Windows.System;
 
 namespace TranslateWithDictCC.ViewModels
@@ -14,8 +14,8 @@ namespace TranslateWithDictCC.ViewModels
 
         public AboutViewModel()
         {
-            ResourceLoader resourceLoader = ResourceLoader.GetForCurrentView();
-            
+            ResourceLoader resourceLoader = new ResourceLoader();
+
             AppVersion = string.Format(resourceLoader.GetString("AboutPage_Version"), GetType().GetTypeInfo().Assembly.GetName().Version);
 
             GiveFeedbackCommand = new RelayCommand(RunGiveFeedbackCommand);

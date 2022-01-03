@@ -1,6 +1,6 @@
 ﻿using TranslateWithDictCC.Models;
 using System;
-using Windows.ApplicationModel.Resources;
+using Microsoft.Windows.ApplicationModel.Resources;
 using System.Windows.Input;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml;
@@ -99,7 +99,7 @@ namespace TranslateWithDictCC.ViewModels
 
         private void UpdateStatusText()
         {
-            ResourceLoader resourceLoader = ResourceLoader.GetForCurrentView();
+            ResourceLoader resourceLoader = new ResourceLoader();
 
             switch (Status)
             {

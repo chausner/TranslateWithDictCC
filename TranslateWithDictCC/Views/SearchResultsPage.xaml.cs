@@ -2,7 +2,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Windows.ApplicationModel.Resources;
+using Microsoft.Windows.ApplicationModel.Resources;
 using Windows.Media.Core;
 using Windows.Networking.Connectivity;
 using Windows.UI.Popups;
@@ -11,6 +11,8 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Microsoft.UI.Xaml.Documents;
+using Windows.Media.Playback;
+using System.IO;
 
 namespace TranslateWithDictCC.Views
 {
@@ -19,26 +21,33 @@ namespace TranslateWithDictCC.Views
         DictionaryEntryViewModel currentlyPlayingAudioRecording;
         bool currentlyPlayingAudioRecordingWord2;
 
+        MediaPlayer mediaPlayer = new MediaPlayer();
         SemaphoreSlim audioPlayerSemaphore = new SemaphoreSlim(1);
 
         public SearchResultsPage()
         {
             InitializeComponent();
 
-            //mediaElement.SetPlaybackSource(MediaSource.CreateFromStream(new MemoryStream().AsRandomAccessStream(), "audio/mpeg"));
+            mediaPlayer.AudioCategory = MediaPlayerAudioCategory.Speech;
+            mediaPlayer.MediaOpened += MediaPlayer_MediaOpened;
+            mediaPlayer.MediaEnded += MediaPlayer_MediaEnded;
+            mediaPlayer.MediaFailed += MediaPlayer_MediaFailed;
+            mediaPlayer.AutoPlay = true;
+
+            mediaPlayer.Source = MediaSource.CreateFromStream(new MemoryStream().AsRandomAccessStream(), "audio/mpeg");
         }
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
-            //mediaElement.Source = null; // for some reason needed to prevent MediaElement from playing when navigating back to a page
+            mediaPlayer.Source = null; // for some reason needed to prevent MediaElement from playing when navigating back to a page
 
-            ((MainPage)((Frame)Window.Current.Content).Content).FocusSearchBox();
+            ((MainPage)((Frame)MainWindow.Instance.Content).Content).FocusSearchBox();
 
             if (e.Parameter != null)
             {
                 DataContext = (SearchResultsViewModel)e.Parameter;
 
-                ResourceLoader resourceLoader = ResourceLoader.GetForCurrentView();
+                ResourceLoader resourceLoader = new ResourceLoader();
 
                 int resultCount = ((SearchResultsViewModel)e.Parameter).DictionaryEntries.Count;
 
@@ -64,8 +73,8 @@ namespace TranslateWithDictCC.Views
                     await PlayAudioRecording(dictionaryEntryViewModel, false);
                     break;
                 case AudioRecordingState.Playing:
-                    //if (currentlyPlayingAudioRecording == dictionaryEntryViewModel)
-                    //    mediaElement.Stop();
+                    if (currentlyPlayingAudioRecording == dictionaryEntryViewModel)
+                        mediaPlayer.Pause();
                     dictionaryEntryViewModel.AudioRecordingState1 = AudioRecordingState.Available;
                     break;
                 case AudioRecordingState.Unavailable:
@@ -84,8 +93,8 @@ namespace TranslateWithDictCC.Views
                     await PlayAudioRecording(dictionaryEntryViewModel, true);
                     break;
                 case AudioRecordingState.Playing:
-                    //if (currentlyPlayingAudioRecording == dictionaryEntryViewModel)
-                    //    mediaElement.Stop();
+                    if (currentlyPlayingAudioRecording == dictionaryEntryViewModel)
+                        mediaPlayer.Pause();
                     dictionaryEntryViewModel.AudioRecordingState2 = AudioRecordingState.Available;
                     break;
                 case AudioRecordingState.Unavailable:
@@ -98,13 +107,17 @@ namespace TranslateWithDictCC.Views
         {
             if (!IsInternetAccessAvailable())
             {
-                ResourceLoader resourceLoader = ResourceLoader.GetForCurrentView();
+                ResourceLoader resourceLoader = new ResourceLoader();
 
-                MessageDialog messageDialog = new MessageDialog(
-                    resourceLoader.GetString("No_Internet_Access_Body"),
-                    resourceLoader.GetString("No_Internet_Access_Title"));
+                ContentDialog contentDialog = new ContentDialog()
+                {
+                    Title = resourceLoader.GetString("No_Internet_Access_Title"),
+                    Content = resourceLoader.GetString("No_Internet_Access_Body"),
+                    CloseButtonText = "OK",
+                    XamlRoot = MainWindow.Instance.Content.XamlRoot
+                };
 
-                await messageDialog.ShowAsync();
+                await contentDialog.ShowAsync();
                 return;
             }
 
@@ -114,7 +127,7 @@ namespace TranslateWithDictCC.Views
 
                 if (currentlyPlayingAudioRecording != null)
                 {
-                    //mediaElement.Stop();
+                    mediaPlayer.Pause();
                     if (currentlyPlayingAudioRecordingWord2)
                         currentlyPlayingAudioRecording.AudioRecordingState2 = AudioRecordingState.Available;
                     else
@@ -129,9 +142,7 @@ namespace TranslateWithDictCC.Views
                     currentlyPlayingAudioRecording = dictionaryEntryViewModel;
                     currentlyPlayingAudioRecordingWord2 = word2;
 
-                    MediaSource mediaSource = MediaSource.CreateFromUri(audioUri);
-
-                    //mediaElement.SetPlaybackSource(mediaSource);
+                    mediaPlayer.SetUriSource(audioUri);
                 }
                 else
                 {
@@ -143,13 +154,17 @@ namespace TranslateWithDictCC.Views
             }
             catch
             {
-                ResourceLoader resourceLoader = ResourceLoader.GetForCurrentView();
+                ResourceLoader resourceLoader = new ResourceLoader();
 
-                MessageDialog messageDialog = new MessageDialog(
-                    resourceLoader.GetString("Error_Retrieving_Audio_Recording_Body"), 
-                    resourceLoader.GetString("Error_Retrieving_Audio_Recording_Title"));
+                ContentDialog contentDialog = new ContentDialog()
+                {
+                    Title = resourceLoader.GetString("Error_Retrieving_Audio_Recording_Title"),
+                    Content = resourceLoader.GetString("Error_Retrieving_Audio_Recording_Body"),
+                    CloseButtonText = "OK",
+                    XamlRoot = MainWindow.Instance.Content.XamlRoot
+                };
 
-                await messageDialog.ShowAsync();
+                await contentDialog.ShowAsync();
             }
             finally
             {
@@ -159,13 +174,17 @@ namespace TranslateWithDictCC.Views
 
         private async Task ShowAudioRecordingNotAvailableMessage()
         {
-            ResourceLoader resourceLoader = ResourceLoader.GetForCurrentView();
+            ResourceLoader resourceLoader = new ResourceLoader();
 
-            MessageDialog messageDialog = new MessageDialog(
-                resourceLoader.GetString("Audio_Recording_Not_Available_Body"),
-                resourceLoader.GetString("Audio_Recording_Not_Available_Title"));
+            ContentDialog contentDialog = new ContentDialog()
+            {
+                Title = resourceLoader.GetString("Audio_Recording_Not_Available_Title"),
+                Content = resourceLoader.GetString("Audio_Recording_Not_Available_Body"),
+                CloseButtonText = "OK",
+                XamlRoot = MainWindow.Instance.Content.XamlRoot
+            };
 
-            await messageDialog.ShowAsync();
+            await contentDialog.ShowAsync();
         }
 
         readonly SolidColorBrush altBackgroundThemeBrush = (SolidColorBrush)Application.Current.Resources["DictionaryEntryAltBackgroundThemeBrush"];
@@ -225,37 +244,46 @@ namespace TranslateWithDictCC.Views
             resultCountAnimation.Seek(TimeSpan.Zero);
         }
 
-        /*private void mediaElement_MediaOpened(object sender, RoutedEventArgs e)
+        private void MediaPlayer_MediaOpened(MediaPlayer sender, object args)
         {
-            if (currentlyPlayingAudioRecording != null)
-                if (currentlyPlayingAudioRecordingWord2)
-                    currentlyPlayingAudioRecording.AudioRecordingState2 = AudioRecordingState.Playing;
-                else
-                    currentlyPlayingAudioRecording.AudioRecordingState1 = AudioRecordingState.Playing;
+            DispatcherQueue.TryEnqueue(() =>
+            {
+                if (currentlyPlayingAudioRecording != null)
+                    if (currentlyPlayingAudioRecordingWord2)
+                        currentlyPlayingAudioRecording.AudioRecordingState2 = AudioRecordingState.Playing;
+                    else
+                        currentlyPlayingAudioRecording.AudioRecordingState1 = AudioRecordingState.Playing;
+            });
         }
 
-        private void mediaElement_MediaEnded(object sender, RoutedEventArgs e)
+        private void MediaPlayer_MediaEnded(MediaPlayer sender, object args)
         {
-            if (currentlyPlayingAudioRecording != null)
+            DispatcherQueue.TryEnqueue(() =>
             {
-                if (currentlyPlayingAudioRecordingWord2)
-                    currentlyPlayingAudioRecording.AudioRecordingState2 = AudioRecordingState.Available;
-                else
-                    currentlyPlayingAudioRecording.AudioRecordingState1 = AudioRecordingState.Available;
-                currentlyPlayingAudioRecording = null;
-            }
+                if (currentlyPlayingAudioRecording != null)
+                {
+                    if (currentlyPlayingAudioRecordingWord2)
+                        currentlyPlayingAudioRecording.AudioRecordingState2 = AudioRecordingState.Available;
+                    else
+                        currentlyPlayingAudioRecording.AudioRecordingState1 = AudioRecordingState.Available;
+                    currentlyPlayingAudioRecording = null;
+                }
+            });
         }
 
-        private void mediaElement_MediaFailed(object sender, ExceptionRoutedEventArgs e)
+        private void MediaPlayer_MediaFailed(MediaPlayer sender, MediaPlayerFailedEventArgs args)
         {
-            if (currentlyPlayingAudioRecording != null)
+            DispatcherQueue.TryEnqueue(() =>
             {
-                if (currentlyPlayingAudioRecordingWord2)
-                    currentlyPlayingAudioRecording.AudioRecordingState2 = AudioRecordingState.Unavailable;
-                else
-                    currentlyPlayingAudioRecording.AudioRecordingState1 = AudioRecordingState.Unavailable;
-                currentlyPlayingAudioRecording = null;
-            }
-        }*/
+                if (currentlyPlayingAudioRecording != null)
+                {
+                    if (currentlyPlayingAudioRecordingWord2)
+                        currentlyPlayingAudioRecording.AudioRecordingState2 = AudioRecordingState.Unavailable;
+                    else
+                        currentlyPlayingAudioRecording.AudioRecordingState1 = AudioRecordingState.Unavailable;
+                    currentlyPlayingAudioRecording = null;
+                }
+            });
+        }
     }
 }

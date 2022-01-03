@@ -3,13 +3,14 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using TranslateWithDictCC.ViewModels;
-using Windows.ApplicationModel.Resources;
+using Microsoft.Windows.ApplicationModel.Resources;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Popups;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
+using Microsoft.UI.Xaml.Media.Animation;
 
 namespace TranslateWithDictCC.Views
 {
@@ -29,8 +30,8 @@ namespace TranslateWithDictCC.Views
 
             // SystemNavigationManager.GetForCurrentView().BackRequested += SystemNavigationManager_BackRequested;
 
-            MainViewModel.Instance.NavigateToPageCommand = new RelayCommand<object>(NavigateToPage);
-            MainViewModel.Instance.GoBackToPageCommand = new RelayCommand<string>(GoBackToPage);
+            MainViewModel.Instance.NavigateToPageCommand = new RelayCommand<object>(o => NavigateToPage(o, null));
+            MainViewModel.Instance.GoBackToPageCommand = new RelayCommand<string>(o => GoBackToPage(o, null));
 
             MainViewModel.Instance.PropertyChanged += MainViewModel_PropertyChanged;
 
@@ -95,23 +96,23 @@ namespace TranslateWithDictCC.Views
             }
         }*/
 
-        private void GoBackToPage(string pageType)
+        private void GoBackToPage(string pageType, NavigationTransitionInfo transitionInfo)
         {
-            GoBackToPage(typeof(SearchResultsPage));
+            GoBackToPage(typeof(SearchResultsPage), transitionInfo);
         }
 
-        private void GoBackToPage(Type pageType)
+        private void GoBackToPage(Type pageType, NavigationTransitionInfo transitionInfo)
         {
             while (contentFrame.SourcePageType != pageType)
             {
                 if (contentFrame.CanGoBack)
-                    contentFrame.GoBack();
+                    contentFrame.GoBack(transitionInfo);
                 else
-                    contentFrame.Navigate(pageType);
+                    contentFrame.Navigate(pageType, null, transitionInfo);
             }
         }
 
-        private void NavigateToPage(object pageTypeAndParameter)
+        private void NavigateToPage(object pageTypeAndParameter, NavigationTransitionInfo transitionInfo)
         {           
             string pageType;
             object parameter;
@@ -128,11 +129,11 @@ namespace TranslateWithDictCC.Views
             }
 
             if (pageType == "SearchResultsPage")
-                contentFrame.Navigate(typeof(SearchResultsPage), parameter);
+                contentFrame.Navigate(typeof(SearchResultsPage), parameter, transitionInfo);
             else if (pageType == "SettingsPage")
-                contentFrame.NavigateIfNeeded(typeof(SettingsPage), parameter);
+                contentFrame.NavigateIfNeeded(typeof(SettingsPage), parameter, transitionInfo);
             else if (pageType == "AboutPage")
-                contentFrame.NavigateIfNeeded(typeof(AboutPage), parameter);
+                contentFrame.NavigateIfNeeded(typeof(AboutPage), parameter, transitionInfo);
         }
 
         public void FocusSearchBox()
@@ -180,13 +181,17 @@ namespace TranslateWithDictCC.Views
             }
             catch
             {
-                ResourceLoader resourceLoader = ResourceLoader.GetForCurrentView();
+                ResourceLoader resourceLoader = new ResourceLoader();
 
-                MessageDialog messageDialog = new MessageDialog(
-                    resourceLoader.GetString("Error_Performing_Query_Body"), 
-                    resourceLoader.GetString("Error_Performing_Query_Title"));
+                ContentDialog contentDialog = new ContentDialog()
+                {
+                    Title = resourceLoader.GetString("Error_Performing_Query_Title"),
+                    Content = resourceLoader.GetString("Error_Performing_Query_Body"),
+                    CloseButtonText = "OK",
+                    XamlRoot = MainWindow.Instance.Content.XamlRoot
+                };
 
-                await messageDialog.ShowAsync();
+                await contentDialog.ShowAsync();
             }
         }
 
@@ -198,13 +203,13 @@ namespace TranslateWithDictCC.Views
 
         private void hamburgerButton_Click(object sender, RoutedEventArgs e)
         {
-            splitView.IsPaneOpen = !splitView.IsPaneOpen;
+            navigationView.IsPaneOpen = !navigationView.IsPaneOpen;
         }
 
         private void contentFrame_Navigated(object sender, NavigationEventArgs e)
         {
-            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
-                contentFrame.CanGoBack ? AppViewBackButtonVisibility.Visible : AppViewBackButtonVisibility.Collapsed;
+            //SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
+            //    contentFrame.CanGoBack ? AppViewBackButtonVisibility.Visible : AppViewBackButtonVisibility.Collapsed;
 
             if (e.SourcePageType == typeof(SearchResultsPage))
             {
@@ -256,27 +261,6 @@ namespace TranslateWithDictCC.Views
             }
         }
 
-        /*private void searchHamburgerMenuItem_CheckRequested(object sender, EventArgs e)
-        {
-            splitView.IsPaneOpen = false;
-
-            GoBackToPage(typeof(SearchResultsPage));
-        }
-
-        private void optionsHamburgerMenuItem_CheckRequested(object sender, EventArgs e)
-        {
-            splitView.IsPaneOpen = false;
-
-            NavigateToPage("SettingsPage");
-        }
-
-        private void aboutHamburgerMenuItem_CheckRequested(object sender, EventArgs e)
-        {
-            splitView.IsPaneOpen = false;
-
-            NavigateToPage("AboutPage");
-        }*/
-
         private async void SwitchDirection_Click(object sender, RoutedEventArgs e)
         {
             MainViewModel.Instance.SwitchDirectionOfTranslationCommand.Execute(null);
@@ -320,6 +304,18 @@ namespace TranslateWithDictCC.Views
         {
             if (!directionComboBox.IsDropDownOpen)
                 directionComboBox.Tag = directionComboBox.ActualWidth;
+        }
+
+        private void navigationView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
+        {
+            navigationView.IsPaneOpen = false;
+
+            if (args.InvokedItemContainer == searchHamburgerMenuItem)
+                GoBackToPage(typeof(SearchResultsPage), args.RecommendedNavigationTransitionInfo);
+            else if (args.InvokedItemContainer == optionsHamburgerMenuItem)
+                NavigateToPage("SettingsPage", args.RecommendedNavigationTransitionInfo);
+            else if (args.InvokedItemContainer == aboutHamburgerMenuItem)
+                NavigateToPage("AboutPage", args.RecommendedNavigationTransitionInfo);
         }
     }
 }

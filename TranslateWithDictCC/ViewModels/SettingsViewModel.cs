@@ -5,12 +5,13 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Windows.ApplicationModel.Resources;
+using Microsoft.Windows.ApplicationModel.Resources;
 using Windows.Globalization.DateTimeFormatting;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI.Popups;
 using System.Windows.Input;
+using Microsoft.UI.Xaml.Controls;
 
 namespace TranslateWithDictCC.ViewModels
 {
@@ -25,7 +26,7 @@ namespace TranslateWithDictCC.ViewModels
         Task importQueueProcessTask;
         CancellationTokenSource cancellationTokenSource;
 
-        ResourceLoader resourceLoader = ResourceLoader.GetForViewIndependentUse();
+        ResourceLoader resourceLoader = new ResourceLoader();
 
         private bool IsImportInProgress
         {
@@ -57,6 +58,9 @@ namespace TranslateWithDictCC.ViewModels
             fileOpenPicker.FileTypeFilter.Add(".txt");
             fileOpenPicker.FileTypeFilter.Add(".zip");
 
+            IntPtr hwnd = WinRT.Interop.WindowNative.GetWindowHandle(MainWindow.Instance);
+            WinRT.Interop.InitializeWithWindow.Initialize(fileOpenPicker, hwnd);
+
             IReadOnlyList<StorageFile> wordlistFiles = await fileOpenPicker.PickMultipleFilesAsync();
 
             if (wordlistFiles == null)
@@ -74,11 +78,15 @@ namespace TranslateWithDictCC.ViewModels
                 {
                     wordlistReader.Dispose();
 
-                    MessageDialog messageDialog = new MessageDialog(
-                        string.Format(resourceLoader.GetString("Import_Header_Error_Body"), wordlistFile.Name),
-                        resourceLoader.GetString("Import_Header_Error_Title"));
+                    ContentDialog contentDialog = new ContentDialog()
+                    {
+                        Title = resourceLoader.GetString("Import_Header_Error_Title"),
+                        Content = string.Format(resourceLoader.GetString("Import_Header_Error_Body"), wordlistFile.Name),
+                        CloseButtonText = "OK",
+                        XamlRoot = MainWindow.Instance.Content.XamlRoot
+                    };
 
-                    await messageDialog.ShowAsync();
+                    await contentDialog.ShowAsync();
                     continue;
                 }
 
@@ -120,15 +128,17 @@ namespace TranslateWithDictCC.ViewModels
             content += string.Format(resourceLoader.GetString("Import_Conflict_Body3"), 
                 conflictingDictionary.OriginLanguage, conflictingDictionary.DestinationLanguage, dateTimeFormatter.Format(wordlistReader.CreationDate));
 
-            MessageDialog messageDialog = new MessageDialog(content, resourceLoader.GetString("Import_Conflict_Title"));
+            ContentDialog contentDialog = new ContentDialog()
+            {
+                Title = resourceLoader.GetString("Import_Conflict_Title"),
+                Content = content,
+                PrimaryButtonText = resourceLoader.GetString("Import_Conflict_Replace"),
+                CloseButtonText = resourceLoader.GetString("Import_Conflict_Skip"),
+                DefaultButton = ContentDialogButton.Primary,
+                XamlRoot = MainWindow.Instance.Content.XamlRoot
+            };
 
-            messageDialog.Commands.Add(new UICommand(resourceLoader.GetString("Import_Conflict_Replace")));
-            messageDialog.Commands.Add(new UICommand(resourceLoader.GetString("Import_Conflict_Skip")));
-
-            messageDialog.DefaultCommandIndex = 0;
-            messageDialog.CancelCommandIndex = 1;
-
-            bool replace = await messageDialog.ShowAsync() == messageDialog.Commands[0];
+            bool replace = await contentDialog.ShowAsync() == ContentDialogResult.Primary;
 
             if (replace)
             {
@@ -167,11 +177,15 @@ namespace TranslateWithDictCC.ViewModels
                 }
                 catch
                 {
-                    MessageDialog messageDialog = new MessageDialog(
-                        string.Format(resourceLoader.GetString("Import_Error_Body"), dictionaryViewModel.OriginLanguage, dictionaryViewModel.DestinationLanguage), 
-                        resourceLoader.GetString("Import_Error_Title"));
+                    ContentDialog contentDialog = new ContentDialog()
+                    {
+                        Title = resourceLoader.GetString("Import_Error_Title"),
+                        Content = string.Format(resourceLoader.GetString("Import_Error_Body"), dictionaryViewModel.OriginLanguage, dictionaryViewModel.DestinationLanguage),
+                        CloseButtonText = "OK",
+                        XamlRoot = MainWindow.Instance.Content.XamlRoot
+                    };
 
-                    await messageDialog.ShowAsync();     
+                    await contentDialog.ShowAsync();
 
                     Dictionaries.Remove(dictionaryViewModel);
                     continue;
@@ -193,26 +207,31 @@ namespace TranslateWithDictCC.ViewModels
             if (dictionaryViewModel.Status == DictionaryStatus.Installed)
                 if (IsImportInProgress)
                 {
-                    MessageDialog messageDialog = new MessageDialog(
-                        resourceLoader.GetString("Import_In_Progress_Body"),
-                        resourceLoader.GetString("Import_In_Progress_Title"));
+                    ContentDialog contentDialog = new ContentDialog()
+                    {
+                        Title = resourceLoader.GetString("Import_In_Progress_Title"),
+                        Content = resourceLoader.GetString("Import_In_Progress_Body"),
+                        CloseButtonText = "OK",
+                        XamlRoot = MainWindow.Instance.Content.XamlRoot
+                    };
 
-                    await messageDialog.ShowAsync();
+                    await contentDialog.ShowAsync();
                     return false;
                 }
                 else if (!noConfirmation)
                 {
-                    MessageDialog messageDialog = new MessageDialog(string.Format(
+                    ContentDialog contentDialog = new ContentDialog()
+                    {
+                        Content = string.Format(
                            resourceLoader.GetString("Remove_Dictionary_Confirmation_Body"),
-                           dictionaryViewModel.OriginLanguage, dictionaryViewModel.DestinationLanguage));
+                           dictionaryViewModel.OriginLanguage, dictionaryViewModel.DestinationLanguage),
+                        PrimaryButtonText = resourceLoader.GetString("Remove_Dictionary_Confirmation_Remove"),
+                        CloseButtonText = resourceLoader.GetString("Remove_Dictionary_Confirmation_Cancel"),
+                        DefaultButton = ContentDialogButton.Primary,
+                        XamlRoot = MainWindow.Instance.Content.XamlRoot
+                    };
 
-                    messageDialog.Commands.Add(new UICommand(resourceLoader.GetString("Remove_Dictionary_Confirmation_Remove")));
-                    messageDialog.Commands.Add(new UICommand(resourceLoader.GetString("Remove_Dictionary_Confirmation_Cancel")));
-
-                    messageDialog.DefaultCommandIndex = 0;
-                    messageDialog.CancelCommandIndex = 1;
-
-                    if (await messageDialog.ShowAsync() != messageDialog.Commands[0])
+                    if (await contentDialog.ShowAsync() != ContentDialogResult.Primary)
                         return false;
                 }
 
