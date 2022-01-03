@@ -33,8 +33,7 @@
                 <TextBlock Grid.Column="2" VerticalAlignment="Center" Text="{x:Bind StatusText, Mode=OneWay}" />
                 <ProgressBar Grid.Row="0" Grid.ColumnSpan="3" VerticalAlignment="Bottom"
                              Minimum="0.0" Maximum="1.0" Value="{x:Bind ImportProgress, Mode=OneWay}" Visibility="{x:Bind ProgressBarVisibility, Mode=OneWay}" />
-                <Button Grid.Column="3" Grid.RowSpan="2" VerticalAlignment="Center" FontFamily="Segoe MDL2 Assets" Content="&#xE711;" Width="48" Height="48" Margin="8,0,0,0"
-                        Style="{StaticResource FlatButtonStyle}" Background="Transparent"
+                <AppBarButton Grid.Column="3" Grid.RowSpan="2" VerticalAlignment="Center" Width="48" Height="48" Margin="8,0,0,0" Icon="Delete"
                         ToolTipService.ToolTip="Remove dictionary" Command="{x:Bind RemoveDictionaryCommand}" /> <!-- x:Uid="SettingsPage_RemoveDictionaryButton" -->
             </Grid>
         </DataTemplate>
@@ -59,15 +58,10 @@
                 </StackPanel>
                 <ProgressBar Grid.Row="0" Grid.ColumnSpan="3" VerticalAlignment="Bottom"
                              Minimum="0.0" Maximum="1.0" Value="{x:Bind ImportProgress, Mode=OneWay}" Visibility="{x:Bind ProgressBarVisibility, Mode=OneWay}" />
-                <Button Grid.Column="3" Grid.RowSpan="2" VerticalAlignment="Center" FontFamily="Segoe MDL2 Assets" Content="&#xE711;" Width="48" Height="48" Margin="8,0,0,0"
-                        Style="{StaticResource FlatButtonStyle}" Background="Transparent"
+                <AppBarButton Grid.Column="3" Grid.RowSpan="2" VerticalAlignment="Center" Width="48" Height="48" Margin="8,0,0,0" Icon="Delete"
                         ToolTipService.ToolTip="Remove dictionary" Command="{x:Bind RemoveDictionaryCommand}" /> <!-- x:Uid="SettingsPage_RemoveDictionaryButton" -->
             </Grid>
         </DataTemplate>
-        <Style x:Key="ListViewItemStyle" TargetType="ListViewItem">
-            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-            <Setter Property="VerticalContentAlignment" Value="Center" />
-        </Style>
     </Page.Resources>
     <ScrollViewer>
        <VisualStateManager.VisualStateGroups>
@@ -91,7 +85,7 @@
             <TextBlock x:Uid="SettingsPage_AcquireDictionariesTextBlock" TextWrapping="WrapWholeWords" Margin="0,0,0,8">Follow the link below to acquire dictionaries from dict.cc. Then, click on "Import dictionary" and select the downloaded files to start the import process.</TextBlock>
             <HyperlinkButton x:Uid="SettingsPage_GetDictionariesLink" NavigateUri="http://www1.dict.cc/translation_file_request.php?l=e" Margin="0,0,0,16">Get dictionaries from dict.cc</HyperlinkButton>
             <Button x:Uid="SettingsPage_ImportDictionaryButton" Margin="0,0,0,16" Command="{x:Bind ViewModel.ImportDictionaryCommand}">Import dictionary</Button>
-            <ListView Name="dictionariesListView" ItemTemplate="{StaticResource LanguageItemDataTemplateCompact}" ItemContainerStyle="{StaticResource ListViewItemStyle}"
+            <ListView Name="dictionariesListView" ItemTemplate="{StaticResource LanguageItemDataTemplateCompact}" 
                       HorizontalContentAlignment="Stretch" ItemsSource="{x:Bind ViewModel.Dictionaries}" />
         </StackPanel>
     </ScrollViewer>
