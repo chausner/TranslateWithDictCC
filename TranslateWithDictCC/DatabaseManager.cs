@@ -160,9 +160,6 @@ namespace TranslateWithDictCC
                     // run on the thread pool for better UI responsiveness
                     await Task.Run(delegate ()
                     {
-                        foreach (DictionaryEntry entry in entries)
-                            PreprocessDictionaryEntry(entry);
-
                         using (DbCommand command = connection.CreateCommand())
                         {
                             command.CommandText = $"INSERT INTO {tableName}(Word1, Word2, WordClasses) VALUES (@Word1, @Word2, @WordClasses)";
@@ -217,16 +214,6 @@ namespace TranslateWithDictCC
             return dictionary;
         }
 
-        private void PreprocessDictionaryEntry(DictionaryEntry entry)
-        {
-            // replace two or more spaces in words by a single space
-            if (entry.Word1.Contains("  "))
-                entry.Word1 = Regex.Replace(entry.Word1, @"\s\s+", " ");
-
-            if (entry.Word2.Contains("  "))
-                entry.Word2 = Regex.Replace(entry.Word2, @"\s\s+", " ");
-        }
-
         public Task<List<DictionaryEntry>> QueryEntries(Dictionary dictionary, string searchQuery, bool reverseSearch)
         {
             return QueryEntries(dictionary, searchQuery, reverseSearch, -1);
@@ -245,17 +232,14 @@ namespace TranslateWithDictCC
 
             return ExecuteReader(commandText, dataReader =>
             {
-                DictionaryEntry entry = new DictionaryEntry();
-
-                entry.Word1 = dataReader.GetString(0);
-                entry.Word2 = dataReader.GetString(1);
-                entry.WordClasses = dataReader.GetValue(2) as string;
-
+                string word1 = dataReader.GetString(0);
+                string word2 = dataReader.GetString(1);
+                string wordClasses = dataReader.GetValue(2) as string;
                 string[] offsets = dataReader.GetString(3).Split(' ');
 
                 TextSpan[] matchSpans = new TextSpan[offsets.Length / 4];
 
-                string word = reverseSearch ? entry.Word2 : entry.Word1;
+                string word = reverseSearch ? word2 : word1;
 
                 int[] byteCounts = null;
 
@@ -285,9 +269,7 @@ namespace TranslateWithDictCC
                     matchSpans[i] = new TextSpan(offset, length);
                 }
 
-                entry.MatchSpans = matchSpans;
-
-                return entry;
+                return new DictionaryEntry { Word1 = word1, Word2 = word2, WordClasses = wordClasses, MatchSpans = matchSpans };
             });
         }
 

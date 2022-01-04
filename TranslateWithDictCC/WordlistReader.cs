@@ -95,13 +95,21 @@ namespace TranslateWithDictCC
                 if (s.Length < 3 || s.Length > 4)
                     continue;
 
-                DictionaryEntry entry = new DictionaryEntry();
+                string word1 = WebUtility.HtmlDecode(s[0]);
+                string word2 = WebUtility.HtmlDecode(s[1]);
 
-                entry.Word1 = WebUtility.HtmlDecode(s[0]);
-                entry.Word2 = WebUtility.HtmlDecode(s[1]);
+                // replace two or more spaces in words by a single space
+                if (word1.Contains("  "))
+                    word1 = Regex.Replace(word1, @"\s\s+", " ");
+                if (word2.Contains("  "))
+                    word2 = Regex.Replace(word2, @"\s\s+", " ");
 
-                if (s[2].Length != 0)
-                    entry.WordClasses = s[2];
+                DictionaryEntry entry = new DictionaryEntry
+                {
+                    Word1 = word1,
+                    Word2 = word2,
+                    WordClasses = s[2].Length != 0 ? s[2] : null
+                };
 
                 entries.Add(entry);
             }
