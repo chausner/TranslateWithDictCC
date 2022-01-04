@@ -17,6 +17,14 @@ namespace TranslateWithDictCC.Views
 {
     public sealed partial class SearchResultsPage : Page
     {
+        SearchResultsViewModel viewModel;
+
+        SearchResultsViewModel ViewModel
+        {
+            get => viewModel;
+            set { viewModel = value; Bindings.Update(); }
+        }
+
         DictionaryEntryViewModel currentlyPlayingAudioRecording;
         bool currentlyPlayingAudioRecordingWord2;
 
@@ -44,16 +52,16 @@ namespace TranslateWithDictCC.Views
 
             if (e.Parameter != null)
             {
-                DataContext = (SearchResultsViewModel)e.Parameter;
+                ViewModel = (SearchResultsViewModel)e.Parameter;
 
                 ResourceLoader resourceLoader = new ResourceLoader();
 
-                int resultCount = ((SearchResultsViewModel)e.Parameter).DictionaryEntries.Count;
+                int resultCount = ViewModel.DictionaryEntries.Count;
 
                 if (resultCount == 1)
                     statusTextBlock.Text = resourceLoader.GetString("SearchResultsPage_SingleResult");
                 else
-                    statusTextBlock.Text = string.Format(resourceLoader.GetString("SearchResultsPage_ResultCount"), ((SearchResultsViewModel)e.Parameter).DictionaryEntries.Count);
+                    statusTextBlock.Text = string.Format(resourceLoader.GetString("SearchResultsPage_ResultCount"), ViewModel.DictionaryEntries.Count);
 
                 resultCountAnimation.Stop();
                 resultCountAnimation.Seek(TimeSpan.Zero);

@@ -17,10 +17,9 @@
                     <ColumnDefinition />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <Button Grid.Column="0" Width="32" Height="32" Style="{StaticResource FlatButtonStyle}" 
-                        VerticalAlignment="Center" Content="{x:Bind GetAudioRecordingButtonText(AudioRecordingState1), Mode=OneWay}" 
-                        FontFamily="Segoe MDL2 Assets" FontSize="15" Background="Transparent" Margin="0,0,4,0" Padding="0"
-                        Visibility="{Binding Source={StaticResource settings}, Path=ShowAudioRecordingButton}" 
+                <AppBarButton Grid.Column="0" LabelPosition="Collapsed" Width="42" 
+                        VerticalAlignment="Center" Icon="{x:Bind GetAudioRecordingButtonIcon(AudioRecordingState1), Mode=OneWay}" 
+                        Margin="-4,0,4,0" Visibility="{Binding Source={StaticResource settings}, Path=ShowAudioRecordingButton}" 
                         Click="audioRecordingButton1_Click" />
                 <Grid Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="0,8,8,8">
                     <Grid.ColumnDefinitions>
@@ -37,10 +36,9 @@
                     </Grid>
                 </Grid>             
                 <RichTextBlock Grid.Column="2" VerticalAlignment="Center" Margin="0,8,0,8" />
-                <Button Grid.Column="3" Width="32" Height="32" Style="{StaticResource FlatButtonStyle}"
-                        VerticalAlignment="Center" Content="{x:Bind GetAudioRecordingButtonText(AudioRecordingState2), Mode=OneWay}" 
-                        FontFamily="Segoe MDL2 Assets" FontSize="15" Background="Transparent" Margin="0,0,4,0" Padding="0"
-                        Visibility="{Binding Source={StaticResource settings}, Path=ShowAudioRecordingButton}" 
+                <AppBarButton Grid.Column="3" LabelPosition="Collapsed" Width="42" 
+                        VerticalAlignment="Center" Icon="{x:Bind GetAudioRecordingButtonIcon(AudioRecordingState2), Mode=OneWay}" 
+                        Margin="-4,0,4,0" Visibility="{Binding Source={StaticResource settings}, Path=ShowAudioRecordingButton}" 
                         Click="audioRecordingButton2_Click" />
             </Grid>
         </DataTemplate>
@@ -69,7 +67,7 @@
         </Storyboard>
     </Page.Resources>
     <Grid>
-        <ListView ItemsSource="{Binding DictionaryEntries}" ItemTemplate="{StaticResource DictionaryEntryDataTemplate}"
+        <ListView ItemsSource="{x:Bind ViewModel.DictionaryEntries}" ItemTemplate="{StaticResource DictionaryEntryDataTemplate}"
                   HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" ContainerContentChanging="ListView_ContainerContentChanging" ItemContainerStyle="{StaticResource ListViewItemStyle}"
                   ShowsScrollingPlaceholders="False" />
 

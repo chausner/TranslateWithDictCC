@@ -2,6 +2,7 @@
 using System;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Documents;
+using Microsoft.UI.Xaml.Controls;
 
 namespace TranslateWithDictCC.ViewModels
 {
@@ -66,14 +67,14 @@ namespace TranslateWithDictCC.ViewModels
             word2 = WordHighlighting.GenerateRichTextBlock(reverseSearch ? DictionaryEntry.Word1 : DictionaryEntry.Word2, SearchContext.SearchQuery, DictionaryEntry.MatchSpans, false);
         }        
 
-        public char GetAudioRecordingButtonText(AudioRecordingState state)
+        public IconElement GetAudioRecordingButtonIcon(AudioRecordingState state)
         {
             return state switch
             {
-                AudioRecordingState.Available => (char)0xE767,
-                AudioRecordingState.Playing => (char)0xE769,// 0xE71A
-                AudioRecordingState.Unavailable => (char)0xE74F,
-                _ => throw new ArgumentException(),
+                AudioRecordingState.Available => new IconSourceElement() { IconSource = new SymbolIconSource() { Symbol = Symbol.Volume } },
+                AudioRecordingState.Playing => new IconSourceElement() { IconSource = new SymbolIconSource() { Symbol = Symbol.Pause } }, // Symbol.Stop
+                AudioRecordingState.Unavailable => new IconSourceElement() { IconSource = new SymbolIconSource() { Symbol = Symbol.Mute } },
+                _ => throw new ArgumentException()
             };
         }
 

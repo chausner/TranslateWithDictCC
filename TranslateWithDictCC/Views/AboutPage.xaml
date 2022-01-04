@@ -19,10 +19,10 @@
                 <StackPanel Grid.Column="1">
                     <TextBlock x:Uid="AboutPage_DescriptionTextBlock" Text="Unofficial app to search and manage offline dictionaries downloaded from dict.cc." Margin="0,0,0,8" TextWrapping="WrapWholeWords" />
                     <TextBlock Text="{x:Bind ViewModel.AppVersion}" Margin="0,0,0,8" />
-                    <TextBlock Text="Copyright © Christoph Hausner 2016" Margin="0,0,0,8" />
+                    <TextBlock Text="Copyright © Christoph Hausner 2016, 2022" Margin="0,0,0,8" />
                 </StackPanel>
             </Grid>            
-            <HyperlinkButton x:Uid="AboutPage_PrivacyStatementLink" Content="Privacy Statement" NavigateUri="http://www.dict.cc/?s=about:&amp;l=e" Margin="0,0,0,16" />
+            <HyperlinkButton x:Uid="AboutPage_PrivacyStatementLink" Content="Privacy Statement" NavigateUri="http://www.dict.cc/?s=about:&amp;l=e" Margin="-12,8,0,16" />
             <Button x:Uid="AboutPage_GiveFeedbackButton" Content="Give feedback" Margin="0,0,0,32" Command="{x:Bind ViewModel.GiveFeedbackCommand}" />
 
             <TextBlock x:Uid="AboutPage_KeyboardShortcutsTextBlock" Style="{StaticResource TitleTextBlockStyle}" Text="Keyboard shortcuts" Margin="0,0,0,16" />
@@ -44,7 +44,7 @@
             <TextBlock x:Uid="AboutPage_LicensesTextBlock" Style="{StaticResource TitleTextBlockStyle}" Text="Licenses" Margin="0,0,0,16" />
             <TextBlock>GoSquared Flag Icon Set</TextBlock>
             <TextBlock>Copyright (c) 2015 Go Squared Ltd. http://www.gosquared.com/</TextBlock>
-            <HyperlinkButton x:Uid="AboutPage_MITLicenceLink" Content="MIT Licence" NavigateUri="https://github.com/gosquared/flags/blob/master/LICENSE.txt" />
+            <HyperlinkButton x:Uid="AboutPage_MITLicenceLink" Content="MIT Licence" NavigateUri="https://github.com/gosquared/flags/blob/master/LICENSE.txt" Margin="-12,8,0,0" />
         </StackPanel>
     </ScrollViewer>
 </Page>
