@@ -141,7 +141,7 @@ namespace TranslateWithDictCC.ViewModels
 
             if (replace)
             {
-                bool removedSuccessfully = await RemoveDictionary(conflictingDictionary, true);
+                bool removedSuccessfully = await RemoveDictionary(conflictingDictionary);
 
                 // as long as another import is still in process, we cannot replace a dictionary
                 if (!removedSuccessfully)
@@ -201,39 +201,34 @@ namespace TranslateWithDictCC.ViewModels
             }
         }
 
-        public async Task<bool> RemoveDictionary(DictionaryViewModel dictionaryViewModel, bool noConfirmation)
+        public async Task<bool> RemoveDictionary(DictionaryViewModel dictionaryViewModel)
         {
-            if (dictionaryViewModel.Status == DictionaryStatus.Installed)
-                if (IsImportInProgress)
+            if (dictionaryViewModel.Status != DictionaryStatus.Installed)
+                return false;
+
+            if (IsImportInProgress)
+            {
+                ContentDialog contentDialog = new ContentDialog()
                 {
-                    ContentDialog contentDialog = new ContentDialog()
-                    {
-                        Title = resourceLoader.GetString("Import_In_Progress_Title"),
-                        Content = resourceLoader.GetString("Import_In_Progress_Body"),
-                        CloseButtonText = "OK",
-                        XamlRoot = MainWindow.Instance.Content.XamlRoot
-                    };
+                    Title = resourceLoader.GetString("Import_In_Progress_Title"),
+                    Content = resourceLoader.GetString("Import_In_Progress_Body"),
+                    CloseButtonText = "OK",
+                    XamlRoot = MainWindow.Instance.Content.XamlRoot
+                };
 
-                    await contentDialog.ShowAsync();
-                    return false;
-                }
-                else if (!noConfirmation)
-                {
-                    ContentDialog contentDialog = new ContentDialog()
-                    {
-                        Content = string.Format(
-                           resourceLoader.GetString("Remove_Dictionary_Confirmation_Body"),
-                           dictionaryViewModel.OriginLanguage, dictionaryViewModel.DestinationLanguage),
-                        PrimaryButtonText = resourceLoader.GetString("Remove_Dictionary_Confirmation_Remove"),
-                        CloseButtonText = resourceLoader.GetString("Remove_Dictionary_Confirmation_Cancel"),
-                        DefaultButton = ContentDialogButton.Primary,
-                        XamlRoot = MainWindow.Instance.Content.XamlRoot
-                    };
+                await contentDialog.ShowAsync();
+                return false;
+            }
 
-                    if (await contentDialog.ShowAsync() != ContentDialogResult.Primary)
-                        return false;
-                }
+            await DatabaseManager.Instance.DeleteDictionary(dictionaryViewModel.Dictionary);
+            Dictionaries.Remove(dictionaryViewModel);
+            await MainViewModel.Instance.UpdateDirection();
 
+            return true;
+        }
+
+        public void AbortImport(DictionaryViewModel dictionaryViewModel)
+        {
             switch (dictionaryViewModel.Status)
             {
                 case DictionaryStatus.Queued:
@@ -242,14 +237,7 @@ namespace TranslateWithDictCC.ViewModels
                 case DictionaryStatus.Installing:
                     cancellationTokenSource.Cancel();
                     break;
-                case DictionaryStatus.Installed:
-                    await DatabaseManager.Instance.DeleteDictionary(dictionaryViewModel.Dictionary);
-                    Dictionaries.Remove(dictionaryViewModel);
-                    await MainViewModel.Instance.UpdateDirection();
-                    break;
             }
-
-            return true;
         }
     }
 }

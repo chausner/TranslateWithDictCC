@@ -62,15 +62,33 @@ namespace TranslateWithDictCC.ViewModels
             set { SetProperty(ref progressBarVisibility, value); }
         }
 
+        Visibility abortImportButtonVisibility;
+
+        public Visibility AbortImportButtonVisibility
+        {
+            get { return abortImportButtonVisibility; }
+            set { SetProperty(ref abortImportButtonVisibility, value); }
+        }
+
+        Visibility removeDictionaryButtonVisibility;
+
+        public Visibility RemoveDictionaryButtonVisibility
+        {
+            get { return removeDictionaryButtonVisibility; }
+            set { SetProperty(ref removeDictionaryButtonVisibility, value); }
+        }
+
         public Dictionary Dictionary { get; set; }
         public WordlistReader WordlistReader { get; set; }
 
+        public ICommand AbortImportCommand { get; }
         public ICommand RemoveDictionaryCommand { get; }
 
         private DictionaryViewModel()
         {
             PropertyChanged += (sender, e) => { UpdateStatusText(); };
 
+            AbortImportCommand = new RelayCommand(RunAbortImportCommand);
             RemoveDictionaryCommand = new RelayCommand(RunRemoveDictionaryCommand);
         }
 
@@ -103,21 +121,32 @@ namespace TranslateWithDictCC.ViewModels
                 case DictionaryStatus.Queued:
                     StatusText = resourceLoader.GetString("DictionaryStatus_Queued");
                     ProgressBarVisibility = Visibility.Collapsed;
+                    AbortImportButtonVisibility = Visibility.Collapsed;
+                    RemoveDictionaryButtonVisibility = Visibility.Collapsed;
                     break;
                 case DictionaryStatus.Installing:
                     StatusText = resourceLoader.GetString("DictionaryStatus_Installing");
                     ProgressBarVisibility = Visibility.Visible;
+                    AbortImportButtonVisibility = Visibility.Visible;
+                    RemoveDictionaryButtonVisibility = Visibility.Collapsed;
                     break;
                 case DictionaryStatus.Installed:
                     StatusText = string.Format(resourceLoader.GetString("DictionaryStatus_Installed"), NumberOfEntries);
                     ProgressBarVisibility = Visibility.Collapsed;
+                    AbortImportButtonVisibility = Visibility.Collapsed;
+                    RemoveDictionaryButtonVisibility = Visibility.Visible;
                     break;
             }
         }
 
+        private void RunAbortImportCommand()
+        {
+            SettingsViewModel.Instance.AbortImport(this);
+        }
+
         private async void RunRemoveDictionaryCommand()
         {
-            await SettingsViewModel.Instance.RemoveDictionary(this, false);
+            await SettingsViewModel.Instance.RemoveDictionary(this);
         }
     }
 
