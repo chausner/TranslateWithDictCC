@@ -70,33 +70,7 @@
         </MenuFlyout>
     </Page.Resources>
     <Grid Name="rootGrid" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
-        <Grid Grid.Row="0" Background="DarkOrange" Padding="8" Height="48">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="48" />
-                <ColumnDefinition />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <Button Name="hamburgerButton" Grid.Column="0" Width="48" Height="48" Background="Transparent" FontFamily="Segoe MDL2 Assets" FontSize="21" Content="&#xe700;"
-                    Style="{StaticResource FlatButtonStyle}" Click="hamburgerButton_Click" Margin="-8,-9,-8,-8" />
-            <AutoSuggestBox x:Uid="MainPage_SearchBox" Name="searchBox" Grid.Column="1" VerticalAlignment="Stretch" Margin="0,0,8,0"
-                            ItemTemplate="{StaticResource SearchSuggestionDataTemplate}" ItemContainerStyle="{StaticResource SearchSuggestionItemContainerStyle}"
-                            TextMemberPath="WordText" ItemsSource="{x:Bind ViewModel.SearchSuggestions}"
-                            PlaceholderText="Enter search terms..." QueryIcon="Find" QuerySubmitted="searchBox_QuerySubmitted" TextChanged="searchBox_TextChanged"
-                            Loaded="searchBox_Loaded" IsEnabled="{x:Bind ViewModel.AvailableDirections, Converter={StaticResource sourceNotEmptyValueConverter}, Mode=OneWay}" />
-            <ComboBox x:Uid="MainPage_DirectionComboBox" Name="directionComboBox" Grid.Column="2" VerticalAlignment="Stretch" Margin="0,0,8,0" HorizontalAlignment="Stretch"
-                      PlaceholderText="No dictionary installed" ItemTemplate="{StaticResource DirectionComboBoxItemTemplateCompact}" SelectionChanged="directionComboBox_SelectionChanged" 
-                      ItemsSource="{x:Bind ViewModel.AvailableDirections, Mode=OneWay}"
-                      IsEnabled="{x:Bind ViewModel.AvailableDirections, Converter={StaticResource sourceNotEmptyValueConverter}, Mode=OneWay}"
-                      DropDownOpened="directionComboBox_DropDownOpened" DropDownClosed="directionComboBox_DropDownClosed" SizeChanged="directionComboBox_SizeChanged" />
-            <Button Grid.Column="3" VerticalAlignment="Stretch" Background="Transparent" FontFamily="Segoe MDL2 Assets" FontSize="21" Content="&#xE712;"
-                    Style="{StaticResource FlatButtonStyle}" Flyout="{StaticResource moreMenuFlyout}" />
-        </Grid>
-        <NavigationView Grid.Row="1" Name="navigationView" IsPaneOpen="False" IsSettingsVisible="False" IsBackButtonVisible="Visible" ItemInvoked="navigationView_ItemInvoked">
+        <NavigationView Grid.Row="1" Name="navigationView" IsPaneOpen="False" IsSettingsVisible="False" IsBackButtonVisible="Visible" ItemInvoked="navigationView_ItemInvoked" Background="DarkOrange">
             <NavigationView.MenuItems>
                 <NavigationViewItem x:Uid="MainPage_SearchHamburgerMenuItem" x:Name="searchHamburgerMenuItem" Icon="Find" Content="Search" IsSelected="True"  />
             </NavigationView.MenuItems>
@@ -105,8 +79,32 @@
                 <NavigationViewItem x:Uid="MainPage_AboutHamburgerMenuItem" x:Name="aboutHamburgerMenuItem" Icon="Help" Content="About" />
             </NavigationView.FooterMenuItems>
             <Grid>
-                <Frame Name="contentFrame" Navigated="contentFrame_Navigated" />
-                <ProgressBar IsIndeterminate="{x:Bind ViewModel.IsSearchInProgress, Mode=OneWay}" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="12"
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0" Padding="8" Height="48">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <AutoSuggestBox x:Uid="MainPage_SearchBox" Name="searchBox" Grid.Column="0" VerticalAlignment="Stretch" Margin="0,0,8,0"
+                                    ItemTemplate="{StaticResource SearchSuggestionDataTemplate}" ItemContainerStyle="{StaticResource SearchSuggestionItemContainerStyle}"
+                                    TextMemberPath="WordText" ItemsSource="{x:Bind ViewModel.SearchSuggestions}"
+                                    PlaceholderText="Enter search terms..." QueryIcon="Find" QuerySubmitted="searchBox_QuerySubmitted" TextChanged="searchBox_TextChanged"
+                                    Loaded="searchBox_Loaded" IsEnabled="{x:Bind ViewModel.AvailableDirections, Converter={StaticResource sourceNotEmptyValueConverter}, Mode=OneWay}" />
+                    <ComboBox x:Uid="MainPage_DirectionComboBox" Name="directionComboBox" Grid.Column="1" VerticalAlignment="Stretch" Margin="0,0,8,0" HorizontalAlignment="Stretch"
+                              PlaceholderText="No dictionary installed" ItemTemplate="{StaticResource DirectionComboBoxItemTemplateCompact}" SelectionChanged="directionComboBox_SelectionChanged" 
+                              ItemsSource="{x:Bind ViewModel.AvailableDirections, Mode=OneWay}"
+                              IsEnabled="{x:Bind ViewModel.AvailableDirections, Converter={StaticResource sourceNotEmptyValueConverter}, Mode=OneWay}"
+                              DropDownOpened="directionComboBox_DropDownOpened" DropDownClosed="directionComboBox_DropDownClosed" SizeChanged="directionComboBox_SizeChanged" />
+                    <CommandBar Grid.Column="2" Margin="0" Padding="0">
+                        <AppBarButton Icon="More" Flyout="{StaticResource moreMenuFlyout}" VerticalAlignment="Top" Margin="-6" Width="44" />
+                    </CommandBar>                    
+                </Grid>
+                <Frame Grid.Row="1" Name="contentFrame" Navigated="contentFrame_Navigated" />
+                <ProgressBar Grid.Row="1" IsIndeterminate="{x:Bind ViewModel.IsSearchInProgress, Mode=OneWay}" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="12"
                                  Background="Transparent" />
             </Grid>
         </NavigationView>

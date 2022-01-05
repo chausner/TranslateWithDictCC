@@ -197,11 +197,6 @@ namespace TranslateWithDictCC.Views
         {
             searchBox.Text = args.QueryText;
             await PerformQuery();
-        }      
-
-        private void hamburgerButton_Click(object sender, RoutedEventArgs e)
-        {
-            navigationView.IsPaneOpen = !navigationView.IsPaneOpen;
         }
 
         private void contentFrame_Navigated(object sender, NavigationEventArgs e)
