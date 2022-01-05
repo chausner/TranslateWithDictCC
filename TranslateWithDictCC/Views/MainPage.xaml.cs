@@ -9,6 +9,8 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using Microsoft.UI.Xaml.Media.Animation;
+using Microsoft.UI.Xaml.Input;
+using Microsoft.UI.Input;
 
 namespace TranslateWithDictCC.Views
 {
@@ -24,7 +26,7 @@ namespace TranslateWithDictCC.Views
 
             rootGrid.DataContext = MainViewModel.Instance;
 
-            // CoreWindow.GetForCurrentThread().PointerPressed += MainPage_PointerPressed;
+            PointerPressed += MainPage_PointerPressed;
 
             // SystemNavigationManager.GetForCurrentView().BackRequested += SystemNavigationManager_BackRequested;
 
@@ -139,24 +141,26 @@ namespace TranslateWithDictCC.Views
             searchBox.Focus(FocusState.Programmatic);
         }
 
-        private void MainPage_PointerPressed(CoreWindow sender, PointerEventArgs args)
+        private void MainPage_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            if (args.CurrentPoint.Properties.IsXButton1Pressed)
+            PointerPoint point = e.GetCurrentPoint(null);
+
+            if (point.Properties.IsXButton1Pressed)
             {
                 if (contentFrame.CanGoBack)
                 {
                     contentFrame.GoBack();
-                    args.Handled = true;
+                    e.Handled = true;
                 }
             }
-            //else if (args.CurrentPoint.Properties.IsXButton2Pressed)
-            //{
-            //    if (contentFrame.CanGoForward)
-            //    {
-            //        contentFrame.GoForward();
-            //        args.Handled = true;
-            //    }
-            //}
+            else if (point.Properties.IsXButton2Pressed)
+            {
+                if (contentFrame.CanGoForward)
+                {
+                    contentFrame.GoForward();
+                    e.Handled = true;
+                }
+            }
         }
 
         private void SystemNavigationManager_BackRequested(object sender, BackRequestedEventArgs e)
