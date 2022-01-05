@@ -7,6 +7,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Shapes;
+using System.Collections.Generic;
 
 namespace TranslateWithDictCC.ViewModels
 {
@@ -70,21 +71,18 @@ namespace TranslateWithDictCC.ViewModels
 
         private static void GenerateRun(Paragraph paragraph, string word, int offset, int length, TextSpan[] annotationSpans)
         {
-            TextSpan[] affectedAnnotationSpans =
+            IEnumerable<TextSpan> affectedAnnotationSpans =
                 annotationSpans
                 .Where(span => span.Intersects(new TextSpan(offset, length)))
-                .Select(span => new TextSpan(Math.Max(span.Offset, offset), Math.Min(span.Offset + span.Length, offset + length) - Math.Max(span.Offset, offset)))
-                .ToArray();
+                .Select(span => new TextSpan(Math.Max(span.Offset, offset), Math.Min(span.Offset + span.Length, offset + length) - Math.Max(span.Offset, offset)));
 
             TextSpan lastSpan = new TextSpan(offset, 0);
 
             int betweenOffset;
             int betweenLength;
 
-            for (int i = 0; i < affectedAnnotationSpans.Length; i++)
+            foreach (TextSpan span in affectedAnnotationSpans)
             {
-                TextSpan span = affectedAnnotationSpans[i];
-
                 betweenOffset = lastSpan.Offset + lastSpan.Length;
                 betweenLength = span.Offset - betweenOffset;
 
