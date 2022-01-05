@@ -11,6 +11,7 @@ using Microsoft.UI.Xaml.Navigation;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Input;
+using System.Linq;
 
 namespace TranslateWithDictCC.Views
 {
@@ -67,7 +68,7 @@ namespace TranslateWithDictCC.Views
             directionComboBox.SelectionChanged += directionComboBox_SelectionChanged;
         }
 
-        /*protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             if (MainViewModel.Instance.AvailableDirections.Length == 0)
                 contentFrame.Navigate(typeof(SettingsPage));
@@ -94,7 +95,7 @@ namespace TranslateWithDictCC.Views
                     }
                 }
             }
-        }*/
+        }
 
         private void GoBackToPage(string pageType, NavigationTransitionInfo transitionInfo)
         {
