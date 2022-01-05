@@ -205,8 +205,7 @@ namespace TranslateWithDictCC.Views
 
         private void contentFrame_Navigated(object sender, NavigationEventArgs e)
         {
-            //SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility =
-            //    contentFrame.CanGoBack ? AppViewBackButtonVisibility.Visible : AppViewBackButtonVisibility.Collapsed;
+            //navigationView.IsBackButtonVisible = contentFrame.CanGoBack ? NavigationViewBackButtonVisible.Visible : NavigationViewBackButtonVisible.Collapsed;
 
             if (e.SourcePageType == typeof(SearchResultsPage))
             {
@@ -219,9 +218,9 @@ namespace TranslateWithDictCC.Views
                 }
             }
 
-            /*searchHamburgerMenuItem.IsChecked = e.SourcePageType == typeof(SearchResultsPage);
-            optionsHamburgerMenuItem.IsChecked = e.SourcePageType == typeof(SettingsPage);
-            aboutHamburgerMenuItem.IsChecked = e.SourcePageType == typeof(AboutPage);*/
+            searchHamburgerMenuItem.IsSelected = e.SourcePageType == typeof(SearchResultsPage);
+            optionsHamburgerMenuItem.IsSelected = e.SourcePageType == typeof(SettingsPage);
+            aboutHamburgerMenuItem.IsSelected = e.SourcePageType == typeof(AboutPage);
         }
 
         private async void directionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
