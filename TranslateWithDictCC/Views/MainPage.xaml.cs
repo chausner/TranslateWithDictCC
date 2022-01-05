@@ -30,8 +30,8 @@ namespace TranslateWithDictCC.Views
 
             // SystemNavigationManager.GetForCurrentView().BackRequested += SystemNavigationManager_BackRequested;
 
-            MainViewModel.Instance.NavigateToPageCommand = new RelayCommand<object>(o => NavigateToPage(o, null));
-            MainViewModel.Instance.GoBackToPageCommand = new RelayCommand<string>(o => GoBackToPage(o, null));
+            MainViewModel.Instance.NavigateToPageCommand = new RelayCommand<object>(o => NavigateToPage(o, new SuppressNavigationTransitionInfo()));
+            MainViewModel.Instance.GoBackToPageCommand = new RelayCommand<string>(o => GoBackToPage(o, new SuppressNavigationTransitionInfo()));
 
             MainViewModel.Instance.PropertyChanged += MainViewModel_PropertyChanged;
 
@@ -307,11 +307,11 @@ namespace TranslateWithDictCC.Views
             navigationView.IsPaneOpen = false;
 
             if (args.InvokedItemContainer == searchHamburgerMenuItem)
-                GoBackToPage(typeof(SearchResultsPage), args.RecommendedNavigationTransitionInfo);
+                GoBackToPage(typeof(SearchResultsPage), new SuppressNavigationTransitionInfo());
             else if (args.InvokedItemContainer == optionsHamburgerMenuItem)
-                NavigateToPage("SettingsPage", args.RecommendedNavigationTransitionInfo);
+                NavigateToPage("SettingsPage", new SuppressNavigationTransitionInfo());
             else if (args.InvokedItemContainer == aboutHamburgerMenuItem)
-                NavigateToPage("AboutPage", args.RecommendedNavigationTransitionInfo);
+                NavigateToPage("AboutPage", new SuppressNavigationTransitionInfo());
         }
     }
 }
