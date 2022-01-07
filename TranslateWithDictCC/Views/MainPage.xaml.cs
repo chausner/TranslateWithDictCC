@@ -29,8 +29,6 @@ namespace TranslateWithDictCC.Views
 
             PointerPressed += MainPage_PointerPressed;
 
-            // SystemNavigationManager.GetForCurrentView().BackRequested += SystemNavigationManager_BackRequested;
-
             MainViewModel.Instance.NavigateToPageCommand = new RelayCommand<object>(o => NavigateToPage(o, new SuppressNavigationTransitionInfo()));
             MainViewModel.Instance.GoBackToPageCommand = new RelayCommand<string>(o => GoBackToPage(o, new SuppressNavigationTransitionInfo()));
 
@@ -164,15 +162,6 @@ namespace TranslateWithDictCC.Views
             }
         }
 
-        private void SystemNavigationManager_BackRequested(object sender, BackRequestedEventArgs e)
-        {
-            if (contentFrame.CanGoBack)
-            {
-                contentFrame.GoBack();
-                e.Handled = true;
-            }
-        }
-
         private async Task PerformQuery(bool dontSearchInBothDirections = false)
         {
             if (searchBox.Text.Trim() == string.Empty || MainViewModel.Instance.SelectedDirection == null)
@@ -206,8 +195,6 @@ namespace TranslateWithDictCC.Views
 
         private void contentFrame_Navigated(object sender, NavigationEventArgs e)
         {
-            //navigationView.IsBackButtonVisible = contentFrame.CanGoBack ? NavigationViewBackButtonVisible.Visible : NavigationViewBackButtonVisible.Collapsed;
-
             if (e.SourcePageType == typeof(SearchResultsPage))
             {
                 SearchResultsViewModel searchResultsViewModel = (SearchResultsViewModel)e.Parameter;
@@ -313,6 +300,12 @@ namespace TranslateWithDictCC.Views
                 NavigateToPage("SettingsPage", new SuppressNavigationTransitionInfo());
             else if (args.InvokedItemContainer == aboutHamburgerMenuItem)
                 NavigateToPage("AboutPage", new SuppressNavigationTransitionInfo());
+        }
+
+        private void navigationView_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)
+        {
+            if (contentFrame.CanGoBack)
+                contentFrame.GoBack();
         }
     }
 }
