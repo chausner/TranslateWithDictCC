@@ -210,15 +210,15 @@ namespace TranslateWithDictCC.Views
                         richTextBlock.Blocks.Clear();
                         return;
                     }
-
+                    
                     richTextBlock.Blocks[0] = word;
                 }
             }
 
-            if (args.ItemIndex % 2 == 0)
-                args.ItemContainer.ClearValue(Control.BackgroundProperty);
-            else
-                args.ItemContainer.Background = altBackgroundThemeBrush;
+            //if (args.ItemIndex % 2 == 0)
+            //    args.ItemContainer.ClearValue(Control.BackgroundProperty);
+            //else
+            //    args.ItemContainer.Background = altBackgroundThemeBrush;
 
             DictionaryEntryViewModel viewModel = (DictionaryEntryViewModel)args.Item;
 
