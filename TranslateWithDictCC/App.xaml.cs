@@ -1,7 +1,5 @@
 ﻿using TranslateWithDictCC.ViewModels;
-using System;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Navigation;
 
 namespace TranslateWithDictCC
 {
@@ -12,7 +10,7 @@ namespace TranslateWithDictCC
         public App()
         {
             InitializeComponent();
-            //Suspending += OnSuspending;
+            //Suspending += OnSuspending;            
         }
 
         protected override async void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs e)
@@ -28,14 +26,10 @@ namespace TranslateWithDictCC
             MainViewModel.Instance.LoadSettings();
 
             mainWindow = new MainWindow();
+            //mainWindow.ExtendsContentIntoTitleBar = true;
             mainWindow.Activate();
 
             SetTitleBarColors();
-        }
-
-        private void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
-        {
-            throw new Exception("Failed to load page " + e.SourcePageType.FullName);
         }
 
         /*private void OnSuspending(object sender, SuspendingEventArgs e)
