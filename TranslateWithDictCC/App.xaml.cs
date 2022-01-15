@@ -1,5 +1,10 @@
 ﻿using TranslateWithDictCC.ViewModels;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Windowing;
+using Windows.UI;
+using Microsoft.UI;
+using WinRT.Interop;
+using System;
 
 namespace TranslateWithDictCC
 {
@@ -25,10 +30,10 @@ namespace TranslateWithDictCC
             await DirectionManager.Instance.UpdateDirection();
 
             mainWindow = new MainWindow();
-            //mainWindow.ExtendsContentIntoTitleBar = true;
-            mainWindow.Activate();
 
-            SetTitleBarColors();
+            SetTitleBarColors(mainWindow);
+
+            mainWindow.Activate();
         }
 
         /*private void OnSuspending(object sender, SuspendingEventArgs e)
@@ -41,9 +46,12 @@ namespace TranslateWithDictCC
             deferral.Complete();
         }*/
 
-        private void SetTitleBarColors()
+        private void SetTitleBarColors(Window window)
         {
-            /*ApplicationViewTitleBar titleBar = ApplicationView.GetForCurrentView().TitleBar;
+            IntPtr hWnd = WindowNative.GetWindowHandle(window);
+            WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
+            AppWindow appWindow = AppWindow.GetFromWindowId(windowId);
+            AppWindowTitleBar titleBar = appWindow.TitleBar;
 
             titleBar.BackgroundColor = (Color?)Application.Current.Resources["TitleBarBackgroundColor"]; 
             titleBar.ForegroundColor = (Color?)Application.Current.Resources["TitleBarForegroundColor"];
@@ -53,10 +61,10 @@ namespace TranslateWithDictCC
             titleBar.ButtonHoverBackgroundColor = (Color?)Application.Current.Resources["TitleBarButtonHoverBackgroundColor"];
             titleBar.ButtonForegroundColor = (Color?)Application.Current.Resources["TitleBarButtonForegroundColor"];
             titleBar.ButtonHoverForegroundColor = (Color?)Application.Current.Resources["TitleBarButtonHoverForegroundColor"];
-            //titleBar.ButtonPressedBackgroundColor =(Color?)Application.Current.Resources["TitleBarButtonPressedBackgroundColor"]; 
+            //titleBar.ButtonPressedBackgroundColor = (Color?)Application.Current.Resources["TitleBarButtonPressedBackgroundColor"]; 
             titleBar.ButtonPressedForegroundColor = (Color?)Application.Current.Resources["TitleBarButtonPressedForegroundColor"];
             titleBar.ButtonInactiveBackgroundColor = (Color?)Application.Current.Resources["TitleBarButtonInactiveBackgroundColor"];
-            titleBar.ButtonInactiveForegroundColor = (Color?)Application.Current.Resources["TitleBarButtonInactiveForegroundColor"];*/
+            titleBar.ButtonInactiveForegroundColor = (Color?)Application.Current.Resources["TitleBarButtonInactiveForegroundColor"];
         }
     }
 }
