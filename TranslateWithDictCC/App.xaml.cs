@@ -5,6 +5,8 @@ using Windows.UI;
 using Microsoft.UI;
 using WinRT.Interop;
 using System;
+using System.Reflection;
+using System.IO;
 
 namespace TranslateWithDictCC
 {
@@ -31,8 +33,8 @@ namespace TranslateWithDictCC
 
             mainWindow = new MainWindow();
 
-            SetTitleBarColors(mainWindow);
-
+            SetTitleBarColorsAndIcon(mainWindow);
+            
             mainWindow.Activate();
         }
 
@@ -46,7 +48,7 @@ namespace TranslateWithDictCC
             deferral.Complete();
         }*/
 
-        private void SetTitleBarColors(Window window)
+        private void SetTitleBarColorsAndIcon(Window window)
         {
             IntPtr hWnd = WindowNative.GetWindowHandle(window);
             WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
@@ -65,6 +67,9 @@ namespace TranslateWithDictCC
             titleBar.ButtonPressedForegroundColor = (Color?)Application.Current.Resources["TitleBarButtonPressedForegroundColor"];
             titleBar.ButtonInactiveBackgroundColor = (Color?)Application.Current.Resources["TitleBarButtonInactiveBackgroundColor"];
             titleBar.ButtonInactiveForegroundColor = (Color?)Application.Current.Resources["TitleBarButtonInactiveForegroundColor"];
+
+            string applicationRoot = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+            appWindow.SetIcon(Path.Combine(applicationRoot, @"Assets\Logo.ico"));
         }
     }
 }
