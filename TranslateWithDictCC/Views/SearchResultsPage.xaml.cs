@@ -215,20 +215,21 @@ namespace TranslateWithDictCC.Views
                 }
             }
 
-            //if (args.ItemIndex % 2 == 0)
-            //    args.ItemContainer.ClearValue(Control.BackgroundProperty);
-            //else
-            //    args.ItemContainer.Background = altBackgroundThemeBrush;
-
             DictionaryEntryViewModel viewModel = (DictionaryEntryViewModel)args.Item;
 
             Grid templateRoot = (Grid)args.ItemContainer.ContentTemplateRoot;
-            Grid grid = (Grid)templateRoot.Children[1];
+            Grid grid = (Grid)templateRoot.Children[2];
             RichTextBlock word1RichTextBlock = (RichTextBlock)grid.Children[0];
-            RichTextBlock word2RichTextBlock = (RichTextBlock)templateRoot.Children[2];
+            RichTextBlock word2RichTextBlock = (RichTextBlock)templateRoot.Children[3];
 
             SetRichTextBlockContent(word1RichTextBlock, viewModel.Word1);
             SetRichTextBlockContent(word2RichTextBlock, viewModel.Word2);
+
+            Border border = (Border)templateRoot.Children[0];
+            if (args.ItemIndex % 2 == 0)
+                border.ClearValue(Border.BackgroundProperty);
+            else
+                border.Background = altBackgroundThemeBrush;
         }
 
         private bool IsInternetAccessAvailable()

@@ -85,7 +85,7 @@
                     <SolidColorBrush x:Key="SearchBoxButtonPointerOverBackgroundThemeBrush" Color="#FFFF8C00" />
                     <SolidColorBrush x:Key="HamburgerMenuSelectionThemeBrush" Color="DarkOrange" />
                     <SolidColorBrush x:Key="DictionaryEntryWordClassesThemeBrush" Color="#DADADA" />
-                    <SolidColorBrush x:Key="DictionaryEntryAltBackgroundThemeBrush" Color="#ECECEC" />
+                    <SolidColorBrush x:Key="DictionaryEntryAltBackgroundThemeBrush" Color="#20FFFFFF" />
                     <SolidColorBrush x:Key="DictionaryEntryAnnotationThemeBrush" Color="DarkSlateBlue" />
                     <SolidColorBrush x:Key="DictionaryEntryQueryThemeBrush" Color="Green" />
                     <!--<SolidColorBrush x:Key="DictionaryEntryQueryHighlightThemeBrush" Color="#FFFFB0" />-->
