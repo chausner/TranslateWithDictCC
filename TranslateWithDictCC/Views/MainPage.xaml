@@ -2,73 +2,9 @@
     x:Class="TranslateWithDictCC.Views.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:TranslateWithDictCC"
-    xmlns:viewmodels="using:TranslateWithDictCC.ViewModels"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    SizeChanged="Page_SizeChanged">
-    <Page.Resources>
-        <local:SourceNotEmptyValueConverter x:Key="sourceNotEmptyValueConverter" />
-        <DataTemplate x:Key="SearchSuggestionDataTemplate" x:DataType="viewmodels:SearchSuggestionViewModel">
-            <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" IsHitTestVisible="False">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <RichTextBlock Grid.Column="0" VerticalAlignment="Center" Margin="0,0,8,0" DataContextChanged="RichTextBlock_DataContextChanged" />
-                <Grid Grid.Column="1" VerticalAlignment="Center" 
-                      Visibility="{Binding Source={StaticResource settings}, Path=ShowWordClasses}">
-                    <Border Background="{ThemeResource DictionaryEntryWordClassesThemeBrush}" Padding="5,2,5,2"
-                                Visibility="{x:Bind GetWordClassVisibility(DictionaryEntry.WordClasses)}">
-                        <TextBlock Text="{x:Bind DictionaryEntry.WordClasses}" />
-                    </Border>
-                </Grid>
-            </Grid>
-        </DataTemplate>
-        <Style x:Key="SearchSuggestionItemContainerStyle" TargetType="ListViewItem">
-            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-        </Style>
-        <DataTemplate x:Key="DirectionComboBoxItemTemplate" x:DataType="viewmodels:DirectionViewModel">
-            <Grid HorizontalAlignment="Stretch">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <Image Grid.Column="0" Source="{x:Bind OriginLanguageImage}" Height="21" Margin="0,0,6,0" />
-                <TextBlock Grid.Column="1" Text="{x:Bind OriginLanguage}" TextAlignment="Left" />
-                <TextBlock Grid.Column="2" Text="→" Margin="6,0,6,0" />
-                <TextBlock Grid.Column="3" Text="{x:Bind DestinationLanguage}" TextAlignment="Right" />
-                <Image Grid.Column="4" Source="{x:Bind DestinationLanguageImage}" Height="21" Margin="6,0,0,0" />
-            </Grid>
-        </DataTemplate>
-        <DataTemplate x:Key="DirectionComboBoxItemTemplateCompact" x:DataType="viewmodels:DirectionViewModel">
-            <Grid HorizontalAlignment="Stretch">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <Image Grid.Column="0" Source="{x:Bind OriginLanguageImage}" Width="21" Height="21" Margin="0,0,6,0" />
-                <TextBlock Grid.Column="1" Text="{x:Bind OriginLanguageCode}" TextAlignment="Left" />
-                <TextBlock Grid.Column="2" Text="→" Margin="6,0,6,0" />
-                <TextBlock Grid.Column="3" Text="{x:Bind DestinationLanguageCode}" TextAlignment="Right" />
-                <Image Grid.Column="4" Source="{x:Bind DestinationLanguageImage}" Width="21" Height="21" Margin="6,0,0,0" />
-            </Grid>
-        </DataTemplate>
-        <MenuFlyout x:Key="moreMenuFlyout">
-            <MenuFlyoutItem x:Uid="MainPage_SwitchDirectionOfTranslationMenuItem" Text="Switch direction of translation" Click="SwitchDirection_Click" 
-                            AutomationProperties.AcceleratorKey="Control S" />
-            <ToggleMenuFlyoutItem x:Uid="MainPage_SearchInBothDirectionsMenuItem" Text="Search in both directions" IsChecked="{x:Bind Settings.SearchInBothDirections, Mode=TwoWay}" />
-            <ToggleMenuFlyoutItem x:Uid="MainPage_CaseSensitiveSearchMenuItem" IsChecked="{x:Bind Settings.CaseSensitiveSearch, Mode=TwoWay}"
-                                  Text="Case-sensitive search" Click="CaseSensitiveSearch_Click" />
-        </MenuFlyout>
-    </Page.Resources>
+    mc:Ignorable="d">
     <Grid Name="rootGrid" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <NavigationView Grid.Row="1" Name="navigationView" IsPaneOpen="False" IsSettingsVisible="False" IsBackEnabled="{Binding CanGoBack, ElementName=contentFrame, Mode=OneWay}" IsBackButtonVisible="Visible"
                         BackRequested="navigationView_BackRequested" ItemInvoked="navigationView_ItemInvoked" Background="DarkOrange">
@@ -79,35 +15,7 @@
                 <NavigationViewItem x:Uid="MainPage_OptionsHamburgerMenuItem" x:Name="optionsHamburgerMenuItem" Icon="Setting" Content="Options" />
                 <NavigationViewItem x:Uid="MainPage_AboutHamburgerMenuItem" x:Name="aboutHamburgerMenuItem" Icon="Help" Content="About" />
             </NavigationView.FooterMenuItems>
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition />
-                </Grid.RowDefinitions>
-                <Grid Grid.Row="0" Padding="8" Height="48">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <AutoSuggestBox x:Uid="MainPage_SearchBox" Name="searchBox" Grid.Column="0" VerticalAlignment="Stretch" Margin="0,0,8,0"
-                                    ItemTemplate="{StaticResource SearchSuggestionDataTemplate}" ItemContainerStyle="{StaticResource SearchSuggestionItemContainerStyle}"
-                                    TextMemberPath="WordText" ItemsSource="{x:Bind ViewModel.SearchSuggestions}"
-                                    PlaceholderText="Enter search terms..." QueryIcon="Find" QuerySubmitted="searchBox_QuerySubmitted" TextChanged="searchBox_TextChanged"
-                                    Loaded="searchBox_Loaded" IsEnabled="{x:Bind ViewModel.AvailableDirections, Converter={StaticResource sourceNotEmptyValueConverter}, Mode=OneWay}" />
-                    <ComboBox x:Uid="MainPage_DirectionComboBox" Name="directionComboBox" Grid.Column="1" VerticalAlignment="Stretch" Margin="0,0,8,0" HorizontalAlignment="Stretch"
-                              PlaceholderText="No dictionary installed" ItemTemplate="{StaticResource DirectionComboBoxItemTemplateCompact}" SelectionChanged="directionComboBox_SelectionChanged" 
-                              ItemsSource="{x:Bind ViewModel.AvailableDirections, Mode=OneWay}"
-                              IsEnabled="{x:Bind ViewModel.AvailableDirections, Converter={StaticResource sourceNotEmptyValueConverter}, Mode=OneWay}"
-                              DropDownOpened="directionComboBox_DropDownOpened" DropDownClosed="directionComboBox_DropDownClosed" SizeChanged="directionComboBox_SizeChanged" />
-                    <CommandBar Grid.Column="2" Margin="0" Padding="0">
-                        <AppBarButton Icon="More" Flyout="{StaticResource moreMenuFlyout}" VerticalAlignment="Top" Margin="-6" Width="44" />
-                    </CommandBar>                    
-                </Grid>
-                <Frame Grid.Row="1" Name="contentFrame" Navigated="contentFrame_Navigated" />
-                <ProgressBar Grid.Row="1" IsIndeterminate="{x:Bind ViewModel.IsSearchInProgress, Mode=OneWay}" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="12"
-                                 Background="Transparent" />
-            </Grid>
+            <Frame Name="contentFrame" Navigated="contentFrame_Navigated" />
         </NavigationView>
     </Grid>
 </Page>

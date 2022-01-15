@@ -22,8 +22,7 @@ namespace TranslateWithDictCC
             if (!Resources.ContainsKey("settings"))
                 Resources.Add("settings", Settings.Instance);
 
-            await MainViewModel.Instance.UpdateDirection();
-            MainViewModel.Instance.LoadSettings();
+            await DirectionManager.Instance.UpdateDirection();
 
             mainWindow = new MainWindow();
             //mainWindow.ExtendsContentIntoTitleBar = true;

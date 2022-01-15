@@ -197,7 +197,7 @@ namespace TranslateWithDictCC.ViewModels
 
                 dictionaryViewModel.Status = DictionaryStatus.Installed;
 
-                await MainViewModel.Instance.UpdateDirection();
+                await DirectionManager.Instance.UpdateDirection();
             }
         }
 
@@ -222,7 +222,7 @@ namespace TranslateWithDictCC.ViewModels
 
             await DatabaseManager.Instance.DeleteDictionary(dictionaryViewModel.Dictionary);
             Dictionaries.Remove(dictionaryViewModel);
-            await MainViewModel.Instance.UpdateDirection();
+            await DirectionManager.Instance.UpdateDirection();
 
             return true;
         }

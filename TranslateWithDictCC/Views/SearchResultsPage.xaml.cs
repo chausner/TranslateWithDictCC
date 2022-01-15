@@ -12,6 +12,8 @@ using Microsoft.UI.Xaml.Navigation;
 using Microsoft.UI.Xaml.Documents;
 using Windows.Media.Playback;
 using System.IO;
+using Windows.System;
+using System.ComponentModel;
 
 namespace TranslateWithDictCC.Views
 {
@@ -24,6 +26,8 @@ namespace TranslateWithDictCC.Views
             get => viewModel;
             set { viewModel = value; Bindings.Update(); }
         }
+
+        Settings Settings => Settings.Instance;
 
         DictionaryEntryViewModel currentlyPlayingAudioRecording;
         bool currentlyPlayingAudioRecordingWord2;
@@ -42,31 +46,173 @@ namespace TranslateWithDictCC.Views
             mediaPlayer.AutoPlay = true;
 
             mediaPlayer.Source = MediaSource.CreateFromStream(new MemoryStream().AsRandomAccessStream(), "audio/mpeg");
+
+            ViewModel = new SearchResultsViewModel();
+
+            ViewModel.PropertyChanged += MainViewModel_PropertyChanged;
+
+            KeyboardShortcutListener shortcutListener = new KeyboardShortcutListener();
+
+            shortcutListener.RegisterShortcutHandler(VirtualKeyModifiers.Control, VirtualKey.E, OnControlEShortcut);
+            shortcutListener.RegisterShortcutHandler(VirtualKeyModifiers.Control, VirtualKey.S, OnControlSShortcut);
+        }
+
+        private void OnControlEShortcut(object sender, EventArgs e)
+        {
+            searchBox.Text = string.Empty;
+            FocusSearchBox();
+        }
+
+        public void FocusSearchBox()
+        {
+            searchBox.Focus(FocusState.Programmatic);
+        }
+
+        private void OnControlSShortcut(object sender, EventArgs e)
+        {
+            SwitchDirection_Click(sender, new RoutedEventArgs());
+        }
+
+        private void MainViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(ViewModel.SelectedDirection))
+                SetDirectionComboBoxSelectedItem(ViewModel.SelectedDirection);
+        }
+
+        private void SetDirectionComboBoxSelectedItem(object selectedItem)
+        {
+            directionComboBox.SelectionChanged -= directionComboBox_SelectionChanged;
+
+            directionComboBox.SelectedItem = selectedItem;
+
+            directionComboBox.SelectionChanged += directionComboBox_SelectionChanged;
+        }
+
+        private void searchBox_Loaded(object sender, RoutedEventArgs e)
+        {
+            FocusSearchBox();
+        }
+
+        private async void CaseSensitiveSearch_Click(object sender, RoutedEventArgs e)
+        {
+            await PerformQuery();
+        }
+
+        private async void SwitchDirection_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.SwitchDirectionOfTranslationCommand.Execute(null);
+
+            await PerformQuery(dontSearchInBothDirections: true);
+        }
+
+        private async void searchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+        {
+            if (args.Reason != AutoSuggestionBoxTextChangeReason.UserInput)
+                return;
+
+            await ViewModel.UpdateSearchSuggestions(searchBox.Text);
+        }
+
+        private void RichTextBlock_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
+        {
+            RichTextBlock richTextBlock = (RichTextBlock)sender;
+            SearchSuggestionViewModel searchSuggestionViewModel = (SearchSuggestionViewModel)args.NewValue;
+
+            richTextBlock.Blocks.Clear();
+
+            if (searchSuggestionViewModel == null)
+                return;
+
+            richTextBlock.Blocks.Add(searchSuggestionViewModel.Word);
+        }
+
+        private async void directionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ViewModel.SelectedDirection = directionComboBox.SelectedItem as DirectionViewModel;
+
+            if (e.AddedItems.Count != 0 && e.RemovedItems.Count != 0)
+                await PerformQuery(dontSearchInBothDirections: true);
+        }
+
+        private void directionComboBox_DropDownOpened(object sender, object e)
+        {
+            if (directionComboBox.Tag is double width)
+                directionComboBox.Width = width;
+        }
+
+        private void directionComboBox_DropDownClosed(object sender, object e)
+        {
+            directionComboBox.ClearValue(FrameworkElement.WidthProperty);
+        }
+
+        private void directionComboBox_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (!directionComboBox.IsDropDownOpen)
+                directionComboBox.Tag = directionComboBox.ActualWidth;
+        }
+
+        private async Task PerformQuery(bool dontSearchInBothDirections = false)
+        {
+            if (searchBox.Text.Trim() == string.Empty || ViewModel.SelectedDirection == null)
+                return;
+
+            try
+            {
+                await ViewModel.PerformQuery(searchBox.Text, dontSearchInBothDirections);
+            }
+            catch
+            {
+                ResourceLoader resourceLoader = new ResourceLoader();
+
+                ContentDialog contentDialog = new ContentDialog()
+                {
+                    Title = resourceLoader.GetString("Error_Performing_Query_Title"),
+                    Content = resourceLoader.GetString("Error_Performing_Query_Body"),
+                    CloseButtonText = "OK",
+                    XamlRoot = MainWindow.Instance.Content.XamlRoot
+                };
+
+                await contentDialog.ShowAsync();
+            }
+        }
+
+        private async void searchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+        {
+            searchBox.Text = args.QueryText;
+            await PerformQuery();
         }
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             mediaPlayer.Source = null; // for some reason needed to prevent MediaElement from playing when navigating back to a page
 
-            ((MainPage)((Frame)MainWindow.Instance.Content).Content).FocusSearchBox();
+            FocusSearchBox();
 
             if (e.Parameter != null)
             {
                 ViewModel = (SearchResultsViewModel)e.Parameter;
 
+                if (ViewModel.SearchContext != null)
+                    SetDirectionComboBoxSelectedItem(ViewModel.SearchContext.SelectedDirection);
+                else
+                    SetDirectionComboBoxSelectedItem(ViewModel.SelectedDirection);
+
                 ResourceLoader resourceLoader = new ResourceLoader();
 
-                int resultCount = ViewModel.DictionaryEntries.Count;
+                if (ViewModel.DictionaryEntries != null)
+                {
+                    int resultCount = ViewModel.DictionaryEntries.Count;
 
-                if (resultCount == 1)
-                    statusTextBlock.Text = resourceLoader.GetString("SearchResultsPage_SingleResult");
-                else
-                    statusTextBlock.Text = string.Format(resourceLoader.GetString("SearchResultsPage_ResultCount"), ViewModel.DictionaryEntries.Count);
+                    if (resultCount == 1)
+                        statusTextBlock.Text = resourceLoader.GetString("SearchResultsPage_SingleResult");
+                    else
+                        statusTextBlock.Text = string.Format(resourceLoader.GetString("SearchResultsPage_ResultCount"), ViewModel.DictionaryEntries.Count);
 
-                resultCountAnimation.Stop();
-                resultCountAnimation.Seek(TimeSpan.Zero);
-                await Task.Delay(250);
-                resultCountAnimation.Begin();
+                    resultCountAnimation.Stop();
+                    resultCountAnimation.Seek(TimeSpan.Zero);
+                    await Task.Delay(250);
+                    resultCountAnimation.Begin();
+                }
             }
         }
 
@@ -292,6 +438,26 @@ namespace TranslateWithDictCC.Views
                     currentlyPlayingAudioRecording = null;
                 }
             });
+        }
+
+        private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            const double widthThreshold = 650;
+
+            if (e.NewSize.Width < widthThreshold != e.PreviousSize.Width < widthThreshold)
+            {
+                if (e.NewSize.Width < widthThreshold)
+                    directionComboBox.ItemTemplate = (DataTemplate)Resources["DirectionComboBoxItemTemplateCompact"];
+                else
+                    directionComboBox.ItemTemplate = (DataTemplate)Resources["DirectionComboBoxItemTemplate"];
+
+                // force ComboBox to apply the new item template
+                directionComboBox.SelectionChanged -= directionComboBox_SelectionChanged;
+                object selectedItem = directionComboBox.SelectedItem;
+                directionComboBox.SelectedItem = null;
+                directionComboBox.SelectedItem = selectedItem;
+                directionComboBox.SelectionChanged += directionComboBox_SelectionChanged;
+            }
         }
     }
 }
