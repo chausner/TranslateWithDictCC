@@ -1,12 +1,12 @@
-﻿using TranslateWithDictCC.ViewModels;
-using Microsoft.UI.Xaml;
+﻿using Microsoft.UI;
 using Microsoft.UI.Windowing;
-using Windows.UI;
-using Microsoft.UI;
-using WinRT.Interop;
+using Microsoft.UI.Xaml;
 using System;
-using System.Reflection;
 using System.IO;
+using System.Reflection;
+using TranslateWithDictCC.ViewModels;
+using Windows.UI;
+using WinRT.Interop;
 
 namespace TranslateWithDictCC
 {
@@ -20,7 +20,7 @@ namespace TranslateWithDictCC
             //Suspending += OnSuspending;            
         }
 
-        protected override async void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs e)
+        protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
             await ApplicationDataMigration.Migrate();
             await DatabaseManager.Instance.InitializeDb();

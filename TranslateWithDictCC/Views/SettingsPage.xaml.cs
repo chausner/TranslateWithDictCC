@@ -1,5 +1,5 @@
-﻿using TranslateWithDictCC.ViewModels;
-using Microsoft.UI.Xaml.Controls;
+﻿using Microsoft.UI.Xaml.Controls;
+using TranslateWithDictCC.ViewModels;
 
 namespace TranslateWithDictCC.Views
 {

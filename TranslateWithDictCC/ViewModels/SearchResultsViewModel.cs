@@ -1,11 +1,11 @@
-﻿using TranslateWithDictCC.Models;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Windows.Input;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Linq;
-using System;
+using System.Windows.Input;
+using TranslateWithDictCC.Models;
 
 namespace TranslateWithDictCC.ViewModels
 {

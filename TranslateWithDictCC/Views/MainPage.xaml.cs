@@ -1,11 +1,11 @@
-﻿using System;
-using TranslateWithDictCC.ViewModels;
+﻿using Microsoft.UI.Input;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Navigation;
-using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Input;
+using Microsoft.UI.Xaml.Media.Animation;
+using Microsoft.UI.Xaml.Navigation;
+using System;
 using System.Linq;
+using TranslateWithDictCC.ViewModels;
 
 namespace TranslateWithDictCC.Views
 {

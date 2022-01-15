@@ -1,19 +1,19 @@
-﻿using TranslateWithDictCC.ViewModels;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Windows.ApplicationModel.Resources;
-using Windows.Media.Core;
-using Windows.Networking.Connectivity;
-using Microsoft.UI.Xaml;
+﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
-using Microsoft.UI.Xaml.Documents;
-using Windows.Media.Playback;
-using System.IO;
-using Windows.System;
+using Microsoft.Windows.ApplicationModel.Resources;
+using System;
 using System.ComponentModel;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+using TranslateWithDictCC.ViewModels;
+using Windows.Media.Core;
+using Windows.Media.Playback;
+using Windows.Networking.Connectivity;
+using Windows.System;
 
 namespace TranslateWithDictCC.Views
 {
