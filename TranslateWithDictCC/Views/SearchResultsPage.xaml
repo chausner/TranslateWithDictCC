@@ -108,6 +108,14 @@
         </Storyboard>
     </Page.Resources>
     <Grid>
+        <Grid.Background>
+            <RadialGradientBrush GradientOrigin="0,0">
+                <RadialGradientBrush.GradientStops>
+                    <GradientStop Offset="0" Color="Orange" />
+                    <GradientStop Offset="1.0" Color="DarkOrange" />
+                </RadialGradientBrush.GradientStops>
+            </RadialGradientBrush>
+        </Grid.Background>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
