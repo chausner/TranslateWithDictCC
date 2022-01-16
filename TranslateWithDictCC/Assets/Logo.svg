@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="75.141685mm"
+   height="108.43934mm"
+   viewBox="0 0 75.141685 108.43934"
+   version="1.1"
+   id="svg5"
+   inkscape:export-filename="C:\Users\chris\Desktop\Rastergrafik.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   sodipodi:docname="logo.svg"
+   inkscape:version="1.1 (c68e22c387, 2021-05-23)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="true"
+     inkscape:document-units="mm"
+     showgrid="false"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:showpageshadow="false"
+     inkscape:zoom="4.4308951"
+     inkscape:cx="142.07062"
+     inkscape:cy="204.92473"
+     inkscape:window-width="3840"
+     inkscape:window-height="2054"
+     inkscape:window-x="-11"
+     inkscape:window-y="-11"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs2">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient3292">
+      <stop
+         style="stop-color:#ffa83f;stop-opacity:1"
+         offset="0"
+         id="stop3290" />
+      <stop
+         style="stop-color:#ea8100;stop-opacity:1"
+         offset="1"
+         id="stop3288" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3292"
+       id="linearGradient3294"
+       x1="180.18124"
+       y1="111.78645"
+       x2="207.43333"
+       y2="194.46875"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(-80.261038,-13.283296)" />
+    <inkscape:path-effect
+       effect="fill_between_many"
+       method="originald"
+       linkedpaths="#path1036,0,1"
+       id="path-effect7848"
+       is_visible="true"
+       lpeversion="0"
+       join="true"
+       close="true"
+       autoreverse="true"
+       applied="false" />
+  </defs>
+  <g
+     inkscape:label="Ebene 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-71.032472,-86.99361)">
+    <path
+       inkscape:original-d="M 0,0"
+       inkscape:path-effect="#path-effect7848"
+       d="m 78.505352,189.56107 -7.47288,-5.99941 V 145.80913 108.0566 L 100.62779,97.672434 c 16.27742,-5.71129 30.75957,-10.987208 30.7578,-10.66477 l -0.0281,5.1418 v 5.37908 c 0,0.30193 -47.250368,16.744716 -50.724278,17.864036 -0.17665,0.0569 0.97622,1.14082 2.56192,2.40869 l 2.8831,2.3052 29.055768,-10.18485 c 15.98068,-5.60168 29.50227,-10.358756 30.04797,-10.571296 l 0.99219,-0.38644 v 37.782696 37.7827 l -29.59532,10.38416 c -16.27742,5.71129 -29.821498,10.44331 -30.097948,10.5156 -0.36317,0.095 -2.57614,-1.53322 -7.97551,-5.86797 z"
+       id="path7850"
+       style="fill:#ffffff;fill-opacity:1"
+       inkscape:export-filename="C:\Users\chris\Desktop\path7850.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <path
+       style="fill:url(#linearGradient3294);fill-opacity:1;stroke-width:0.264583"
+       d="m 78.505352,189.56107 -7.47288,-5.99941 V 145.80913 108.0566 L 100.62779,97.672434 c 16.27742,-5.71129 30.75957,-10.987208 30.7578,-10.66477 l -0.0281,5.1418 v 5.37908 c 0,0.30193 -47.250368,16.744716 -50.724278,17.864036 -0.17665,0.0569 0.97622,1.14082 2.56192,2.40869 l 2.8831,2.3052 29.055768,-10.18485 c 15.98068,-5.60168 29.50227,-10.358756 30.04797,-10.571296 l 0.99219,-0.38644 v 37.782696 37.7827 l -29.59532,10.38416 c -16.27742,5.71129 -29.821498,10.44331 -30.097948,10.5156 -0.36317,0.095 -2.57614,-1.53322 -7.97551,-5.86797 z m 36.201488,-20.37982 c 2.46697,-0.72462 4.43756,-2.04902 6.83363,-4.27425 l 2.40846,-2.03523 0.0232,2.33565 2.42448,-0.87859 1.78593,-0.58945 v -18.26299 l -0.0496,-18.22378 -2.39778,0.79402 -1.78594,0.58945 v 5.6359 5.63589 l -2.3151,-0.0163 c -5.10342,-0.0361 -9.92703,2.6369 -12.94375,7.17265 -1.2825,1.9283 -2.5926,5.43575 -3.00913,8.0562 -0.399,2.51017 -0.19859,7.46572 0.37706,9.32362 1.32052,4.26194 4.44336,5.97247 8.64863,4.73726 z m -2.39539,-4.52327 c -1.89569,-0.98394 -2.85177,-4.27783 -2.55803,-8.81296 0.43556,-6.72457 3.66337,-10.78371 9.57012,-12.03489 1.0161,-0.21523 2.28421,-0.3934 2.81801,-0.39593 l 1.77699,0.0117 0.0306,7.9266 v 7.62169 l -2.17743,2.02287 c -3.58104,3.32685 -7.31784,4.77292 -9.46025,3.66093 z"
+       id="path1036"
+       sodipodi:nodetypes="ccccsscssscsscccssscscccccccccccsssccsssccccsss" />
+  </g>
+</svg>
