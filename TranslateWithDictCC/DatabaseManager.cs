@@ -34,14 +34,25 @@ namespace TranslateWithDictCC
 
             await ExecuteNonQuery("PRAGMA journal_mode=WAL");
 
-            await ExecuteNonQuery("CREATE TABLE IF NOT EXISTS Dictionaries(ID INTEGER PRIMARY KEY NOT NULL, OriginLanguageCode VARCHAR(255) NOT NULL, DestinationLanguageCode VARCHAR(255) NOT NULL, CreationDate BIGINT NOT NULL, NumberOfEntries BIGINT NOT NULL)");
+            await ExecuteNonQuery(
+                @"CREATE TABLE IF NOT EXISTS Dictionaries(
+                      ID INTEGER PRIMARY KEY NOT NULL,
+                      OriginLanguageCode VARCHAR(255) NOT NULL,
+                      DestinationLanguageCode VARCHAR(255) NOT NULL,
+                      CreationDate BIGINT NOT NULL,
+                      NumberOfEntries BIGINT NOT NULL)");
         }
 
         public async Task<DbConnection> OpenConnection()
         {
             DbConnection connection = SqliteFactory.Instance.CreateConnection();
 
-            connection.ConnectionString = "Filename=" + DatabasePath;
+            SqliteConnectionStringBuilder builder = new SqliteConnectionStringBuilder()
+            {
+                DataSource = DatabasePath
+            };
+
+            connection.ConnectionString = builder.ToString();
 
             await connection.OpenAsync();
 
@@ -67,6 +78,29 @@ namespace TranslateWithDictCC
             }
         }
 
+        public async Task<T> OpenTransactedConnection<T>(Func<DbConnection, Task<T>> action)
+        {
+            using (DbConnection connection = await OpenConnection())
+            using (DbTransaction transaction = connection.BeginTransaction())
+            {
+                T result;
+
+                try
+                {
+                    result = await action(connection);
+
+                    transaction.Commit();
+                }
+                catch
+                {
+                    transaction.Rollback();
+                    throw;
+                }
+
+                return result;
+            }
+        }
+
         public async Task<int> ExecuteNonQuery(string commandText)
         {
             using (DbConnection connection = await OpenConnection())
@@ -89,14 +123,19 @@ namespace TranslateWithDictCC
             }
         }
 
-        public async Task<List<T>> ExecuteReader<T>(string commandText, Func<DbDataReader, T> dataReaderFunc)
+        public Task<List<T>> ExecuteReader<T>(string commandText, Func<DbDataReader, T> dataReaderFunc)
+        {
+            return ExecuteReader(command => { command.CommandText = commandText; }, dataReaderFunc);
+        }
+
+        public async Task<List<T>> ExecuteReader<T>(Action<DbCommand> commandFunc, Func<DbDataReader, T> dataReaderFunc)
         {
             List<T> results = new List<T>();
 
             using (DbConnection connection = await OpenConnection())
             using (DbCommand command = connection.CreateCommand())
             {
-                command.CommandText = commandText;
+                commandFunc(command);
 
                 using (DbDataReader dataReader = await command.ExecuteReaderAsync())
                     while (await dataReader.ReadAsync())
@@ -109,9 +148,9 @@ namespace TranslateWithDictCC
             return results;
         }
 
-        public Task<List<Dictionary>> GetDictionaries()
+        public async Task<List<Dictionary>> GetDictionaries()
         {
-            return ExecuteReader("SELECT * FROM Dictionaries", dataReader =>
+            return await ExecuteReader("SELECT * FROM Dictionaries", dataReader =>
             {
                 Dictionary dictionary = new Dictionary();
                 
@@ -125,16 +164,14 @@ namespace TranslateWithDictCC
             });
         }
 
-        private string GetDictionaryTableName(string originLanguageCode, string destinationLanguageCode)
+        private static string GetDictionaryTableName(string originLanguageCode, string destinationLanguageCode)
         {
-            return string.Format("Dictionary{0}{1}", originLanguageCode, destinationLanguageCode);
+            return "Dictionary" + originLanguageCode + destinationLanguageCode;
         }
 
         public async Task<Dictionary> ImportWordlist(DictionaryViewModel dictionaryViewModel, CancellationToken cancellationToken)
         {
-            Dictionary dictionary = null;
-
-            await OpenTransactedConnection(async connection =>
+            return await OpenTransactedConnection(async connection =>
             {
                 WordlistReader wordlistReader = dictionaryViewModel.WordlistReader;
 
@@ -142,7 +179,7 @@ namespace TranslateWithDictCC
 
                 using (DbCommand command = connection.CreateCommand())
                 {
-                    command.CommandText = "CREATE VIRTUAL TABLE " + tableName + " USING fts4(Word1 VARCHAR NOT NULL, Word2 VARCHAR NOT NULL, WordClasses VARCHAR, tokenize=unicode61)";
+                    command.CommandText = $"CREATE VIRTUAL TABLE {tableName} USING fts4(Word1 VARCHAR NOT NULL, Word2 VARCHAR NOT NULL, WordClasses VARCHAR, tokenize=unicode61)";
 
                     await command.ExecuteNonQueryAsync();
                 }
@@ -186,7 +223,7 @@ namespace TranslateWithDictCC
 
                 dictionaryViewModel.ImportProgress = 1.0;
 
-                dictionary = new Dictionary(wordlistReader.OriginLanguageCode, wordlistReader.DestinationLanguageCode, wordlistReader.CreationDate, dictionaryViewModel.NumberOfEntries);
+                Dictionary dictionary = new Dictionary(wordlistReader.OriginLanguageCode, wordlistReader.DestinationLanguageCode, wordlistReader.CreationDate, dictionaryViewModel.NumberOfEntries);
 
                 using (DbCommand command = connection.CreateCommand())
                 {
@@ -208,9 +245,9 @@ namespace TranslateWithDictCC
                 }
 
                 dictionaryViewModel.Dictionary = dictionary;
-            });
 
-            return dictionary;
+                return dictionary;
+            });
         }
 
         public Task<List<DictionaryEntry>> QueryEntries(Dictionary dictionary, string searchQuery, bool reverseSearch)
@@ -218,75 +255,76 @@ namespace TranslateWithDictCC
             return QueryEntries(dictionary, searchQuery, reverseSearch, -1);
         }
 
-        public Task<List<DictionaryEntry>> QueryEntries(Dictionary dictionary, string searchQuery, bool reverseSearch, int maxResults)
+        public async Task<List<DictionaryEntry>> QueryEntries(Dictionary dictionary, string searchQuery, bool reverseSearch, int maxResults)
         {
             string tableName = GetDictionaryTableName(dictionary.OriginLanguageCode, dictionary.DestinationLanguageCode);
-
             string column = reverseSearch ? "Word2" : "Word1";
+            string escapedQuery = '\"' + searchQuery.Replace("\"", "\"\"") + '\"';
 
-            string commandText = string.Format("SELECT *, offsets({0}) FROM {0} WHERE {1} MATCH '\"{2}\"'", tableName, column, SqlEscapeString(searchQuery));
+            return await ExecuteReader(command =>
+            {
+                command.CommandText = $"SELECT *, offsets({tableName}) FROM {tableName} WHERE {column} MATCH @Query";
 
-            if (maxResults >= 0)
-                commandText += " LIMIT " + maxResults;
+                if (maxResults >= 0)
+                    command.CommandText += " LIMIT " + maxResults;
 
-            return ExecuteReader(commandText, dataReader =>
+                command.Parameters.Add(new SqliteParameter("@Query", escapedQuery));
+            }, dataReader =>
             {
                 string word1 = dataReader.GetString(0);
                 string word2 = dataReader.GetString(1);
                 string wordClasses = dataReader.GetValue(2) as string;
                 string[] offsets = dataReader.GetString(3).Split(' ');
 
-                TextSpan[] matchSpans = new TextSpan[offsets.Length / 4];
-
-                string word = reverseSearch ? word2 : word1;
-
-                int[] byteCounts = null;
-
-                if (Encoding.UTF8.GetByteCount(word) != word.Length)
-                {
-                    byteCounts = new int[word.Length + 1];
-
-                    char[] wordChars = word.ToCharArray();
-
-                    for (int i = 0; i < word.Length; i++)
-                        byteCounts[i + 1] = byteCounts[i] + Encoding.UTF8.GetByteCount(wordChars, i, 1);
-                }
-
-                for (int i = 0; i < matchSpans.Length; i++)
-                {
-                    int offset = Convert.ToInt32(offsets[4 * i + 2]);
-                    int length = Convert.ToInt32(offsets[4 * i + 3]);
-
-                    if (byteCounts != null)
-                    {
-                        int adjustedOffset = Array.BinarySearch(byteCounts, offset);
-                        int adjustedLength = Array.BinarySearch(byteCounts, offset + length) - adjustedOffset;
-                        offset = adjustedOffset;
-                        length = adjustedLength;
-                    }
-
-                    matchSpans[i] = new TextSpan(offset, length);
-                }
+                TextSpan[] matchSpans = GetMatchSpans(reverseSearch ? word2 : word1, offsets);
 
                 return new DictionaryEntry { Word1 = word1, Word2 = word2, WordClasses = wordClasses, MatchSpans = matchSpans };
             });
         }
 
-        public Task OptimizeTable(Dictionary dictionary)
+        private static TextSpan[] GetMatchSpans(string word, string[] offsets)
+        {
+            TextSpan[] matchSpans = new TextSpan[offsets.Length / 4];
+
+            int[] byteCounts = null;
+
+            if (Encoding.UTF8.GetByteCount(word) != word.Length)
+            {
+                byteCounts = new int[word.Length + 1];
+
+                for (int i = 0; i < word.Length; i++)
+                    byteCounts[i + 1] = byteCounts[i] + Encoding.UTF8.GetByteCount(word, i, 1);
+            }
+
+            for (int i = 0; i < matchSpans.Length; i++)
+            {
+                int offset = Convert.ToInt32(offsets[4 * i + 2]);
+                int length = Convert.ToInt32(offsets[4 * i + 3]);
+
+                if (byteCounts != null)
+                {
+                    int adjustedOffset = Array.BinarySearch(byteCounts, offset);
+                    int adjustedLength = Array.BinarySearch(byteCounts, offset + length) - adjustedOffset;
+                    offset = adjustedOffset;
+                    length = adjustedLength;
+                }
+
+                matchSpans[i] = new TextSpan(offset, length);
+            }
+
+            return matchSpans;
+        }
+
+        public async Task OptimizeTable(Dictionary dictionary)
         {
             string tableName = GetDictionaryTableName(dictionary.OriginLanguageCode, dictionary.DestinationLanguageCode);
 
-            return ExecuteNonQuery(string.Format("INSERT INTO {0}({0}) VALUES('optimize');", tableName));
+            await ExecuteNonQuery($"INSERT INTO {tableName}({tableName}) VALUES('optimize');");
         }
 
-        private static string SqlEscapeString(string s)
+        public async Task DeleteDictionary(Dictionary dictionary)
         {
-            return s.Replace("'", "''").Replace("\"", "\"\"");
-        }
-
-        public Task DeleteDictionary(Dictionary dictionary)
-        {
-            return OpenTransactedConnection(async connection =>
+            await OpenTransactedConnection(async connection =>
             {
                 using (DbCommand command = connection.CreateCommand())
                 {
