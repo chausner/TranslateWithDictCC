@@ -1,7 +1,10 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
+using Microsoft.Windows.ApplicationModel.Resources;
 using System;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using TranslateWithDictCC.Models;
 
 namespace TranslateWithDictCC.ViewModels
@@ -52,12 +55,17 @@ namespace TranslateWithDictCC.ViewModels
             }
         }
 
+        public ICommand PlayStopAudioRecording1Command { get; }
+        public ICommand PlayStopAudioRecording2Command { get; }
+
         public DictionaryEntryViewModel(DictionaryEntry entry, SearchContext searchContext)
         {
             DictionaryEntry = entry;
             SearchContext = searchContext;
             AudioRecordingState1 = AudioRecordingState.Available;
             AudioRecordingState2 = AudioRecordingState.Available;
+            PlayStopAudioRecording1Command = new RelayCommand(() => { PlayStopAudioRecording(false); });
+            PlayStopAudioRecording2Command = new RelayCommand(() => { PlayStopAudioRecording(true); });
         }
 
         private void Initialize()
@@ -84,6 +92,42 @@ namespace TranslateWithDictCC.ViewModels
                 return Visibility.Visible;
             else
                 return Visibility.Collapsed;
+        }
+
+        private async void PlayStopAudioRecording(bool word2)
+        {
+            switch (word2 ? AudioRecordingState2 : AudioRecordingState1)
+            {
+                case AudioRecordingState.Available:
+                    await AudioPlayer.Instance.PlayAudioRecording(this, word2);
+                    break;
+                case AudioRecordingState.Playing:
+                    if (AudioPlayer.Instance.CurrentlyPlayingAudioRecording == this)
+                        AudioPlayer.Instance.Pause();
+                    if (word2)
+                        AudioRecordingState2 = AudioRecordingState.Available;
+                    else
+                        AudioRecordingState1 = AudioRecordingState.Available;
+                    break;
+                case AudioRecordingState.Unavailable:
+                    await ShowAudioRecordingNotAvailableMessage();
+                    break;
+            }
+        }
+
+        private async Task ShowAudioRecordingNotAvailableMessage()
+        {
+            ResourceLoader resourceLoader = new ResourceLoader();
+
+            ContentDialog contentDialog = new ContentDialog()
+            {
+                Title = resourceLoader.GetString("Audio_Recording_Not_Available_Title"),
+                Content = resourceLoader.GetString("Audio_Recording_Not_Available_Body"),
+                CloseButtonText = "OK",
+                XamlRoot = MainWindow.Instance.Content.XamlRoot
+            };
+
+            await contentDialog.ShowAsync();
         }
     }
 
