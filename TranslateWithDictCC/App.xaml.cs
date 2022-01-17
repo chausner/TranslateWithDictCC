@@ -5,8 +5,10 @@ using System;
 using System.IO;
 using System.Reflection;
 using TranslateWithDictCC.ViewModels;
+using Windows.Graphics;
 using Windows.UI;
 using WinRT.Interop;
+using WinUIEx;
 
 namespace TranslateWithDictCC
 {
@@ -34,7 +36,8 @@ namespace TranslateWithDictCC
             mainWindow = new MainWindow();
 
             SetTitleBarColorsAndIcon(mainWindow);
-            
+            SetWindowSizeAndLocation(mainWindow);
+
             mainWindow.Activate();
         }
 
@@ -70,6 +73,19 @@ namespace TranslateWithDictCC
 
             string applicationRoot = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
             appWindow.SetIcon(Path.Combine(applicationRoot, @"Assets\Logo.ico"));
+        }
+
+        private void SetWindowSizeAndLocation(WindowEx window)
+        {
+            SizeInt32 initialSize = new SizeInt32(1000, 650);
+            SizeInt32 minSize = new SizeInt32(680, 430);
+
+            window.CenterOnScreen(initialSize.Width, initialSize.Height);
+
+            // minimum size must be scaled by DPI
+            uint dpi = HwndExtensions.GetDpiForWindow(window.GetWindowHandle());
+            window.MinWidth = (int)(minSize.Width * dpi / 96.0);
+            window.MinHeight = (int)(minSize.Height * dpi / 96.0);
         }
     }
 }

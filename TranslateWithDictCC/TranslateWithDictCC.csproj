@@ -88,6 +88,7 @@
 		<PackageReference Include="Microsoft.Data.Sqlite" Version="6.0.1" />
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.0.0" />
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22000.196" />
+		<PackageReference Include="WinUIEx" Version="1.1.0" />
 		<Manifest Remove="app.manifest" />
 		<None Remove="Assets\Logo.ico" />
 		<Manifest Include="$(ApplicationManifest)" />
