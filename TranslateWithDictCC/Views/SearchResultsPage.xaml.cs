@@ -6,13 +6,8 @@ using Microsoft.UI.Xaml.Navigation;
 using Microsoft.Windows.ApplicationModel.Resources;
 using System;
 using System.ComponentModel;
-using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
 using TranslateWithDictCC.ViewModels;
-using Windows.Media.Core;
-using Windows.Media.Playback;
-using Windows.Networking.Connectivity;
 using Windows.System;
 
 namespace TranslateWithDictCC.Views
