@@ -39,7 +39,7 @@ namespace TranslateWithDictCC.ViewModels
         private void Initialize()
         {
             bool reverseSearch = SearchContext.SelectedDirection.ReverseSearch;
-            word = WordHighlighting.GenerateRichTextBlock(reverseSearch ? DictionaryEntry.Word2 : DictionaryEntry.Word1, SearchContext.SearchQuery, DictionaryEntry.MatchSpans, false);
+            word = WordHighlighting.GenerateRichTextBlock(reverseSearch ? DictionaryEntry.Word2 : DictionaryEntry.Word1, DictionaryEntry.MatchSpans, false);
         }
 
         public Visibility GetWordClassVisibility(string wordClasses)

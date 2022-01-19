@@ -71,8 +71,8 @@ namespace TranslateWithDictCC.ViewModels
         private void Initialize()
         {
             bool reverseSearch = SearchContext.SelectedDirection.ReverseSearch;
-            word1 = WordHighlighting.GenerateRichTextBlock(reverseSearch ? DictionaryEntry.Word2 : DictionaryEntry.Word1, SearchContext.SearchQuery, DictionaryEntry.MatchSpans, true);
-            word2 = WordHighlighting.GenerateRichTextBlock(reverseSearch ? DictionaryEntry.Word1 : DictionaryEntry.Word2, SearchContext.SearchQuery, DictionaryEntry.MatchSpans, false);
+            word1 = WordHighlighting.GenerateRichTextBlock(reverseSearch ? DictionaryEntry.Word2 : DictionaryEntry.Word1, DictionaryEntry.MatchSpans, true);
+            word2 = WordHighlighting.GenerateRichTextBlock(reverseSearch ? DictionaryEntry.Word1 : DictionaryEntry.Word2, DictionaryEntry.MatchSpans, false);
         }        
 
         public IconElement GetAudioRecordingButtonIcon(AudioRecordingState state)

@@ -17,7 +17,7 @@ namespace TranslateWithDictCC.ViewModels
         static readonly SolidColorBrush queryBrush = (SolidColorBrush)Application.Current.Resources["DictionaryEntryQueryThemeBrush"];
         static readonly SolidColorBrush queryHighlightBrush = (SolidColorBrush)Application.Current.Resources["DictionaryEntryQueryHighlightThemeBrush"];
 
-        public static Block GenerateRichTextBlock(string word, string searchQuery, TextSpan[] matchSpans, bool highlightQuery)
+        public static Block GenerateRichTextBlock(string word, TextSpan[] matchSpans, bool highlightQuery)
         {
             TextSpan[] annotationSpans = GetAnnotationSpans(word);
 
@@ -29,10 +29,9 @@ namespace TranslateWithDictCC.ViewModels
             int betweenLength;
 
             if (highlightQuery)
-                for (int i = 0; i < matchSpans.Length; i++)
+            {
+                foreach (TextSpan span in MergeSpans(matchSpans, word))
                 {
-                    TextSpan span = matchSpans[i];
-
                     betweenOffset = lastSpan.Offset + lastSpan.Length;
                     betweenLength = span.Offset - betweenOffset;
 
@@ -59,6 +58,7 @@ namespace TranslateWithDictCC.ViewModels
 
                     lastSpan = span;
                 }
+            }
 
             betweenOffset = lastSpan.Offset + lastSpan.Length;
             betweenLength = word.Length - betweenOffset;
@@ -67,6 +67,38 @@ namespace TranslateWithDictCC.ViewModels
                 GenerateRun(paragraph, word, betweenOffset, betweenLength, annotationSpans);
 
             return paragraph;
+        }
+
+        private static IReadOnlyList<TextSpan> MergeSpans(TextSpan[] matchSpans, string word)
+        {
+            List<TextSpan> mergedSpans = new List<TextSpan>(matchSpans.Length);
+
+            TextSpan currentSpan = matchSpans[0];
+
+            for (int i = 1; i < matchSpans.Length; i++)
+            {
+                bool onlyWhitespaceBetweenSpans = true;
+                for (int j = currentSpan.Offset + currentSpan.Length; j < matchSpans[i].Offset; j++)
+                {
+                    if (!char.IsWhiteSpace(word[j]))
+                    {
+                        onlyWhitespaceBetweenSpans = false;
+                        break;
+                    }
+                }
+
+                if (onlyWhitespaceBetweenSpans)
+                    currentSpan.Length = matchSpans[i].Offset + matchSpans[i].Length - currentSpan.Offset;
+                else
+                {
+                    mergedSpans.Add(currentSpan);
+                    currentSpan = matchSpans[i];
+                }
+            }
+
+            mergedSpans.Add(currentSpan);
+
+            return mergedSpans;
         }
 
         private static void GenerateRun(Paragraph paragraph, string word, int offset, int length, TextSpan[] annotationSpans)
