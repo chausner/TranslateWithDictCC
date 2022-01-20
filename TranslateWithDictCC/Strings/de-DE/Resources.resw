@@ -786,6 +786,12 @@
   <data name="MainPage_DirectionComboBox.PlaceholderText" xml:space="preserve">
     <value>Kein Wörterbuch installiert</value>
   </data>
+  <data name="MainPage_NoDictionaryInstalledTeachingTip.Subtitle" xml:space="preserve">
+    <value>Importieren Sie zunächst ein Wörterbuch.</value>
+  </data>
+  <data name="MainPage_NoDictionaryInstalledTeachingTip.Title" xml:space="preserve">
+    <value>Kein Wörterbuch installiert</value>
+  </data>
   <data name="MainPage_OptionsHamburgerMenuItem.Content" xml:space="preserve">
     <value>Optionen</value>
   </data>

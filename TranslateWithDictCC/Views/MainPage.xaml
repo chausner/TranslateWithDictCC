@@ -17,5 +17,11 @@
             </NavigationView.FooterMenuItems>
             <Frame Name="contentFrame" Navigated="contentFrame_Navigated" />
         </NavigationView>
+        <TeachingTip x:Uid="MainPage_NoDictionaryInstalledTeachingTip" Name="noDictionaryInstalledTeachingTip" Target="{x:Bind optionsHamburgerMenuItem}" 
+                     Title="No dictionary installed" Subtitle="Import a dictionary to get started." IsOpen="{x:Bind ViewModel.ShowNoDictionaryInstalledTeachingTip, Mode=OneWay}">
+            <TeachingTip.IconSource>
+                <FontIconSource FontFamily="Segoe MDL2 Assets" Glyph="&#xE946;" />
+            </TeachingTip.IconSource>
+        </TeachingTip>
     </Grid>
 </Page>

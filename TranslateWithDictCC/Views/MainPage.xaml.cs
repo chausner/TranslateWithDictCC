@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using TranslateWithDictCC.ViewModels;
 
 namespace TranslateWithDictCC.Views
@@ -29,28 +30,23 @@ namespace TranslateWithDictCC.Views
         {
             SearchResultsViewModel searchResultsViewModel = new SearchResultsViewModel();
 
-            if (searchResultsViewModel.AvailableDirections.Length == 0)
-                contentFrame.Navigate(typeof(SettingsPage));
-            else
+            contentFrame.Navigate(typeof(SearchResultsPage), searchResultsViewModel);
+
+            string launchArguments = e.Parameter as string;
+
+            if (!string.IsNullOrEmpty(launchArguments))
             {
-                contentFrame.Navigate(typeof(SearchResultsPage), searchResultsViewModel);
-
-                string launchArguments = e.Parameter as string;
-
-                if (!string.IsNullOrEmpty(launchArguments))
+                if (launchArguments.StartsWith("dict:") && launchArguments.Length == 9)
                 {
-                    if (launchArguments.StartsWith("dict:") && launchArguments.Length == 9)
-                    {
-                        string originLanguageCode = launchArguments.Substring(5, 2);
-                        string destinationLanguageCode = launchArguments.Substring(7, 2);
+                    string originLanguageCode = launchArguments.Substring(5, 2);
+                    string destinationLanguageCode = launchArguments.Substring(7, 2);
 
-                        DirectionViewModel directionViewModel =
-                            searchResultsViewModel.AvailableDirections.FirstOrDefault(
-                                dvm => dvm.OriginLanguageCode == originLanguageCode && dvm.DestinationLanguageCode == destinationLanguageCode);
+                    DirectionViewModel directionViewModel =
+                        searchResultsViewModel.AvailableDirections.FirstOrDefault(
+                            dvm => dvm.OriginLanguageCode == originLanguageCode && dvm.DestinationLanguageCode == destinationLanguageCode);
 
-                        if (directionViewModel != null)
-                            searchResultsViewModel.SelectedDirection = directionViewModel;
-                    }
+                    if (directionViewModel != null)
+                        searchResultsViewModel.SelectedDirection = directionViewModel;
                 }
             }
         }
@@ -117,11 +113,28 @@ namespace TranslateWithDictCC.Views
             }
         }        
 
-        private void contentFrame_Navigated(object sender, NavigationEventArgs e)
+        private async void contentFrame_Navigated(object sender, NavigationEventArgs e)
         {
             searchHamburgerMenuItem.IsSelected = e.SourcePageType == typeof(SearchResultsPage);
             optionsHamburgerMenuItem.IsSelected = e.SourcePageType == typeof(SettingsPage);
             aboutHamburgerMenuItem.IsSelected = e.SourcePageType == typeof(AboutPage);
+
+            if (e.SourcePageType == typeof(SearchResultsPage) && 
+                !ViewModel.NoDictionaryInstalledTeachingTipShown && 
+                DirectionManager.Instance.AvailableDirections.Length == 0)
+            {
+                // workaround https://github.com/microsoft/microsoft-ui-xaml/issues/6628
+                await Task.Delay(1000);
+
+                // make sure that the user hasn't navigated to another page in the meantime
+                if (contentFrame.SourcePageType == typeof(SearchResultsPage))
+                {
+                    ViewModel.ShowNoDictionaryInstalledTeachingTip = true;
+                    ViewModel.NoDictionaryInstalledTeachingTipShown = true;
+                }
+            }
+            else
+                ViewModel.ShowNoDictionaryInstalledTeachingTip = false;
         }
 
         private void navigationView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
