@@ -100,6 +100,8 @@ namespace TranslateWithDictCC.ViewModels
             CreationDate = dictionary.CreationDate;
             NumberOfEntries = dictionary.NumberOfEntries;
             Status = DictionaryStatus.Installed;
+
+            UpdateStatusText();
         }
 
         public DictionaryViewModel(WordlistReader wordlistReader) : this()
@@ -110,6 +112,8 @@ namespace TranslateWithDictCC.ViewModels
             CreationDate = wordlistReader.CreationDate;
             NumberOfEntries = 0;
             Status = DictionaryStatus.Queued;
+
+            UpdateStatusText();
         }
 
         private void UpdateStatusText()

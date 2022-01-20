@@ -16,7 +16,7 @@
                     <ColumnDefinition Width="2*" />
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="56" />
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition />
@@ -56,7 +56,7 @@
                     <ColumnDefinition Width="2*" />
                     <ColumnDefinition Width="0" />
                     <ColumnDefinition Width="0" />
-                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="56" />
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition />
