@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Input;
 using System.Collections.Generic;
 using Windows.System;
-using Windows.UI.Core;
 
 namespace TranslateWithDictCC
 {
     class KeyboardShortcutListener
     {
-        private record ShortcutHandler(VirtualKeyModifiers VirtualKeyModifiers, VirtualKey VirtualKey, EventHandler Handler);
+        private record ShortcutHandler(VirtualKeyModifiers VirtualKeyModifiers, VirtualKey VirtualKey, KeyEventHandler Handler);
 
         bool controlPressed;
         bool menuPressed;
@@ -15,15 +15,15 @@ namespace TranslateWithDictCC
 
         List<ShortcutHandler> shortcutHandlers = new List<ShortcutHandler>();
 
-        public KeyboardShortcutListener()
+        public KeyboardShortcutListener(UIElement element)
         {
-            // Window.Current.CoreWindow.KeyDown += CoreWindow_KeyDown;
-            // Window.Current.CoreWindow.KeyUp += CoreWindow_KeyUp;
+            element.KeyDown += Element_KeyDown;
+            element.KeyUp += Element_KeyUp;
         }
 
-        private void CoreWindow_KeyDown(CoreWindow sender, KeyEventArgs args)
+        private void Element_KeyDown(object sender, KeyRoutedEventArgs e)
         {
-            switch (args.VirtualKey)
+            switch (e.Key)
             {
                 case VirtualKey.Control:
                     controlPressed = true;
@@ -51,13 +51,13 @@ namespace TranslateWithDictCC
 
             foreach (var shortcutHandler in shortcutHandlers)
                 if (shortcutHandler.VirtualKeyModifiers == modifiers &&
-                    shortcutHandler.VirtualKey == args.VirtualKey)
-                    shortcutHandler.Handler(this, EventArgs.Empty);
+                    shortcutHandler.VirtualKey == e.Key)                
+                    shortcutHandler.Handler(this, e);
         }
 
-        private void CoreWindow_KeyUp(CoreWindow sender, KeyEventArgs args)
+        private void Element_KeyUp(object sender, KeyRoutedEventArgs e)
         {
-            switch (args.VirtualKey)
+            switch (e.Key)
             {
                 case VirtualKey.Control:
                     controlPressed = false;
@@ -75,7 +75,7 @@ namespace TranslateWithDictCC
             }
         }
 
-        public void RegisterShortcutHandler(VirtualKeyModifiers modifiers, VirtualKey key, EventHandler handler)
+        public void RegisterShortcutHandler(VirtualKeyModifiers modifiers, VirtualKey key, KeyEventHandler handler)
         {
             shortcutHandlers.Add(new ShortcutHandler(modifiers, key, handler));
         }

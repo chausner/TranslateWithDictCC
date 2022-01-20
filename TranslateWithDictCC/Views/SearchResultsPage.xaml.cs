@@ -1,6 +1,7 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
+using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Microsoft.Windows.ApplicationModel.Resources;
@@ -32,16 +33,17 @@ namespace TranslateWithDictCC.Views
 
             ViewModel.PropertyChanged += MainViewModel_PropertyChanged;
 
-            KeyboardShortcutListener shortcutListener = new KeyboardShortcutListener();
+            KeyboardShortcutListener shortcutListener = new KeyboardShortcutListener(MainWindow.Instance.ApplicationFrame);
 
             shortcutListener.RegisterShortcutHandler(VirtualKeyModifiers.Control, VirtualKey.E, OnControlEShortcut);
             shortcutListener.RegisterShortcutHandler(VirtualKeyModifiers.Control, VirtualKey.S, OnControlSShortcut);
         }
 
-        private void OnControlEShortcut(object sender, EventArgs e)
+        private void OnControlEShortcut(object sender, KeyRoutedEventArgs e)
         {
             searchBox.Text = string.Empty;
             FocusSearchBox();
+            e.Handled = true;
         }
 
         public void FocusSearchBox()
@@ -49,9 +51,10 @@ namespace TranslateWithDictCC.Views
             searchBox.Focus(FocusState.Programmatic);
         }
 
-        private void OnControlSShortcut(object sender, EventArgs e)
+        private void OnControlSShortcut(object sender, KeyRoutedEventArgs e)
         {
             SwitchDirection_Click(sender, new RoutedEventArgs());
+            e.Handled = true;
         }
 
         private void MainViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)

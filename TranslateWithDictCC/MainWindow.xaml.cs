@@ -1,4 +1,5 @@
-﻿using Microsoft.Windows.ApplicationModel.Resources;
+﻿using Microsoft.UI.Xaml;
+using Microsoft.Windows.ApplicationModel.Resources;
 using TranslateWithDictCC.Views;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -12,6 +13,8 @@ namespace TranslateWithDictCC
     public sealed partial class MainWindow : WinUIEx.WindowEx
     {
         public static MainWindow Instance { get; private set; }
+
+        public UIElement ApplicationFrame => applicationFrame;
 
         public MainWindow()
         {
