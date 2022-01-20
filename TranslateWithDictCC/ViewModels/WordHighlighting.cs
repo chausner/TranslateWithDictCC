@@ -1,4 +1,5 @@
-﻿using Microsoft.UI.Xaml;
+﻿using Microsoft.UI.Text;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
@@ -14,7 +15,6 @@ namespace TranslateWithDictCC.ViewModels
     static class WordHighlighting
     {
         static readonly SolidColorBrush annotationBrush = (SolidColorBrush)Application.Current.Resources["DictionaryEntryAnnotationThemeBrush"];
-        static readonly SolidColorBrush queryBrush = (SolidColorBrush)Application.Current.Resources["DictionaryEntryQueryThemeBrush"];
         static readonly SolidColorBrush queryHighlightBrush = (SolidColorBrush)Application.Current.Resources["DictionaryEntryQueryHighlightThemeBrush"];
 
         public static Block GenerateRichTextBlock(string word, TextSpan[] matchSpans, bool highlightQuery)
@@ -38,23 +38,7 @@ namespace TranslateWithDictCC.ViewModels
                     if (betweenLength != 0)
                         GenerateRun(paragraph, word, betweenOffset, betweenLength, annotationSpans);
 
-#if true
-                    Rectangle rectangle = new Rectangle() { RadiusX = 4, RadiusY = 4, Fill = queryHighlightBrush };
-                    TextBlock textBlock = new TextBlock() { Text = word.Substring(span.Offset, span.Length) };
-                    textBlock.Margin = new Thickness(4, 0, 4, 0);
-
-                    if (annotationSpans.Any(annotationSpan => annotationSpan.Contains(span)))
-                        textBlock.Foreground = annotationBrush;
-
-                    Grid grid = new Grid();
-                    grid.Children.Add(rectangle);
-                    grid.Children.Add(textBlock);
-                    grid.Margin = new Thickness(0, -4, 0, 0);
-                    grid.RenderTransform = new TranslateTransform() { Y = 4 };
-                    paragraph.Inlines.Add(new InlineUIContainer() { Child = grid });
-#else
-                    paragraph.Inlines.Add(new Run() { Text = word.Substring(span.Offset, span.Length), Foreground = queryBrush });
-#endif
+                    GenerateQueryHighlight(paragraph, word, annotationSpans, span);
 
                     lastSpan = span;
                 }
@@ -138,9 +122,51 @@ namespace TranslateWithDictCC.ViewModels
             Run run = new Run() { Text = word.Substring(offset, length) };
 
             if (annotation)
-                run.Foreground = annotationBrush;
+                ApplyAnnotationStyle(run);
+            else
+                ApplyQueryHighlightStyle(run);
 
             paragraph.Inlines.Add(run);
+        }
+
+        private static void GenerateQueryHighlight(Paragraph paragraph, string word, TextSpan[] annotationSpans, TextSpan span)
+        {
+            Rectangle rectangle = new Rectangle() { RadiusX = 4, RadiusY = 4, Fill = queryHighlightBrush };
+            TextBlock textBlock = new TextBlock() { Text = word.Substring(span.Offset, span.Length) };
+            textBlock.Margin = new Thickness(4, 0, 4, 0);
+
+            if (annotationSpans.Any(annotationSpan => annotationSpan.Contains(span)))
+                ApplyAnnotationStyle(textBlock);
+            else
+                ApplyQueryHighlightStyle(textBlock);
+
+            Grid grid = new Grid();
+            grid.Children.Add(rectangle);
+            grid.Children.Add(textBlock);
+            grid.Margin = new Thickness(0, -4, 0, 0);
+            grid.RenderTransform = new TranslateTransform() { Y = 4 };
+
+            paragraph.Inlines.Add(new InlineUIContainer() { Child = grid });
+        }
+
+        private static void ApplyAnnotationStyle(Run run)
+        {
+            run.Foreground = annotationBrush;
+        }
+
+        private static void ApplyAnnotationStyle(TextBlock textBlock)
+        {
+            textBlock.Foreground = annotationBrush;
+        }
+
+        private static void ApplyQueryHighlightStyle(Run run)
+        {
+            run.FontWeight = FontWeights.SemiBold;
+        }
+
+        private static void ApplyQueryHighlightStyle(TextBlock textBlock)
+        {
+            textBlock.FontWeight = FontWeights.SemiBold;
         }
 
         private static TextSpan[] GetAnnotationSpans(string word)

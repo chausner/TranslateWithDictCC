@@ -87,7 +87,6 @@
                     <SolidColorBrush x:Key="DictionaryEntryWordClassesThemeBrush" Color="#DADADA" />
                     <SolidColorBrush x:Key="DictionaryEntryAltBackgroundThemeBrush" Color="#20FFFFFF" />
                     <SolidColorBrush x:Key="DictionaryEntryAnnotationThemeBrush" Color="DarkSlateBlue" />
-                    <SolidColorBrush x:Key="DictionaryEntryQueryThemeBrush" Color="Green" />
                     <!--<SolidColorBrush x:Key="DictionaryEntryQueryHighlightThemeBrush" Color="#FFFFB0" />-->
                     <!--<SolidColorBrush x:Key="DictionaryEntryQueryHighlightThemeBrush" Color="#FFB358" />-->
                     <SolidColorBrush x:Key="DictionaryEntryQueryHighlightThemeBrush" Color="#4000FF00" />
@@ -117,7 +116,6 @@
                     <SolidColorBrush x:Key="DictionaryEntryWordClassesThemeBrush" Color="#404040" />
                     <SolidColorBrush x:Key="DictionaryEntryAltBackgroundThemeBrush" Color="#131313" />
                     <SolidColorBrush x:Key="DictionaryEntryAnnotationThemeBrush" Color="SlateGray" />
-                    <SolidColorBrush x:Key="DictionaryEntryQueryThemeBrush" Color="LimeGreen" />
                     <SolidColorBrush x:Key="DictionaryEntryQueryHighlightThemeBrush" Color="#404040" />
                     <SolidColorBrush x:Key="ListViewItemPlaceholderBackgroundThemeBrush" Color="Black" />
                 </ResourceDictionary>
