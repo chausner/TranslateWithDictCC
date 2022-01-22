@@ -837,6 +837,9 @@
   <data name="SearchResultsPage_SingleResult" xml:space="preserve">
     <value>1 hit</value>
   </data>
+  <data name="SettingsPage_AbortImportButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Abort import</value>
+  </data>
   <data name="SettingsPage_AcquireDictionariesTextBlock.Text" xml:space="preserve">
     <value>Follow the link below to acquire dictionaries from dict.cc. Then, click on "Import dictionary" and select the downloaded files to start the import process.</value>
   </data>
@@ -861,8 +864,14 @@
   <data name="SettingsPage_ImportDictionaryButton.Content" xml:space="preserve">
     <value>Import dictionary</value>
   </data>
-  <data name="SettingsPage_RemoveDictionaryButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+  <data name="SettingsPage_RemoveDictionaryButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Remove dictionary</value>
+  </data>
+  <data name="SettingsPage_RemoveDictionaryConfirmationButton.Content" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="SettingsPage_RemoveDictionaryConfirmationTextBlock.Text" xml:space="preserve">
+    <value>Are you sure you want to remove this dictionary?</value>
   </data>
   <data name="SettingsPage_TitleTextBlock.Text" xml:space="preserve">
     <value>Settings</value>

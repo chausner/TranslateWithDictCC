@@ -837,6 +837,9 @@
   <data name="SearchResultsPage_SingleResult" xml:space="preserve">
     <value>1 Treffer</value>
   </data>
+  <data name="SettingsPage_AbortImportButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Import abbrechen</value>
+  </data>
   <data name="SettingsPage_AcquireDictionariesTextBlock.Text" xml:space="preserve">
     <value>Folgen Sie dem Link, um Wörterbücher von dict.cc herunterzuladen. Klicken Sie anschließend auf "Wörterbuch importieren" und wählen Sie die heruntergeladenen Dateien aus, um sie zu importieren.</value>
   </data>
@@ -861,8 +864,14 @@
   <data name="SettingsPage_ImportDictionaryButton.Content" xml:space="preserve">
     <value>Wörterbuch importieren</value>
   </data>
-  <data name="SettingsPage_RemoveDictionaryButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+  <data name="SettingsPage_RemoveDictionaryButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Wörterbuch entfernen</value>
+  </data>
+  <data name="SettingsPage_RemoveDictionaryConfirmationButton.Content" xml:space="preserve">
+    <value>Entfernen</value>
+  </data>
+  <data name="SettingsPage_RemoveDictionaryConfirmationTextBlock.Text" xml:space="preserve">
+    <value>Sind Sie sich sicher, dieses Wörterbuch zu entfernen?</value>
   </data>
   <data name="SettingsPage_TitleTextBlock.Text" xml:space="preserve">
     <value>Optionen</value>

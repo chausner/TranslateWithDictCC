@@ -32,21 +32,19 @@
                 <TextBlock Grid.Column="2" VerticalAlignment="Center" Text="{x:Bind StatusText, Mode=OneWay}" />
                 <ProgressBar Grid.Row="0" Grid.ColumnSpan="4" VerticalAlignment="Bottom"
                              Minimum="0.0" Maximum="1.0" Value="{x:Bind ImportProgress, Mode=OneWay}" Visibility="{x:Bind ProgressBarVisibility, Mode=OneWay}" />
-                <AppBarButton Grid.Column="3" Grid.RowSpan="2" VerticalAlignment="Center" Width="48" Height="48" Margin="8,0,0,0" Icon="Delete"
+                <AppBarButton x:Uid="SettingsPage_RemoveDictionaryButton" Grid.Column="3" Grid.RowSpan="2" VerticalAlignment="Center" Width="48" Height="48" Margin="8,0,0,0" Icon="Delete"
                               ToolTipService.ToolTip="Remove dictionary" Visibility="{x:Bind RemoveDictionaryButtonVisibility, Mode=OneWay}">
                     <AppBarButton.Flyout>
                         <Flyout>
                             <StackPanel>
-                                <TextBlock Style="{ThemeResource BaseTextBlockStyle}" Text="Are you sure you want to remove this dictionary?" Margin="0,0,0,12" />
-                                <Button Content="Remove" Command="{x:Bind RemoveDictionaryCommand}" HorizontalAlignment="Right" />
+                                <TextBlock x:Uid="SettingsPage_RemoveDictionaryConfirmationTextBlock" Style="{ThemeResource BaseTextBlockStyle}" Text="Are you sure you want to remove this dictionary?" Margin="0,0,0,12" />
+                                <Button x:Uid="SettingsPage_RemoveDictionaryConfirmationButton" Content="Remove" Command="{x:Bind RemoveDictionaryCommand}" HorizontalAlignment="Right" />
                             </StackPanel>
                         </Flyout>
                     </AppBarButton.Flyout>
                 </AppBarButton>
-                <!-- x:Uid="SettingsPage_RemoveDictionaryButton" -->
-                <AppBarButton Grid.Column="3" Grid.RowSpan="2" VerticalAlignment="Center" Width="48" Height="48" Margin="8,0,0,0" Icon="Cancel"
+                <AppBarButton x:Uid="SettingsPage_AbortImportButton" Grid.Column="3" Grid.RowSpan="2" VerticalAlignment="Center" Width="48" Height="48" Margin="8,0,0,0" Icon="Cancel"
                               ToolTipService.ToolTip="Abort import" Visibility="{x:Bind AbortImportButtonVisibility, Mode=OneWay}" Command="{x:Bind AbortImportCommand}" />
-                <!-- x:Uid="SettingsPage_RemoveDictionaryButton" -->
             </Grid>
         </DataTemplate>
         <DataTemplate x:Key="LanguageItemDataTemplateCompact" x:DataType="viewmodels:DictionaryViewModel">
@@ -70,20 +68,19 @@
                 </StackPanel>
                 <ProgressBar Grid.Row="0" Grid.ColumnSpan="4" VerticalAlignment="Bottom"
                              Minimum="0.0" Maximum="1.0" Value="{x:Bind ImportProgress, Mode=OneWay}" Visibility="{x:Bind ProgressBarVisibility, Mode=OneWay}" />
-                <AppBarButton Grid.Column="3" Grid.RowSpan="2" VerticalAlignment="Center" Width="48" Height="48" Margin="8,0,0,0" Icon="Delete"
+                <AppBarButton x:Uid="SettingsPage_RemoveDictionaryButton" Grid.Column="3" Grid.RowSpan="2" VerticalAlignment="Center" Width="48" Height="48" Margin="8,0,0,0" Icon="Delete"
                               ToolTipService.ToolTip="Remove dictionary" Visibility="{x:Bind RemoveDictionaryButtonVisibility, Mode=OneWay}">
                     <AppBarButton.Flyout>
                         <Flyout>
                             <StackPanel>
-                                <TextBlock Style="{ThemeResource BaseTextBlockStyle}" Text="Are you sure you want to remove this dictionary?" Margin="0,0,0,12" />
-                                <Button Content="Remove" Command="{x:Bind RemoveDictionaryCommand}" HorizontalAlignment="Right" />
+                                <TextBlock x:Uid="SettingsPage_RemoveDictionaryConfirmationTextBlock" Style="{ThemeResource BaseTextBlockStyle}" Text="Are you sure you want to remove this dictionary?" Margin="0,0,0,12" />
+                                <Button x:Uid="SettingsPage_RemoveDictionaryConfirmationButton" Content="Remove" Command="{x:Bind RemoveDictionaryCommand}" HorizontalAlignment="Right" />
                             </StackPanel>
                         </Flyout>
                     </AppBarButton.Flyout>
-                </AppBarButton> <!-- x:Uid="SettingsPage_RemoveDictionaryButton" -->
-                <AppBarButton Grid.Column="3" Grid.RowSpan="2" VerticalAlignment="Center" Width="48" Height="48" Margin="8,0,0,0" Icon="Cancel"
+                </AppBarButton>
+                <AppBarButton x:Uid="SettingsPage_AbortImportButton" Grid.Column="3" Grid.RowSpan="2" VerticalAlignment="Center" Width="48" Height="48" Margin="8,0,0,0" Icon="Cancel"
                               ToolTipService.ToolTip="Abort import" Visibility="{x:Bind AbortImportButtonVisibility, Mode=OneWay}" Command="{x:Bind AbortImportCommand}" />
-                <!-- x:Uid="SettingsPage_RemoveDictionaryButton" -->
             </Grid>
         </DataTemplate>
     </Page.Resources>
