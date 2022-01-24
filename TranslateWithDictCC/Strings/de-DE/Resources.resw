@@ -843,6 +843,18 @@
   <data name="SettingsPage_AcquireDictionariesTextBlock.Text" xml:space="preserve">
     <value>Folgen Sie dem Link, um Wörterbücher von dict.cc herunterzuladen. Klicken Sie anschließend auf "Wörterbuch importieren" und wählen Sie die heruntergeladenen Dateien aus, um sie zu importieren.</value>
   </data>
+  <data name="SettingsPage_AppThemeComboBox.Header" xml:space="preserve">
+    <value>App-Theme</value>
+  </data>
+  <data name="SettingsPage_AppThemeDarkComboBoxItem.Content" xml:space="preserve">
+    <value>Dunkel</value>
+  </data>
+  <data name="SettingsPage_AppThemeDefaultComboBoxItem.Content" xml:space="preserve">
+    <value>Systemeinstellung</value>
+  </data>
+  <data name="SettingsPage_AppThemeLightComboBoxItem.Content" xml:space="preserve">
+    <value>Hell</value>
+  </data>
   <data name="SettingsPage_AudioRecordingButtonToggleSwitch.Header" xml:space="preserve">
     <value>Sprachaufnahmen</value>
   </data>

@@ -1,4 +1,6 @@
-﻿using TranslateWithDictCC.ViewModels;
+﻿using Microsoft.UI.Xaml;
+using System;
+using TranslateWithDictCC.ViewModels;
 using Windows.Foundation.Collections;
 using Windows.Storage;
 
@@ -111,6 +113,24 @@ namespace TranslateWithDictCC
             }
         }
 
+        ElementTheme appTheme;
+
+        public ElementTheme AppTheme
+        {
+            get
+            {
+                return appTheme;
+            }
+            set
+            {
+                if (value != appTheme)
+                {
+                    ApplicationData.Current.LocalSettings.Values["AppTheme"] = Enum.GetName(value);
+                    SetProperty(ref appTheme, value);
+                }
+            }
+        }
+
         private Settings()
         {
             IPropertySet settingsValues = ApplicationData.Current.LocalSettings.Values;
@@ -120,6 +140,7 @@ namespace TranslateWithDictCC
             caseSensitiveSearch = (settingsValues["CaseSensitiveSearch"] as bool?).GetValueOrDefault(true);
             showAudioRecordingButton = (settingsValues["ShowAudioRecordingButton"] as bool?).GetValueOrDefault(true);
             showWordClasses = (settingsValues["ShowWordClasses"] as bool?).GetValueOrDefault(true);
+            appTheme = Enum.Parse<ElementTheme>((settingsValues["AppTheme"] as string) ?? Enum.GetName(ElementTheme.Default));
         }     
     }
 }

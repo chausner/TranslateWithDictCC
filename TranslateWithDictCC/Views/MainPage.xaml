@@ -7,7 +7,7 @@
     mc:Ignorable="d">
     <Grid Name="rootGrid" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <NavigationView Grid.Row="1" Name="navigationView" IsPaneOpen="False" IsSettingsVisible="False" IsBackEnabled="{Binding CanGoBack, ElementName=contentFrame, Mode=OneWay}" IsBackButtonVisible="Visible"
-                        BackRequested="navigationView_BackRequested" ItemInvoked="navigationView_ItemInvoked" Background="DarkOrange">
+                        BackRequested="navigationView_BackRequested" ItemInvoked="navigationView_ItemInvoked" Background="{ThemeResource NavigationViewBackgroundThemeBrush}">
             <NavigationView.MenuItems>
                 <NavigationViewItem x:Uid="MainPage_SearchHamburgerMenuItem" x:Name="searchHamburgerMenuItem" Icon="Find" Content="Search" IsSelected="True"  />
             </NavigationView.MenuItems>

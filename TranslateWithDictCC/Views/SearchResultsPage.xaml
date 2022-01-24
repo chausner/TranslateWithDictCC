@@ -107,15 +107,7 @@
             <DoubleAnimation From="30" To="0" Duration="0:0:0.5" Storyboard.TargetName="resultCountBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)" />
         </Storyboard>
     </Page.Resources>
-    <Grid>
-        <Grid.Background>
-            <RadialGradientBrush GradientOrigin="0,0">
-                <RadialGradientBrush.GradientStops>
-                    <GradientStop Offset="0" Color="Orange" />
-                    <GradientStop Offset="1.0" Color="DarkOrange" />
-                </RadialGradientBrush.GradientStops>
-            </RadialGradientBrush>
-        </Grid.Background>
+    <Grid Background="{ThemeResource SearchResultsPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
@@ -146,7 +138,7 @@
         <ProgressBar Grid.Row="1" IsIndeterminate="{x:Bind ViewModel.IsSearchInProgress, Mode=OneWay}" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="12"
                                  Background="Transparent" />
 
-        <Border Grid.Row="1" Name="resultCountBorder" Background="DarkOrange" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="8,4,4,4">
+        <Border Grid.Row="1" Name="resultCountBorder" Background="{ThemeResource ResultCountBorderBackgroundThemeBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="8,4,4,4">
             <Border.RenderTransform>
                 <TranslateTransform Y="100" />
             </Border.RenderTransform>
