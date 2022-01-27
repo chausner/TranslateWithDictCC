@@ -5,7 +5,6 @@ using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Linq;
-using System.Threading.Tasks;
 using TranslateWithDictCC.ViewModels;
 
 namespace TranslateWithDictCC.Views
@@ -28,9 +27,7 @@ namespace TranslateWithDictCC.Views
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            SearchResultsViewModel searchResultsViewModel = new SearchResultsViewModel();
-
-            contentFrame.Navigate(typeof(SearchResultsPage), searchResultsViewModel);
+            SearchContext searchContext = null;
 
             string launchArguments = e.Parameter as string;
 
@@ -42,13 +39,15 @@ namespace TranslateWithDictCC.Views
                     string destinationLanguageCode = launchArguments.Substring(7, 2);
 
                     DirectionViewModel directionViewModel =
-                        searchResultsViewModel.AvailableDirections.FirstOrDefault(
+                        SearchResultsViewModel.Instance.AvailableDirections.FirstOrDefault(
                             dvm => dvm.OriginLanguageCode == originLanguageCode && dvm.DestinationLanguageCode == destinationLanguageCode);
 
                     if (directionViewModel != null)
-                        searchResultsViewModel.SelectedDirection = directionViewModel;
+                        searchContext = new SearchContext(null, directionViewModel, !Settings.Instance.SearchInBothDirections);
                 }
             }
+
+            contentFrame.Navigate(typeof(SearchResultsPage), searchContext);
         }
 
         private void GoBackToPage(string pageType, NavigationTransitionInfo transitionInfo)
@@ -113,28 +112,11 @@ namespace TranslateWithDictCC.Views
             }
         }        
 
-        private async void contentFrame_Navigated(object sender, NavigationEventArgs e)
+        private void contentFrame_Navigated(object sender, NavigationEventArgs e)
         {
             searchHamburgerMenuItem.IsSelected = e.SourcePageType == typeof(SearchResultsPage);
             optionsHamburgerMenuItem.IsSelected = e.SourcePageType == typeof(SettingsPage);
             aboutHamburgerMenuItem.IsSelected = e.SourcePageType == typeof(AboutPage);
-
-            if (e.SourcePageType == typeof(SearchResultsPage) && 
-                !ViewModel.NoDictionaryInstalledTeachingTipShown && 
-                DirectionManager.Instance.AvailableDirections.Length == 0)
-            {
-                // workaround https://github.com/microsoft/microsoft-ui-xaml/issues/6628
-                await Task.Delay(1000);
-
-                // make sure that the user hasn't navigated to another page in the meantime
-                if (contentFrame.SourcePageType == typeof(SearchResultsPage))
-                {
-                    ViewModel.ShowNoDictionaryInstalledTeachingTip = true;
-                    ViewModel.NoDictionaryInstalledTeachingTipShown = true;
-                }
-            }
-            else
-                ViewModel.ShowNoDictionaryInstalledTeachingTip = false;
         }
 
         private void navigationView_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)

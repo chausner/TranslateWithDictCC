@@ -15,23 +15,18 @@ namespace TranslateWithDictCC.Views
 {
     public sealed partial class SearchResultsPage : Page
     {
-        SearchResultsViewModel viewModel;
-
-        SearchResultsViewModel ViewModel
-        {
-            get => viewModel;
-            set { viewModel = value; Bindings.Update(); }
-        }
+        SearchResultsViewModel ViewModel => SearchResultsViewModel.Instance;
 
         Settings Settings => Settings.Instance;
+
+        bool isPageBeingShown;
+        string lastQuery;
 
         public SearchResultsPage()
         {
             InitializeComponent();
 
-            ViewModel = new SearchResultsViewModel();
-
-            ViewModel.PropertyChanged += MainViewModel_PropertyChanged;
+            ViewModel.PropertyChanged += ViewModel_PropertyChanged;
 
             KeyboardShortcutListener shortcutListener = new KeyboardShortcutListener(MainWindow.Instance.ApplicationFrame);
 
@@ -57,7 +52,7 @@ namespace TranslateWithDictCC.Views
             e.Handled = true;
         }
 
-        private void MainViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(ViewModel.SelectedDirection))
                 SetDirectionComboBoxSelectedItem(ViewModel.SelectedDirection);
@@ -77,21 +72,26 @@ namespace TranslateWithDictCC.Views
             FocusSearchBox();
         }
 
-        private async void CaseSensitiveSearch_Click(object sender, RoutedEventArgs e)
+        private void CaseSensitiveSearch_Click(object sender, RoutedEventArgs e)
         {
-            await PerformQuery();
+            PerformQuery();
         }
 
-        private async void SwitchDirection_Click(object sender, RoutedEventArgs e)
+        private void SwitchDirection_Click(object sender, RoutedEventArgs e)
         {
             ViewModel.SwitchDirectionOfTranslationCommand.Execute(null);
 
-            await PerformQuery(dontSearchInBothDirections: true);
+            PerformQuery(dontSearchInBothDirections: true);
         }
 
         private async void searchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
             if (args.Reason != AutoSuggestionBoxTextChangeReason.UserInput)
+                return;
+
+            // the TextChanged event can fire after the corresponding QuerySubmitted event,
+            // in this case, we don't want to show any suggestions anymore
+            if (searchBox.Text == lastQuery)
                 return;
 
             await ViewModel.UpdateSearchSuggestions(searchBox.Text);
@@ -110,12 +110,12 @@ namespace TranslateWithDictCC.Views
             richTextBlock.Blocks.Add(searchSuggestionViewModel.Word);
         }
 
-        private async void directionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void directionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ViewModel.SelectedDirection = directionComboBox.SelectedItem as DirectionViewModel;
 
             if (e.AddedItems.Count != 0 && e.RemovedItems.Count != 0)
-                await PerformQuery(dontSearchInBothDirections: true);
+                PerformQuery(dontSearchInBothDirections: true);
         }
 
         private void directionComboBox_DropDownOpened(object sender, object e)
@@ -135,51 +135,60 @@ namespace TranslateWithDictCC.Views
                 directionComboBox.Tag = directionComboBox.ActualWidth;
         }
 
-        private async Task PerformQuery(bool dontSearchInBothDirections = false)
+        private void PerformQuery(bool dontSearchInBothDirections = false)
         {
-            if (searchBox.Text.Trim() == string.Empty || ViewModel.SelectedDirection == null)
+            if (string.IsNullOrWhiteSpace(searchBox.Text) || ViewModel.SelectedDirection == null)
                 return;
 
-            try
-            {
-                await ViewModel.PerformQuery(searchBox.Text, dontSearchInBothDirections);
-            }
-            catch
-            {
-                ResourceLoader resourceLoader = new ResourceLoader();
+            SearchContext searchContext = new SearchContext(searchBox.Text, ViewModel.SelectedDirection, dontSearchInBothDirections);
 
-                ContentDialog contentDialog = new ContentDialog()
-                {
-                    Title = resourceLoader.GetString("Error_Performing_Query_Title"),
-                    Content = resourceLoader.GetString("Error_Performing_Query_Body"),
-                    CloseButtonText = "OK",
-                    XamlRoot = MainWindow.Instance.Content.XamlRoot
-                };
-
-                await contentDialog.ShowAsync();
-            }
+            // explicit type parameters required here
+            MainViewModel.Instance.NavigateToPageCommand.Execute(Tuple.Create<string, object>("SearchResultsPage", searchContext));
         }
 
-        private async void searchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+        private void searchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
             searchBox.Text = args.QueryText;
-            await PerformQuery();
+            lastQuery = args.QueryText;
+            PerformQuery();
         }
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
+            isPageBeingShown = true;
+
             FocusSearchBox();
 
-            if (e.Parameter != null)
+            SearchContext searchContext = (SearchContext)e.Parameter;
+
+            if (searchContext != null)
             {
-                ViewModel = (SearchResultsViewModel)e.Parameter;
+                searchBox.Text = searchContext.SearchQuery;
+                ViewModel.SelectedDirection = searchContext.SelectedDirection;
+            }
+            else
+                SetDirectionComboBoxSelectedItem(ViewModel.SelectedDirection);
 
-                if (ViewModel.SearchContext != null)
-                    SetDirectionComboBoxSelectedItem(ViewModel.SearchContext.SelectedDirection);
-                else
-                    SetDirectionComboBoxSelectedItem(ViewModel.SelectedDirection);
-
+            if (searchContext != null && !string.IsNullOrEmpty(searchContext.SearchQuery))
+            {
                 ResourceLoader resourceLoader = new ResourceLoader();
+
+                try
+                {
+                    await ViewModel.PerformQuery(searchContext.SearchQuery, searchContext.DontSearchInBothDirections);
+                }
+                catch
+                {
+                    ContentDialog contentDialog = new ContentDialog()
+                    {
+                        Title = resourceLoader.GetString("Error_Performing_Query_Title"),
+                        Content = resourceLoader.GetString("Error_Performing_Query_Body"),
+                        CloseButtonText = "OK",
+                        XamlRoot = MainWindow.Instance.Content.XamlRoot
+                    };
+
+                    await contentDialog.ShowAsync();
+                }
 
                 if (ViewModel.DictionaryEntries != null)
                 {
@@ -195,6 +204,28 @@ namespace TranslateWithDictCC.Views
                     await Task.Delay(250);
                     resultCountAnimation.Begin();
                 }
+            }
+
+            if (!MainViewModel.Instance.NoDictionaryInstalledTeachingTipShown && ViewModel.AvailableDirections.Length == 0)
+            {
+                // workaround https://github.com/microsoft/microsoft-ui-xaml/issues/6628
+                await Task.Delay(1000);
+
+                // make sure that the user hasn't navigated to another page in the meantime
+                if (isPageBeingShown)
+                {
+                    MainViewModel.Instance.ShowNoDictionaryInstalledTeachingTip = true;
+                    MainViewModel.Instance.NoDictionaryInstalledTeachingTipShown = true;
+                }
+            }
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            if (e.SourcePageType != typeof(SearchResultsPage))
+            {
+                MainViewModel.Instance.ShowNoDictionaryInstalledTeachingTip = false;
+                isPageBeingShown = false;
             }
         }
 

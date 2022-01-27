@@ -25,7 +25,7 @@ namespace TranslateWithDictCC
 
         public UIElement ApplicationFrame => applicationFrame;
 
-        public MainWindow()
+        public MainWindow(string launchArguments)
         {
             this.InitializeComponent();
 
@@ -38,7 +38,7 @@ namespace TranslateWithDictCC
             SetTheme();
             SetWindowSizeAndLocation();
 
-            applicationFrame.Navigate(typeof(MainPage));
+            applicationFrame.Navigate(typeof(MainPage), launchArguments);
 
             //Activated += MainWindow_Activated;
 
