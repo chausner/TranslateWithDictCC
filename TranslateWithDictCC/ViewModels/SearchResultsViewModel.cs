@@ -177,17 +177,49 @@ namespace TranslateWithDictCC.ViewModels
 
                 IList<SearchSuggestionViewModel> suggestions = await GetSearchSuggestions(partialSearchQuery);
 
-                SearchSuggestions.Clear();
-
                 if (suggestions != null)
-                    foreach (SearchSuggestionViewModel suggestion in suggestions)
-                        SearchSuggestions.Add(suggestion);
+                    UpdateSearchSuggestions(suggestions);
+                else
+                    SearchSuggestions.Clear();
 
                 lastQuery = null;
             }
             finally
             {
                 querySemaphore.Release();
+            }
+        }
+
+        private void UpdateSearchSuggestions(IList<SearchSuggestionViewModel> suggestions)
+        {
+            SearchSuggestionViewModelComparer comparer = new SearchSuggestionViewModelComparer();
+
+            for (int i = 0; i < SearchSuggestions.Count; i++)
+                if (!suggestions.Contains(SearchSuggestions[i], comparer))
+                {
+                    SearchSuggestions.RemoveAt(i);
+                    i--;
+                }
+
+            for (int i = 0; i < suggestions.Count; i++)
+                if (!SearchSuggestions.Contains(suggestions[i], comparer))
+                    SearchSuggestions.Insert(i, suggestions[i]);
+        }
+
+        private class SearchSuggestionViewModelComparer : EqualityComparer<SearchSuggestionViewModel>
+        {
+            public override bool Equals(SearchSuggestionViewModel x, SearchSuggestionViewModel y)
+            {
+                return x.DictionaryEntry.Word1 == y.DictionaryEntry.Word1 &&
+                    x.DictionaryEntry.Word2 == y.DictionaryEntry.Word2 &&
+                    x.DictionaryEntry.WordClasses == y.DictionaryEntry.WordClasses;
+            }
+
+            public override int GetHashCode(SearchSuggestionViewModel obj)
+            {
+                return obj.DictionaryEntry.Word1.GetHashCode() ^
+                    obj.DictionaryEntry.Word2.GetHashCode() ^
+                    obj.DictionaryEntry.WordClasses.GetHashCode();
             }
         }
 
