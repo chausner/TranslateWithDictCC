@@ -35,6 +35,8 @@ namespace TranslateWithDictCC.ViewModels
             }
         }
 
+        public event EventHandler<EventArgs> DictionariesChanged;
+
         private SettingsViewModel()
         {
             Dictionaries = new ObservableCollection<DictionaryViewModel>();
@@ -197,7 +199,7 @@ namespace TranslateWithDictCC.ViewModels
 
                 dictionaryViewModel.Status = DictionaryStatus.Installed;
 
-                await DirectionManager.Instance.UpdateDirection();
+                DictionariesChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -222,7 +224,8 @@ namespace TranslateWithDictCC.ViewModels
 
             await DatabaseManager.Instance.DeleteDictionary(dictionaryViewModel.Dictionary);
             Dictionaries.Remove(dictionaryViewModel);
-            await DirectionManager.Instance.UpdateDirection();
+
+            DictionariesChanged?.Invoke(this, EventArgs.Empty);
 
             return true;
         }

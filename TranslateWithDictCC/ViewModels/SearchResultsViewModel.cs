@@ -6,11 +6,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using TranslateWithDictCC.Models;
+using Windows.UI.StartScreen;
 
 namespace TranslateWithDictCC.ViewModels
 {
     class SearchResultsViewModel : ViewModel
     {
+        public static readonly SearchResultsViewModel Instance = new SearchResultsViewModel();
+
         DirectionViewModel[] availableDirections;
 
         public DirectionViewModel[] AvailableDirections
@@ -27,6 +30,14 @@ namespace TranslateWithDictCC.ViewModels
             set { SetProperty(ref selectedDirection, value); }
         }
 
+        IReadOnlyList<DictionaryEntryViewModel> dictionaryEntries;
+
+        public IReadOnlyList<DictionaryEntryViewModel> DictionaryEntries
+        {
+            get { return dictionaryEntries; }
+            private set { SetProperty(ref dictionaryEntries, value); }
+        }
+
         bool isSearchInProgress;
 
         public bool IsSearchInProgress
@@ -41,35 +52,27 @@ namespace TranslateWithDictCC.ViewModels
 
         SemaphoreSlim querySemaphore = new SemaphoreSlim(1);
 
-        string lastQuery;
+        CancellationTokenSource searchSuggestionCancellationTokenSource;
 
-        public IReadOnlyList<DictionaryEntryViewModel> DictionaryEntries { get; private set; }
-        public SearchContext SearchContext { get; private set; }
-
-        public SearchResultsViewModel()
+        private SearchResultsViewModel()
         {
             SearchSuggestions = new ObservableCollection<SearchSuggestionViewModel>();
 
             SwitchDirectionOfTranslationCommand = new RelayCommand(SwitchDirectionOfTranslation, CanSwitchDirectionOfTranslation);
 
-            AvailableDirections = DirectionManager.Instance.AvailableDirections;
-            SelectedDirection = DirectionManager.Instance.SelectedDirection;
-
-            LoadSettings();
+            SettingsViewModel.Instance.DictionariesChanged += SettingsViewModel_DictionariesChanged;
         }
 
-        public SearchResultsViewModel(IList<DictionaryEntry> results, SearchContext searchContext) : this()
+        private async void SettingsViewModel_DictionariesChanged(object sender, EventArgs e)
         {
-            SearchContext = searchContext;
+            await UpdateDirection();
+        }
 
-            DictionaryEntries = new LazyCollection<DictionaryEntry, DictionaryEntryViewModel>(
-                results, entry => new DictionaryEntryViewModel(entry, searchContext));
+        public async Task Load()
+        {
+            await UpdateDirection();
 
-            // force the LazyCollection to have the first 15 items already cached
-            for (int i = 0; i < 15 && i < results.Count; i++)
-            {
-                _ = DictionaryEntries[i];
-            }
+            LoadSettings();
         }
 
         public void LoadSettings()
@@ -124,11 +127,12 @@ namespace TranslateWithDictCC.ViewModels
 
         public async Task PerformQuery(string searchQuery, bool dontSearchInBothDirections = false)
         {
+            if (searchSuggestionCancellationTokenSource != null)
+                searchSuggestionCancellationTokenSource.Cancel();
+
             try
             {
                 await querySemaphore.WaitAsync();
-
-                lastQuery = searchQuery;
 
                 // it may happen that the AutoSuggestBox does not hide search suggestions automatically after
                 // performing a query. For these cases, clear the suggestions manually
@@ -146,12 +150,12 @@ namespace TranslateWithDictCC.ViewModels
                     await searchTask;
                 }
 
-                SearchContext searchContext = new SearchContext(searchQuery, selectedDirection);
+                SearchContext searchContext = new SearchContext(searchQuery, selectedDirection, dontSearchInBothDirections);
 
-                SearchResultsViewModel searchResultsViewModel = new SearchResultsViewModel(searchTask.Result, searchContext);
+                List<DictionaryEntry> results = searchTask.Result;
 
-                // explicit type parameters required here
-                MainViewModel.Instance.NavigateToPageCommand.Execute(Tuple.Create<string, object>("SearchResultsPage", searchResultsViewModel));
+                DictionaryEntries = new LazyCollection<DictionaryEntry, DictionaryEntryViewModel>(
+                    results, entry => new DictionaryEntryViewModel(entry, searchContext));
             }
             finally
             {
@@ -161,36 +165,41 @@ namespace TranslateWithDictCC.ViewModels
             }
         }
 
-        public async Task UpdateSearchSuggestions(string partialSearchQuery)
+        private async Task UpdateSearchSuggestionsInner(string partialSearchQuery, CancellationToken cancellationToken)
         {
+            IList<SearchSuggestionViewModel> suggestions;
+            bool reverseSearch;
+
             try
             {
                 await querySemaphore.WaitAsync();
 
-                // if the user types quickly and presses enter, the search suggestions may get triggered after the query
-                // in this case, don't show the suggestions
-                if (lastQuery == partialSearchQuery)
-                {
-                    SearchSuggestions.Clear();
-                    return;
-                }
-
-                IList<SearchSuggestionViewModel> suggestions;
-                bool reverseSearch;
-
-                (suggestions, reverseSearch) = await GetSearchSuggestions(partialSearchQuery);
-
-                if (suggestions != null)
-                    UpdateSearchSuggestions(suggestions, reverseSearch);
-                else
-                    SearchSuggestions.Clear();
-
-                lastQuery = null;
+                (suggestions, reverseSearch) = await GetSearchSuggestions(partialSearchQuery, cancellationToken);
+            }
+            catch (OperationCanceledException)
+            {
+                suggestions = null;
+                reverseSearch = false;
             }
             finally
             {
                 querySemaphore.Release();
             }
+
+            if (suggestions != null)
+                UpdateSearchSuggestions(suggestions, reverseSearch);
+            else
+                SearchSuggestions.Clear();
+        }
+
+        public Task UpdateSearchSuggestions(string partialSearchQuery)
+        {
+            if (searchSuggestionCancellationTokenSource != null)
+                searchSuggestionCancellationTokenSource.Cancel();
+
+            searchSuggestionCancellationTokenSource = new CancellationTokenSource();
+
+            return UpdateSearchSuggestionsInner(partialSearchQuery, searchSuggestionCancellationTokenSource.Token);
         }
 
         private void UpdateSearchSuggestions(IList<SearchSuggestionViewModel> suggestions, bool reverseSearch)
@@ -246,10 +255,12 @@ namespace TranslateWithDictCC.ViewModels
             }
         }
 
-        private async Task<(IList<SearchSuggestionViewModel>, bool reverseSearch)> GetSearchSuggestions(string partialSearchQuery)
+        private async Task<(IList<SearchSuggestionViewModel>, bool reverseSearch)> GetSearchSuggestions(string partialSearchQuery, CancellationToken cancellationToken)
         {
             const int maxResults = 1000;
             const int maxSuggestionsShown = 100;
+
+            cancellationToken.ThrowIfCancellationRequested();
 
             if (partialSearchQuery.Trim().Length < 3)
                 return (null, false);
@@ -265,6 +276,8 @@ namespace TranslateWithDictCC.ViewModels
 
             List<DictionaryEntry> results = await DatabaseManager.Instance.QueryEntries(SelectedDirection.Dictionary, searchQuery, reverseSearch, maxResults + 1);
 
+            cancellationToken.ThrowIfCancellationRequested();
+
             if (results.Count == 0 && Settings.Instance.SearchInBothDirections)
             {
                 reverseSearch = !reverseSearch;
@@ -274,11 +287,13 @@ namespace TranslateWithDictCC.ViewModels
             if (results.Count == 0 || results.Count > maxResults)
                 return (null, false);
 
+            cancellationToken.ThrowIfCancellationRequested();
+
             SearchSuggestionViewModel[] suggestions = await Task.Run(delegate ()
             {
                 results.Sort(new DictionaryEntryComparer(searchQuery, reverseSearch));
 
-                SearchContext searchContext = new SearchContext(searchQuery, new DirectionViewModel(SelectedDirection.Dictionary, reverseSearch));
+                SearchContext searchContext = new SearchContext(searchQuery, new DirectionViewModel(SelectedDirection.Dictionary, reverseSearch), false);
 
                 IEnumerable<SearchSuggestionViewModel> suggestions =
                     results
@@ -287,9 +302,65 @@ namespace TranslateWithDictCC.ViewModels
                     .Take(maxSuggestionsShown);
 
                 return suggestions.ToArray();
-            });
+            }, cancellationToken);
 
             return (suggestions, reverseSearch);
+        }
+
+        public async Task UpdateDirection()
+        {
+            DirectionViewModel previouslySelected = SelectedDirection;
+
+            SelectedDirection = null;
+
+            AvailableDirections =
+                (await DatabaseManager.Instance.GetDictionaries())
+                .SelectMany(dict => new[] { new DirectionViewModel(dict, false), new DirectionViewModel(dict, true) })
+                .OrderBy(dvm => dvm.OriginLanguage)
+                .ToArray();
+
+            SelectedDirection = null;
+
+            if (previouslySelected != null)
+                SelectedDirection = AvailableDirections.FirstOrDefault(dvm => dvm.Equals(previouslySelected));
+
+            if (SelectedDirection == null)
+                SelectedDirection = AvailableDirections.FirstOrDefault();
+
+            await UpdateJumpList();
+        }
+
+        private async Task UpdateJumpList()
+        {
+            if (!JumpList.IsSupported())
+                return;
+
+            try
+            {
+                JumpList jumpList = await JumpList.LoadCurrentAsync();
+
+                jumpList.SystemGroupKind = JumpListSystemGroupKind.None;
+                jumpList.Items.Clear();
+
+                foreach (DirectionViewModel directionViewModel in AvailableDirections)
+                {
+                    string itemName = string.Format("{0} → {1}", directionViewModel.OriginLanguage, directionViewModel.DestinationLanguage);
+                    string arguments = "dict:" + directionViewModel.OriginLanguageCode + directionViewModel.DestinationLanguageCode;
+
+                    JumpListItem jumpListItem = JumpListItem.CreateWithArguments(arguments, itemName);
+
+                    jumpListItem.Logo = LanguageCodes.GetCountryFlagUri(directionViewModel.OriginLanguageCode);
+
+                    jumpList.Items.Add(jumpListItem);
+                }
+
+                await jumpList.SaveAsync();
+            }
+            catch
+            {
+                // in rare cases, SaveAsync may fail with HRESULT 0x80070497: "Unable to remove the file to be replaced."
+                // this appears to be a common problem without a solution, so we simply ignore any errors here
+            }
         }
     }
 }

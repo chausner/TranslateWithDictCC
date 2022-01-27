@@ -16,7 +16,7 @@ namespace TranslateWithDictCC
 
         public UIElement ApplicationFrame => applicationFrame;
 
-        public MainWindow()
+        public MainWindow(string launchArguments)
         {
             this.InitializeComponent();
 
@@ -26,7 +26,7 @@ namespace TranslateWithDictCC
 
             Title = resourceLoader.GetString("App_Display_Name");
 
-            applicationFrame.Navigate(typeof(MainPage));
+            applicationFrame.Navigate(typeof(MainPage), launchArguments);
         }
     }
 }

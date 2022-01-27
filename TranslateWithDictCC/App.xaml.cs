@@ -19,7 +19,6 @@ namespace TranslateWithDictCC
         public App()
         {
             InitializeComponent();
-            //Suspending += OnSuspending;            
         }
 
         protected override async void OnLaunched(LaunchActivatedEventArgs e)
@@ -27,35 +26,30 @@ namespace TranslateWithDictCC
             await ApplicationDataMigration.Migrate();
             await DatabaseManager.Instance.InitializeDb();
             await SettingsViewModel.Instance.Load();
+            await SearchResultsViewModel.Instance.Load();
 
             if (!Resources.ContainsKey("settings"))
                 Resources.Add("settings", Settings.Instance);
 
-            await DirectionManager.Instance.UpdateDirection();
+            string[] args = Environment.GetCommandLineArgs();
+            string launchArguments = args.Length >= 2 ? args[1] : null;
 
-            mainWindow = new MainWindow();
+            mainWindow = new MainWindow(launchArguments);
 
-            SetTitleBarColorsAndIcon(mainWindow);
-            SetWindowSizeAndLocation(mainWindow);
-
-            mainWindow.Activate();
-        }
-
-        /*private void OnSuspending(object sender, SuspendingEventArgs e)
-        {
-            SuspendingDeferral deferral = e.SuspendingOperation.GetDeferral();
-
-            //TODO: Anwendungszustand speichern und alle Hintergrundaktivitäten beenden
-            MainViewModel.Instance.SaveSettings();
-
-            deferral.Complete();
-        }*/
-
-        private void SetTitleBarColorsAndIcon(Window window)
-        {
-            IntPtr hWnd = WindowNative.GetWindowHandle(window);
+            IntPtr hWnd = WindowNative.GetWindowHandle(mainWindow);
             WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
             AppWindow appWindow = AppWindow.GetFromWindowId(windowId);
+
+            SetTitleBarColorsAndIcon(appWindow);
+            SetWindowSizeAndLocation(mainWindow);
+            
+            mainWindow.Activate();
+
+            appWindow.Closing += AppWindow_Closing;
+        }
+
+        private void SetTitleBarColorsAndIcon(AppWindow appWindow)
+        {            
             AppWindowTitleBar titleBar = appWindow.TitleBar;
 
             titleBar.BackgroundColor = (Color?)Application.Current.Resources["TitleBarBackgroundColor"]; 
@@ -86,6 +80,11 @@ namespace TranslateWithDictCC
             uint dpi = HwndExtensions.GetDpiForWindow(window.GetWindowHandle());
             window.MinWidth = (int)(minSize.Width * dpi / 96.0);
             window.MinHeight = (int)(minSize.Height * dpi / 96.0);
+        }
+
+        private void AppWindow_Closing(AppWindow sender, AppWindowClosingEventArgs args)
+        {
+            SearchResultsViewModel.Instance.SaveSettings();
         }
     }
 }
