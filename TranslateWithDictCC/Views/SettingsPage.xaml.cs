@@ -7,8 +7,6 @@ namespace TranslateWithDictCC.Views
     {
         SettingsViewModel ViewModel => SettingsViewModel.Instance;
 
-        Settings Settings => Settings.Instance;
-
         public SettingsPage()
         {
             InitializeComponent();

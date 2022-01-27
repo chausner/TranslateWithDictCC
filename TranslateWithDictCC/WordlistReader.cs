@@ -68,7 +68,7 @@ namespace TranslateWithDictCC
             line = await streamReader.ReadLineAsync();
 
             if (line.StartsWith("# Date and time\t") &&
-                DateTime.TryParseExact(line.Substring(16), "yyyy-MM-dd HH\\:mm", CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out DateTime creationDate))
+                DateTime.TryParseExact(line[16..], "yyyy-MM-dd HH\\:mm", CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out DateTime creationDate))
             {
                 TimeSpan offset = TimeZoneInfo.FindSystemTimeZoneById("W. Europe Standard Time").GetUtcOffset(creationDate);
                 CreationDate = new DateTimeOffset(creationDate, offset);

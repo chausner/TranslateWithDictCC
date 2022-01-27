@@ -61,66 +61,62 @@ namespace TranslateWithDictCC
 
         public async Task OpenTransactedConnection(Func<DbConnection, Task> action)
         {
-            using (DbConnection connection = await OpenConnection())
-            using (DbTransaction transaction = connection.BeginTransaction())
-            {
-                try
-                {
-                    await action(connection);
+            using DbConnection connection = await OpenConnection();
+            using DbTransaction transaction = connection.BeginTransaction();
 
-                    transaction.Commit();
-                }
-                catch
-                {
-                    transaction.Rollback();
-                    throw;
-                }
+            try
+            {
+                await action(connection);
+
+                transaction.Commit();
+            }
+            catch
+            {
+                transaction.Rollback();
+                throw;
             }
         }
 
         public async Task<T> OpenTransactedConnection<T>(Func<DbConnection, Task<T>> action)
         {
-            using (DbConnection connection = await OpenConnection())
-            using (DbTransaction transaction = connection.BeginTransaction())
+            using DbConnection connection = await OpenConnection();
+            using DbTransaction transaction = connection.BeginTransaction();
+
+            T result;
+
+            try
             {
-                T result;
+                result = await action(connection);
 
-                try
-                {
-                    result = await action(connection);
-
-                    transaction.Commit();
-                }
-                catch
-                {
-                    transaction.Rollback();
-                    throw;
-                }
-
-                return result;
+                transaction.Commit();
             }
+            catch
+            {
+                transaction.Rollback();
+                throw;
+            }
+
+            return result;
         }
 
         public async Task<int> ExecuteNonQuery(string commandText)
         {
-            using (DbConnection connection = await OpenConnection())
-            using (DbCommand command = connection.CreateCommand())
-            {
-                command.CommandText = commandText;
+            using DbConnection connection = await OpenConnection();
+            using DbCommand command = connection.CreateCommand();
 
-                return await command.ExecuteNonQueryAsync();
-            }
+            command.CommandText = commandText;
+
+            return await command.ExecuteNonQueryAsync();
         }
 
         public async Task<object> ExecuteScalar(string commandText)
         {
-            using (DbConnection connection = await OpenConnection())
-            using (DbCommand command = connection.CreateCommand())
-            {
-                command.CommandText = commandText;
+            using DbConnection connection = await OpenConnection();
+            using DbCommand command = connection.CreateCommand();
 
-                return await command.ExecuteScalarAsync();
-            }
+            command.CommandText = commandText;
+
+            return await command.ExecuteScalarAsync();
         }
 
         public Task<List<T>> ExecuteReader<T>(string commandText, Func<DbDataReader, T> dataReaderFunc)
@@ -130,20 +126,20 @@ namespace TranslateWithDictCC
 
         public async Task<List<T>> ExecuteReader<T>(Action<DbCommand> commandFunc, Func<DbDataReader, T> dataReaderFunc)
         {
+            using DbConnection connection = await OpenConnection();
+            using DbCommand command = connection.CreateCommand();
+            
+            commandFunc(command);
+
+            using DbDataReader dataReader = await command.ExecuteReaderAsync();
+
             List<T> results = new List<T>();
 
-            using (DbConnection connection = await OpenConnection())
-            using (DbCommand command = connection.CreateCommand())
+            while (await dataReader.ReadAsync())
             {
-                commandFunc(command);
-
-                using (DbDataReader dataReader = await command.ExecuteReaderAsync())
-                    while (await dataReader.ReadAsync())
-                    {
-                        T result = dataReaderFunc(dataReader);
-                        results.Add(result);
-                    }
-            }
+                T result = dataReaderFunc(dataReader);
+                results.Add(result);
+            }            
 
             return results;
         }
@@ -152,15 +148,14 @@ namespace TranslateWithDictCC
         {
             return await ExecuteReader("SELECT * FROM Dictionaries", dataReader =>
             {
-                Dictionary dictionary = new Dictionary();
-                
-                dictionary.ID = dataReader.GetInt32(0);
-                dictionary.OriginLanguageCode = dataReader.GetString(1);
-                dictionary.DestinationLanguageCode = dataReader.GetString(2);
-                dictionary.CreationDate = new DateTimeOffset(dataReader.GetInt64(3), TimeSpan.Zero);
-                dictionary.NumberOfEntries = dataReader.GetInt32(4);
-
-                return dictionary;
+                return new Dictionary
+                {
+                    ID = dataReader.GetInt32(0),
+                    OriginLanguageCode = dataReader.GetString(1),
+                    DestinationLanguageCode = dataReader.GetString(2),
+                    CreationDate = new DateTimeOffset(dataReader.GetInt64(3), TimeSpan.Zero),
+                    NumberOfEntries = dataReader.GetInt32(4)
+                };
             });
         }
 
@@ -196,24 +191,23 @@ namespace TranslateWithDictCC
                     // run on the thread pool for better UI responsiveness
                     await Task.Run(delegate ()
                     {
-                        using (DbCommand command = connection.CreateCommand())
+                        using DbCommand command = connection.CreateCommand();
+
+                        command.CommandText = $"INSERT INTO {tableName}(Word1, Word2, WordClasses) VALUES (@Word1, @Word2, @WordClasses)";
+
+                        command.Parameters.Add(new SqliteParameter("@Word1", SqliteType.Text, 512));
+                        command.Parameters.Add(new SqliteParameter("@Word2", SqliteType.Text, 512));
+                        command.Parameters.Add(new SqliteParameter("@WordClasses", SqliteType.Text, 64));
+
+                        command.Prepare();
+
+                        foreach (DictionaryEntry entry in entries)
                         {
-                            command.CommandText = $"INSERT INTO {tableName}(Word1, Word2, WordClasses) VALUES (@Word1, @Word2, @WordClasses)";
+                            command.Parameters[0].Value = entry.Word1;
+                            command.Parameters[1].Value = entry.Word2;
+                            command.Parameters[2].Value = (object)entry.WordClasses ?? DBNull.Value;
 
-                            command.Parameters.Add(new SqliteParameter("@Word1", SqliteType.Text, 512));
-                            command.Parameters.Add(new SqliteParameter("@Word2", SqliteType.Text, 512));
-                            command.Parameters.Add(new SqliteParameter("@WordClasses", SqliteType.Text, 64));
-
-                            command.Prepare();
-
-                            foreach (DictionaryEntry entry in entries)
-                            {
-                                command.Parameters[0].Value = entry.Word1;
-                                command.Parameters[1].Value = entry.Word2;
-                                command.Parameters[2].Value = (object)entry.WordClasses ?? DBNull.Value;
-
-                                command.ExecuteNonQuery();
-                            }
+                            command.ExecuteNonQuery();
                         }
                     });
 

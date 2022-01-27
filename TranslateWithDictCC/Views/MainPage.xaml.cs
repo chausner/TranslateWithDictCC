@@ -71,16 +71,18 @@ namespace TranslateWithDictCC.Views
             string pageType;
             object parameter;
 
-            if (pageTypeAndParameter is string)
+            if (pageTypeAndParameter is string s)
             {
-                pageType = (string)pageTypeAndParameter;
+                pageType = s;
                 parameter = null;
             }
-            else
+            else if (pageTypeAndParameter is Tuple<string, object> t)
             {
-                pageType = ((Tuple<string, object>)pageTypeAndParameter).Item1;
-                parameter = ((Tuple<string, object>)pageTypeAndParameter).Item2;
+                pageType = t.Item1;
+                parameter = t.Item2;
             }
+            else
+                throw new ArgumentException();
 
             if (pageType == "SearchResultsPage")
                 contentFrame.Navigate(typeof(SearchResultsPage), parameter, transitionInfo);
