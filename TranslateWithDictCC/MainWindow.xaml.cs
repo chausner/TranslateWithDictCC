@@ -40,15 +40,6 @@ namespace TranslateWithDictCC
 
             applicationFrame.Navigate(typeof(MainPage), launchArguments);
 
-            //Activated += MainWindow_Activated;
-
-            Settings.Instance.PropertyChanged += Settings_PropertyChanged;
-        }
-
-        private void MainWindow_Activated(object sender, WindowActivatedEventArgs args)
-        {
-            SetTheme();
-
             Settings.Instance.PropertyChanged += Settings_PropertyChanged;
         }
 
