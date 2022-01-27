@@ -175,10 +175,13 @@ namespace TranslateWithDictCC.ViewModels
                     return;
                 }
 
-                IList<SearchSuggestionViewModel> suggestions = await GetSearchSuggestions(partialSearchQuery);
+                IList<SearchSuggestionViewModel> suggestions;
+                bool reverseSearch;
+
+                (suggestions, reverseSearch) = await GetSearchSuggestions(partialSearchQuery);
 
                 if (suggestions != null)
-                    UpdateSearchSuggestions(suggestions);
+                    UpdateSearchSuggestions(suggestions, reverseSearch);
                 else
                     SearchSuggestions.Clear();
 
@@ -190,9 +193,9 @@ namespace TranslateWithDictCC.ViewModels
             }
         }
 
-        private void UpdateSearchSuggestions(IList<SearchSuggestionViewModel> suggestions)
+        private void UpdateSearchSuggestions(IList<SearchSuggestionViewModel> suggestions, bool reverseSearch)
         {
-            SearchSuggestionViewModelComparer comparer = new SearchSuggestionViewModelComparer();
+            SearchSuggestionViewModelComparer comparer = new SearchSuggestionViewModelComparer(reverseSearch, Settings.Instance.ShowWordClasses);
 
             for (int i = 0; i < SearchSuggestions.Count; i++)
                 if (!suggestions.Contains(SearchSuggestions[i], comparer))
@@ -208,28 +211,48 @@ namespace TranslateWithDictCC.ViewModels
 
         private class SearchSuggestionViewModelComparer : EqualityComparer<SearchSuggestionViewModel>
         {
+            bool reverseSearch;
+            bool compareWordClasses;
+
+            public SearchSuggestionViewModelComparer(bool reverseSearch, bool compareWordClasses)
+            {
+                this.reverseSearch = reverseSearch;
+                this.compareWordClasses = compareWordClasses;
+            }
+
             public override bool Equals(SearchSuggestionViewModel x, SearchSuggestionViewModel y)
             {
-                return x.DictionaryEntry.Word1 == y.DictionaryEntry.Word1 &&
-                    x.DictionaryEntry.Word2 == y.DictionaryEntry.Word2 &&
-                    x.DictionaryEntry.WordClasses == y.DictionaryEntry.WordClasses;
+                bool equal;
+
+                if (reverseSearch)
+                    equal = x.DictionaryEntry.Word2 == y.DictionaryEntry.Word2;
+                else
+                    equal = x.DictionaryEntry.Word1 == y.DictionaryEntry.Word1;
+
+                if (compareWordClasses)
+                    equal &= x.DictionaryEntry.WordClasses == y.DictionaryEntry.WordClasses;
+
+                return equal;
             }
 
             public override int GetHashCode(SearchSuggestionViewModel obj)
             {
-                return obj.DictionaryEntry.Word1.GetHashCode() ^
-                    obj.DictionaryEntry.Word2.GetHashCode() ^
-                    obj.DictionaryEntry.WordClasses.GetHashCode();
+                int hashCode = (reverseSearch ? obj.DictionaryEntry.Word2 : obj.DictionaryEntry.Word1).GetHashCode();
+
+                if (compareWordClasses)
+                    hashCode ^= obj.DictionaryEntry.WordClasses.GetHashCode();
+
+                return hashCode;
             }
         }
 
-        private async Task<IList<SearchSuggestionViewModel>> GetSearchSuggestions(string partialSearchQuery)
+        private async Task<(IList<SearchSuggestionViewModel>, bool reverseSearch)> GetSearchSuggestions(string partialSearchQuery)
         {
             const int maxResults = 1000;
             const int maxSuggestionsShown = 100;
 
             if (partialSearchQuery.Trim().Length < 3)
-                return null;
+                return (null, false);
 
             string searchQuery;
 
@@ -249,9 +272,9 @@ namespace TranslateWithDictCC.ViewModels
             }
 
             if (results.Count == 0 || results.Count > maxResults)
-                return null;
+                return (null, false);
 
-            return await Task.Run(delegate ()
+            SearchSuggestionViewModel[] suggestions = await Task.Run(delegate ()
             {
                 results.Sort(new DictionaryEntryComparer(searchQuery, reverseSearch));
 
@@ -265,6 +288,8 @@ namespace TranslateWithDictCC.ViewModels
 
                 return suggestions.ToArray();
             });
+
+            return (suggestions, reverseSearch);
         }
     }
 }
