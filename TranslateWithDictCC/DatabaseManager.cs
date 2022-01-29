@@ -61,8 +61,8 @@ namespace TranslateWithDictCC
 
         public async Task OpenTransactedConnection(Func<DbConnection, Task> action)
         {
-            using DbConnection connection = await OpenConnection();
-            using DbTransaction transaction = connection.BeginTransaction();
+            await using DbConnection connection = await OpenConnection();
+            await using DbTransaction transaction = connection.BeginTransaction();
 
             try
             {
@@ -79,8 +79,8 @@ namespace TranslateWithDictCC
 
         public async Task<T> OpenTransactedConnection<T>(Func<DbConnection, Task<T>> action)
         {
-            using DbConnection connection = await OpenConnection();
-            using DbTransaction transaction = connection.BeginTransaction();
+            await using DbConnection connection = await OpenConnection();
+            await using DbTransaction transaction = connection.BeginTransaction();
 
             T result;
 
@@ -101,8 +101,8 @@ namespace TranslateWithDictCC
 
         public async Task<int> ExecuteNonQuery(string commandText)
         {
-            using DbConnection connection = await OpenConnection();
-            using DbCommand command = connection.CreateCommand();
+            await using DbConnection connection = await OpenConnection();
+            await using DbCommand command = connection.CreateCommand();
 
             command.CommandText = commandText;
 
@@ -111,8 +111,8 @@ namespace TranslateWithDictCC
 
         public async Task<object> ExecuteScalar(string commandText)
         {
-            using DbConnection connection = await OpenConnection();
-            using DbCommand command = connection.CreateCommand();
+            await using DbConnection connection = await OpenConnection();
+            await using DbCommand command = connection.CreateCommand();
 
             command.CommandText = commandText;
 
@@ -126,12 +126,12 @@ namespace TranslateWithDictCC
 
         public async Task<List<T>> ExecuteReader<T>(Action<DbCommand> commandFunc, Func<DbDataReader, T> dataReaderFunc)
         {
-            using DbConnection connection = await OpenConnection();
-            using DbCommand command = connection.CreateCommand();
+            await using DbConnection connection = await OpenConnection();
+            await using DbCommand command = connection.CreateCommand();
             
             commandFunc(command);
 
-            using DbDataReader dataReader = await command.ExecuteReaderAsync();
+            await using DbDataReader dataReader = await command.ExecuteReaderAsync();
 
             List<T> results = new List<T>();
 
@@ -172,54 +172,55 @@ namespace TranslateWithDictCC
 
                 string tableName = GetDictionaryTableName(wordlistReader.OriginLanguageCode, wordlistReader.DestinationLanguageCode);
 
-                using (DbCommand command = connection.CreateCommand())
+                await using (DbCommand command = connection.CreateCommand())
                 {
                     command.CommandText = $"CREATE VIRTUAL TABLE {tableName} USING fts4(Word1 VARCHAR NOT NULL, Word2 VARCHAR NOT NULL, WordClasses VARCHAR, tokenize=unicode61)";
 
                     await command.ExecuteNonQueryAsync();
                 }
 
-                while (true)
+                await using (DbCommand command = connection.CreateCommand())
                 {
-                    cancellationToken.ThrowIfCancellationRequested();
+                    command.CommandText = $"INSERT INTO {tableName}(Word1, Word2, WordClasses) VALUES (@Word1, @Word2, @WordClasses)";
 
-                    IReadOnlyList<DictionaryEntry> entries = await wordlistReader.ReadEntries(1000);
+                    command.Parameters.Add(new SqliteParameter("@Word1", SqliteType.Text, 512));
+                    command.Parameters.Add(new SqliteParameter("@Word2", SqliteType.Text, 512));
+                    command.Parameters.Add(new SqliteParameter("@WordClasses", SqliteType.Text, 64));
 
-                    if (entries.Count == 0)
-                        break;
+                    await command.PrepareAsync();
 
-                    // run on the thread pool for better UI responsiveness
-                    await Task.Run(delegate ()
+                    while (true)
                     {
-                        using DbCommand command = connection.CreateCommand();
+                        cancellationToken.ThrowIfCancellationRequested();
 
-                        command.CommandText = $"INSERT INTO {tableName}(Word1, Word2, WordClasses) VALUES (@Word1, @Word2, @WordClasses)";
+                        IReadOnlyList<DictionaryEntry> entries = await wordlistReader.ReadEntries(2500);
 
-                        command.Parameters.Add(new SqliteParameter("@Word1", SqliteType.Text, 512));
-                        command.Parameters.Add(new SqliteParameter("@Word2", SqliteType.Text, 512));
-                        command.Parameters.Add(new SqliteParameter("@WordClasses", SqliteType.Text, 64));
+                        if (entries.Count == 0)
+                            break;
 
-                        command.Prepare();
-
-                        foreach (DictionaryEntry entry in entries)
+                        // run on the thread pool for better UI responsiveness
+                        await Task.Run(delegate ()
                         {
-                            command.Parameters[0].Value = entry.Word1;
-                            command.Parameters[1].Value = entry.Word2;
-                            command.Parameters[2].Value = (object)entry.WordClasses ?? DBNull.Value;
+                            foreach (DictionaryEntry entry in entries)
+                            {
+                                command.Parameters[0].Value = entry.Word1;
+                                command.Parameters[1].Value = entry.Word2;
+                                command.Parameters[2].Value = (object)entry.WordClasses ?? DBNull.Value;
 
-                            command.ExecuteNonQuery();
-                        }
-                    });
+                                command.ExecuteNonQuery();
+                            }
+                        });
 
-                    dictionaryViewModel.NumberOfEntries += entries.Count;
-                    dictionaryViewModel.ImportProgress = wordlistReader.Progress;
+                        dictionaryViewModel.NumberOfEntries += entries.Count;
+                        dictionaryViewModel.ImportProgress = wordlistReader.Progress;
+                    }
                 }
 
                 dictionaryViewModel.ImportProgress = 1.0;
 
                 Dictionary dictionary = new Dictionary(wordlistReader.OriginLanguageCode, wordlistReader.DestinationLanguageCode, wordlistReader.CreationDate, dictionaryViewModel.NumberOfEntries);
 
-                using (DbCommand command = connection.CreateCommand())
+                await using (DbCommand command = connection.CreateCommand())
                 {
                     command.CommandText = "INSERT INTO Dictionaries(OriginLanguageCode, DestinationLanguageCode, CreationDate, NumberOfEntries) VALUES (@OriginLanguageCode, @DestinationLanguageCode, @CreationDate, @NumberOfEntries)";
 
@@ -231,7 +232,7 @@ namespace TranslateWithDictCC
                     await command.ExecuteNonQueryAsync();
                 }
 
-                using (DbCommand command = connection.CreateCommand())
+                await using (DbCommand command = connection.CreateCommand())
                 {
                     command.CommandText = "SELECT last_insert_rowid()";
 
@@ -311,30 +312,38 @@ namespace TranslateWithDictCC
 
         public async Task OptimizeTable(Dictionary dictionary)
         {
-            string tableName = GetDictionaryTableName(dictionary.OriginLanguageCode, dictionary.DestinationLanguageCode);
+            // run on the thread pool for better UI responsiveness
+            await Task.Run(async delegate ()
+            {
+                string tableName = GetDictionaryTableName(dictionary.OriginLanguageCode, dictionary.DestinationLanguageCode);
 
-            await ExecuteNonQuery($"INSERT INTO {tableName}({tableName}) VALUES('optimize');");
+                await ExecuteNonQuery($"INSERT INTO {tableName}({tableName}) VALUES('optimize');");
+            });
         }
 
         public async Task DeleteDictionary(Dictionary dictionary)
         {
-            await OpenTransactedConnection(async connection =>
+            // run on the thread pool for better UI responsiveness
+            await Task.Run(async delegate ()
             {
-                using (DbCommand command = connection.CreateCommand())
+                await OpenTransactedConnection(async connection =>
                 {
-                    command.CommandText = $"DELETE FROM Dictionaries WHERE ID = {dictionary.ID}";
+                    await using (DbCommand command = connection.CreateCommand())
+                    {
+                        command.CommandText = $"DELETE FROM Dictionaries WHERE ID = {dictionary.ID}";
 
-                    await command.ExecuteNonQueryAsync();
-                }
+                        await command.ExecuteNonQueryAsync();
+                    }
 
-                using (DbCommand command = connection.CreateCommand())
-                {
-                    string tableName = GetDictionaryTableName(dictionary.OriginLanguageCode, dictionary.DestinationLanguageCode);
+                    await using (DbCommand command = connection.CreateCommand())
+                    {
+                        string tableName = GetDictionaryTableName(dictionary.OriginLanguageCode, dictionary.DestinationLanguageCode);
 
-                    command.CommandText = $"DROP TABLE {tableName}";
+                        command.CommandText = $"DROP TABLE {tableName}";
 
-                    await command.ExecuteNonQueryAsync();
-                }
+                        await command.ExecuteNonQueryAsync();
+                    }
+                });
             });
         }
     }
