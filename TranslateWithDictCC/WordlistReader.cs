@@ -79,7 +79,7 @@ namespace TranslateWithDictCC
 
         public async Task<IReadOnlyList<DictionaryEntry>> ReadEntries(int numEntries)
         {
-            List<DictionaryEntry> entries = new List<DictionaryEntry>();
+            List<DictionaryEntry> entries = new List<DictionaryEntry>(numEntries);
 
             while (entries.Count < numEntries && !streamReader.EndOfStream)
             {
@@ -87,7 +87,7 @@ namespace TranslateWithDictCC
 
                 line = line.Trim(' ');
 
-                if (line.StartsWith("#") || line.Length == 0)
+                if (line.StartsWith('#') || line.Length == 0)
                     continue;
 
                 string[] s = line.Split('\t');
