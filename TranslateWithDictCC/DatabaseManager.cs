@@ -174,7 +174,7 @@ namespace TranslateWithDictCC
 
                 await using (DbCommand command = connection.CreateCommand())
                 {
-                    command.CommandText = $"CREATE VIRTUAL TABLE {tableName} USING fts4(Word1 VARCHAR NOT NULL, Word2 VARCHAR NOT NULL, WordClasses VARCHAR, tokenize=unicode61)";
+                    command.CommandText = $"CREATE VIRTUAL TABLE {tableName} USING fts4(Word1 VARCHAR NOT NULL, Word2 VARCHAR NOT NULL, WordClasses VARCHAR, tokenize=unicode61, notindexed=WordClasses)";
 
                     await command.ExecuteNonQueryAsync();
                 }
