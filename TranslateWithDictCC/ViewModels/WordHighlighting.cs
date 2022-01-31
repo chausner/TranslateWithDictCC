@@ -161,12 +161,12 @@ namespace TranslateWithDictCC.ViewModels
 
         private static void ApplyQueryHighlightStyle(Run run)
         {
-            run.FontWeight = FontWeights.SemiBold;
+            run.FontWeight = FontWeights.Medium;
         }
 
         private static void ApplyQueryHighlightStyle(TextBlock textBlock)
         {
-            textBlock.FontWeight = FontWeights.SemiBold;
+            textBlock.FontWeight = FontWeights.Medium;
         }
 
         private static TextSpan[] GetAnnotationSpans(string word)
