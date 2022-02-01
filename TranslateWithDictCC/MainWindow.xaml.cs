@@ -3,6 +3,7 @@ using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.ApplicationModel.Resources;
 using System;
+using System.ComponentModel;
 using System.IO;
 using System.Reflection;
 using TranslateWithDictCC.Views;
@@ -43,9 +44,9 @@ namespace TranslateWithDictCC
             Settings.Instance.PropertyChanged += Settings_PropertyChanged;
         }
 
-        private void Settings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void Settings_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(Settings.Instance.AppTheme))
+            if (e.PropertyName == nameof(Settings.AppTheme))
                 SetTheme();
         }
 

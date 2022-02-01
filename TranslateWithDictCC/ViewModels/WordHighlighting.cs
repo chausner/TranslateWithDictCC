@@ -6,6 +6,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Shapes;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text.RegularExpressions;
 using TranslateWithDictCC.Models;
@@ -14,8 +15,42 @@ namespace TranslateWithDictCC.ViewModels
 {
     static class WordHighlighting
     {
-        static readonly SolidColorBrush annotationBrush = (SolidColorBrush)Application.Current.Resources["DictionaryEntryAnnotationThemeBrush"];
-        static readonly SolidColorBrush queryHighlightBrush = (SolidColorBrush)Application.Current.Resources["DictionaryEntryQueryHighlightThemeBrush"];
+        static SolidColorBrush annotationBrush;
+        static SolidColorBrush queryHighlightBrush;
+
+        static WordHighlighting()
+        {
+            SetBrushes();
+
+            Settings.Instance.PropertyChanged += Settings_PropertyChanged;
+        }
+
+        private static void SetBrushes()
+        {
+            ResourceDictionary dictionary = null;
+
+            switch (Settings.Instance.AppTheme)
+            {
+                case ElementTheme.Default:
+                    dictionary = Application.Current.Resources;
+                    break;
+                case ElementTheme.Light:
+                    dictionary = (ResourceDictionary)Application.Current.Resources.ThemeDictionaries["Light"];
+                    break;
+                case ElementTheme.Dark:
+                    dictionary = (ResourceDictionary)Application.Current.Resources.ThemeDictionaries["Dark"];
+                    break;
+            }
+
+            annotationBrush = (SolidColorBrush)dictionary["DictionaryEntryAnnotationThemeBrush"];
+            queryHighlightBrush = (SolidColorBrush)dictionary["DictionaryEntryQueryHighlightThemeBrush"];
+        }
+
+        private static void Settings_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(Settings.AppTheme))
+                SetBrushes();
+        }
 
         public static Block GenerateRichTextBlock(string word, TextSpan[] matchSpans, bool highlightQuery)
         {
