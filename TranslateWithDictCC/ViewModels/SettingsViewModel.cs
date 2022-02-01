@@ -1,8 +1,10 @@
-﻿using Microsoft.UI.Xaml.Controls;
+﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.Windows.ApplicationModel.Resources;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,6 +21,20 @@ namespace TranslateWithDictCC.ViewModels
         public static readonly SettingsViewModel Instance = new SettingsViewModel();
 
         public ObservableCollection<DictionaryViewModel> Dictionaries { get; }
+
+        Visibility restartAppTextBlockVisibility;
+
+        public Visibility RestartAppTextBlockVisibility
+        {
+            get
+            {
+                return restartAppTextBlockVisibility;
+            }
+            private set
+            {
+                SetProperty(ref restartAppTextBlockVisibility, value);
+            }
+        }
 
         public ICommand ImportDictionaryCommand { get; }
 
@@ -37,11 +53,28 @@ namespace TranslateWithDictCC.ViewModels
 
         public event EventHandler<EventArgs> DictionariesChanged;
 
+        ElementTheme appThemeAtStartup;
+
         private SettingsViewModel()
         {
             Dictionaries = new ObservableCollection<DictionaryViewModel>();
 
+            RestartAppTextBlockVisibility = Visibility.Collapsed;
+
             ImportDictionaryCommand = new RelayCommand(RunImportDictionaryCommand);
+
+            appThemeAtStartup = Settings.Instance.AppTheme;
+
+            Settings.Instance.PropertyChanged += Settings_PropertyChanged;
+        }
+
+        private void Settings_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(Settings.AppTheme))
+                if (Settings.Instance.AppTheme != appThemeAtStartup)
+                    RestartAppTextBlockVisibility = Visibility.Visible;
+                else
+                    RestartAppTextBlockVisibility = Visibility.Collapsed;
         }
 
         public async Task Load()

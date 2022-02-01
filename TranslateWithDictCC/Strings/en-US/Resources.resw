@@ -885,6 +885,9 @@
   <data name="SettingsPage_RemoveDictionaryConfirmationTextBlock.Text" xml:space="preserve">
     <value>Are you sure you want to remove this dictionary?</value>
   </data>
+  <data name="SettingsPage_RestartAppTextBlock.Text" xml:space="preserve">
+    <value>Restart the app for the theme change to take full effect.</value>
+  </data>
   <data name="SettingsPage_TitleTextBlock.Text" xml:space="preserve">
     <value>Settings</value>
   </data>

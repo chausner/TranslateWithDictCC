@@ -885,6 +885,9 @@
   <data name="SettingsPage_RemoveDictionaryConfirmationTextBlock.Text" xml:space="preserve">
     <value>Sind Sie sich sicher, dieses Wörterbuch zu entfernen?</value>
   </data>
+  <data name="SettingsPage_RestartAppTextBlock.Text" xml:space="preserve">
+    <value>Starten Sie die App neu, damit die Änderung des Designs vollständig wirksam wird.</value>
+  </data>
   <data name="SettingsPage_TitleTextBlock.Text" xml:space="preserve">
     <value>Optionen</value>
   </data>
