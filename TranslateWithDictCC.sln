@@ -1,32 +1,40 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32526.322
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TranslateWithDictCC", "TranslateWithDictCC\TranslateWithDictCC.csproj", "{309B76DD-B8F2-4832-8CFE-B942C624C264}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TranslateWithDictCC", "TranslateWithDictCC\TranslateWithDictCC.csproj", "{309B76DD-B8F2-4832-8CFE-B942C624C264}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|ARM = Debug|ARM
+		Debug|ARM32 = Debug|ARM32
+		Debug|arm64 = Debug|arm64
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
-		Release|ARM = Release|ARM
+		Release|ARM32 = Release|ARM32
+		Release|arm64 = Release|arm64
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{309B76DD-B8F2-4832-8CFE-B942C624C264}.Debug|ARM.ActiveCfg = Debug|ARM
-		{309B76DD-B8F2-4832-8CFE-B942C624C264}.Debug|ARM.Build.0 = Debug|ARM
-		{309B76DD-B8F2-4832-8CFE-B942C624C264}.Debug|ARM.Deploy.0 = Debug|ARM
+		{309B76DD-B8F2-4832-8CFE-B942C624C264}.Debug|ARM32.ActiveCfg = Debug|ARM32
+		{309B76DD-B8F2-4832-8CFE-B942C624C264}.Debug|ARM32.Build.0 = Debug|ARM32
+		{309B76DD-B8F2-4832-8CFE-B942C624C264}.Debug|ARM32.Deploy.0 = Debug|ARM32
+		{309B76DD-B8F2-4832-8CFE-B942C624C264}.Debug|arm64.ActiveCfg = Debug|arm64
+		{309B76DD-B8F2-4832-8CFE-B942C624C264}.Debug|arm64.Build.0 = Debug|arm64
+		{309B76DD-B8F2-4832-8CFE-B942C624C264}.Debug|arm64.Deploy.0 = Debug|arm64
 		{309B76DD-B8F2-4832-8CFE-B942C624C264}.Debug|x64.ActiveCfg = Debug|x64
 		{309B76DD-B8F2-4832-8CFE-B942C624C264}.Debug|x64.Build.0 = Debug|x64
 		{309B76DD-B8F2-4832-8CFE-B942C624C264}.Debug|x64.Deploy.0 = Debug|x64
 		{309B76DD-B8F2-4832-8CFE-B942C624C264}.Debug|x86.ActiveCfg = Debug|x86
 		{309B76DD-B8F2-4832-8CFE-B942C624C264}.Debug|x86.Build.0 = Debug|x86
 		{309B76DD-B8F2-4832-8CFE-B942C624C264}.Debug|x86.Deploy.0 = Debug|x86
-		{309B76DD-B8F2-4832-8CFE-B942C624C264}.Release|ARM.ActiveCfg = Release|ARM
-		{309B76DD-B8F2-4832-8CFE-B942C624C264}.Release|ARM.Build.0 = Release|ARM
-		{309B76DD-B8F2-4832-8CFE-B942C624C264}.Release|ARM.Deploy.0 = Release|ARM
+		{309B76DD-B8F2-4832-8CFE-B942C624C264}.Release|ARM32.ActiveCfg = Release|ARM32
+		{309B76DD-B8F2-4832-8CFE-B942C624C264}.Release|ARM32.Build.0 = Release|ARM32
+		{309B76DD-B8F2-4832-8CFE-B942C624C264}.Release|ARM32.Deploy.0 = Release|ARM32
+		{309B76DD-B8F2-4832-8CFE-B942C624C264}.Release|arm64.ActiveCfg = Release|arm64
+		{309B76DD-B8F2-4832-8CFE-B942C624C264}.Release|arm64.Build.0 = Release|arm64
+		{309B76DD-B8F2-4832-8CFE-B942C624C264}.Release|arm64.Deploy.0 = Release|arm64
 		{309B76DD-B8F2-4832-8CFE-B942C624C264}.Release|x64.ActiveCfg = Release|x64
 		{309B76DD-B8F2-4832-8CFE-B942C624C264}.Release|x64.Build.0 = Release|x64
 		{309B76DD-B8F2-4832-8CFE-B942C624C264}.Release|x64.Deploy.0 = Release|x64
@@ -36,5 +44,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {73744A7C-CC81-46BD-8EAA-9F9D62571C41}
 	EndGlobalSection
 EndGlobal
