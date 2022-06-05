@@ -9,12 +9,10 @@ namespace TranslateWithDictCC
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            IEnumerable enumerable = value as IEnumerable;
-
-            if (enumerable == null)
+            if (value is IEnumerable enumerable)
+                return enumerable.GetEnumerator().MoveNext();
+            else
                 return null;
-
-            return enumerable.GetEnumerator().MoveNext();
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

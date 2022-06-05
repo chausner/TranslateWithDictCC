@@ -92,9 +92,23 @@ namespace TranslateWithDictCC
             position += count;
         }
 
+        public override int Read(Span<byte> buffer)
+        {
+            int bytesRead = stream.Read(buffer);
+            position += bytesRead;
+            return bytesRead;
+        }
+
         public override async Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
         {
             int bytesRead = await stream.ReadAsync(buffer, offset, count, cancellationToken);
+            position += bytesRead;
+            return bytesRead;
+        }
+
+        public override async ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
+        {
+            int bytesRead = await stream.ReadAsync(buffer, cancellationToken);
             position += bytesRead;
             return bytesRead;
         }
@@ -114,10 +128,22 @@ namespace TranslateWithDictCC
             return readByte;
         }
 
+        public override void Write(ReadOnlySpan<byte> buffer)
+        {
+            stream.Write(buffer);
+            position += buffer.Length;
+        }
+
         public override async Task WriteAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
         {
             await stream.WriteAsync(buffer, offset, count, cancellationToken);
             position += count;
+        }
+
+        public override async ValueTask WriteAsync(ReadOnlyMemory<byte> buffer, CancellationToken cancellationToken = default)
+        {
+            await stream.WriteAsync(buffer, cancellationToken);
+            position += buffer.Length;
         }
 
         public override void WriteByte(byte value)

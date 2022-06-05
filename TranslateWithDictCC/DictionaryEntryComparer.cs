@@ -92,14 +92,17 @@ namespace TranslateWithDictCC
             public int AdditionalWordCount { get; }
             public bool IsMatchInAnnotation { get; }
 
+            static readonly Regex annotationSpanRegex = new Regex(@"(\{.*?\})|(\[.*?\])|(\<.*?\>)", RegexOptions.ExplicitCapture);
+
             public MatchInfo(string searchQuery, string searchResult, TextSpan[] matchSpans)
             {
-                IsCaseSensitiveMatch = matchSpans.Any(matchSpan => searchResult.Substring(matchSpan.Offset, matchSpan.Length) == searchQuery);
+                IsCaseSensitiveMatch = matchSpans.Any(matchSpan => searchResult.AsSpan(matchSpan.Offset, matchSpan.Length).Equals(searchQuery, StringComparison.InvariantCulture));
 
-                IEnumerable<TextSpan> annotationSpans =
-                    Regex.Matches(searchResult, @"(\{.*?\})|(\[.*?\])|(\<.*?\>)", RegexOptions.ExplicitCapture)
+                TextSpan[] annotationSpans =
+                    annotationSpanRegex.Matches(searchResult)
                     .Cast<Match>()
-                    .Select(match => new TextSpan(match.Index, match.Length));
+                    .Select(match => new TextSpan(match.Index, match.Length))
+                    .ToArray();
 
                 AnnotationLength = annotationSpans.Sum(span => span.Length);
 

@@ -172,7 +172,7 @@ namespace TranslateWithDictCC.ViewModels
 
             try
             {
-                await querySemaphore.WaitAsync();
+                await querySemaphore.WaitAsync(cancellationToken);
 
                 (suggestions, reverseSearch) = await GetSearchSuggestions(partialSearchQuery, cancellationToken);
             }

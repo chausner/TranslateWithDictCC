@@ -10,6 +10,7 @@ namespace TranslateWithDictCC
 {
     static class AudioRecordingFetcher
     {
+        static HttpClient httpClient = new HttpClient();
         static Dictionary<LanguageWordPair, Uri> urlCache = new Dictionary<LanguageWordPair, Uri>();
 
         public static async Task<Uri> GetAudioRecordingUri(DictionaryEntryViewModel dictionaryEntryViewModel, bool word2)
@@ -30,10 +31,7 @@ namespace TranslateWithDictCC
 
             Uri requestUri = GetSearchPageUri(originLanguageCode, destinationLanguageCode, word);
 
-            string response;
-
-            using (HttpClient httpClient = new HttpClient())
-                response = await httpClient.GetStringAsync(requestUri);
+            string response = await httpClient.GetStringAsync(requestUri);
 
             DictCCSearchResult[] dictCCSearchResults = ExtractDictCCSearchResults(response, originLanguageCode, destinationLanguageCode);
 

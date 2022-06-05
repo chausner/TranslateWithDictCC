@@ -25,12 +25,10 @@ namespace TranslateWithDictCC.ViewModels
 
         public override bool Equals(object obj)
         {
-            DirectionViewModel other = obj as DirectionViewModel;
-
-            if (other == null)
+            if (obj is DirectionViewModel other)
+                return OriginLanguageCode == other.OriginLanguageCode && DestinationLanguageCode == other.DestinationLanguageCode;
+            else
                 return false;
-
-            return OriginLanguageCode == other.OriginLanguageCode && DestinationLanguageCode == other.DestinationLanguageCode;
         }
 
         public override int GetHashCode()
