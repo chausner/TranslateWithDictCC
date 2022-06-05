@@ -11,24 +11,6 @@
                         <ResourceDictionary>
                             <ResourceDictionary.ThemeDictionaries>
                                 <ResourceDictionary x:Key="Light">
-                                    <!--<Color x:Key="SystemAccentColorLight3">#FFFC00</Color>
-                                    <Color x:Key="SystemAccentColorLight2">#FFCC00</Color>
-                                    <Color x:Key="SystemAccentColorLight1">#FFAC00</Color>
-                                    <Color x:Key="SystemAccentColor">#FF8C00</Color>
-                                    <Color x:Key="SystemAccentColorDark1">#AF6C00</Color>
-                                    <Color x:Key="SystemAccentColorDark2">#8F4C00</Color>
-                                    <Color x:Key="SystemAccentColorDark3">#6F2C00</Color>
-                                    <SolidColorBrush x:Key="AccentFillColorDefaultBrush" Color="#FF8C00" />-->
-
-                                    <!--<Color x:Key="SystemAccentColorLight3">#93C6FC</Color>
-                                    <Color x:Key="SystemAccentColorLight2">#73A6FC</Color>
-                                    <Color x:Key="SystemAccentColorLight1">#5386EC</Color>
-                                    <Color x:Key="SystemAccentColor">#3366CC</Color>
-                                    <Color x:Key="SystemAccentColorDark1">#1346AC</Color>
-                                    <Color x:Key="SystemAccentColorDark2">#03268C</Color>
-                                    <Color x:Key="SystemAccentColorDark3">#03066C</Color>
-                                    <SolidColorBrush x:Key="AccentFillColorDefaultBrush" Color="#3366CC" />-->
-
                                     <Color x:Key="SystemAccentColorLight3">#A4A7E5</Color>
                                     <Color x:Key="SystemAccentColorLight2">#6C95E4</Color>
                                     <Color x:Key="SystemAccentColorLight1">#367BD7</Color>
@@ -120,7 +102,7 @@
                     <Color x:Key="TitleBarButtonHoverBackgroundColor">Orange</Color>
                     <Color x:Key="TitleBarButtonForegroundColor">Black</Color>
                     <Color x:Key="TitleBarButtonHoverForegroundColor">Black</Color>
-                    <!--<Color x:Key="TitleBarButtonPressedBackgroundColor"></Color>-->
+                    <Color x:Key="TitleBarButtonPressedBackgroundColor">#FF9800</Color>
                     <Color x:Key="TitleBarButtonPressedForegroundColor">Black</Color>
                     <Color x:Key="TitleBarButtonInactiveBackgroundColor">DarkOrange</Color>
                     <Color x:Key="TitleBarButtonInactiveForegroundColor">Black</Color>
@@ -129,13 +111,8 @@
                     <SolidColorBrush x:Key="DictionaryEntryAltBackgroundThemeBrush" Color="#20FFFFFF" />
                     <SolidColorBrush x:Key="DictionaryEntryAnnotationThemeBrush" Color="#000080" />
                     <SolidColorBrush x:Key="DictionaryEntryQueryHighlightThemeBrush" Color="#40FFFFB0" />
-                    <SolidColorBrush x:Key="ResultCountBorderBackgroundThemeBrush" Color="DarkOrange" />
-                    <RadialGradientBrush x:Key="SearchResultsPageBackgroundThemeBrush" GradientOrigin="0,0">
-                        <RadialGradientBrush.GradientStops>
-                            <GradientStop Offset="0" Color="Orange" />
-                            <GradientStop Offset="1.0" Color="DarkOrange" />
-                        </RadialGradientBrush.GradientStops>
-                    </RadialGradientBrush>
+                    <SolidColorBrush x:Key="ResultCountBorderBackgroundThemeBrush" Color="#FF9800" />
+                    <SolidColorBrush x:Key="SearchResultsPageBackgroundThemeBrush" Color="#FF9800" />
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Dark">
                     <Color x:Key="TitleBarBackgroundColor">#2D2D2D</Color>
@@ -146,7 +123,7 @@
                     <Color x:Key="TitleBarButtonHoverBackgroundColor">#4D4D4D</Color>
                     <Color x:Key="TitleBarButtonForegroundColor">#FEFEFE</Color>
                     <Color x:Key="TitleBarButtonHoverForegroundColor">#FEFEFE</Color>
-                    <!--<Color x:Key="TitleBarButtonPressedBackgroundColor"></Color>-->
+                    <Color x:Key="TitleBarButtonPressedBackgroundColor">#FF9800</Color>
                     <Color x:Key="TitleBarButtonPressedForegroundColor">#FEFEFE</Color>
                     <Color x:Key="TitleBarButtonInactiveBackgroundColor">DarkOrange</Color>
                     <Color x:Key="TitleBarButtonInactiveForegroundColor">#FEFEFE</Color>
@@ -155,13 +132,8 @@
                     <SolidColorBrush x:Key="DictionaryEntryAltBackgroundThemeBrush" Color="#20000000" />
                     <SolidColorBrush x:Key="DictionaryEntryAnnotationThemeBrush" Color="#367BD7" />
                     <SolidColorBrush x:Key="DictionaryEntryQueryHighlightThemeBrush" Color="DarkOrange" />
-                    <SolidColorBrush x:Key="ResultCountBorderBackgroundThemeBrush" Color="#2D2D2D" />
-                    <RadialGradientBrush x:Key="SearchResultsPageBackgroundThemeBrush" GradientOrigin="0,0">
-                        <RadialGradientBrush.GradientStops>
-                            <GradientStop Offset="0" Color="#464646" />
-                            <GradientStop Offset="1.0" Color="#2D2D2D" />
-                        </RadialGradientBrush.GradientStops>
-                    </RadialGradientBrush>
+                    <SolidColorBrush x:Key="ResultCountBorderBackgroundThemeBrush" Color="#373737" />
+                    <SolidColorBrush x:Key="SearchResultsPageBackgroundThemeBrush" Color="#373737" />
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
         </ResourceDictionary>

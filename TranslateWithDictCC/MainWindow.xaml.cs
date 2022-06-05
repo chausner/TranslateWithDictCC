@@ -87,7 +87,7 @@ namespace TranslateWithDictCC
             titleBar.ButtonHoverBackgroundColor = (Color?)dictionary["TitleBarButtonHoverBackgroundColor"];
             titleBar.ButtonForegroundColor = (Color?)dictionary["TitleBarButtonForegroundColor"];
             titleBar.ButtonHoverForegroundColor = (Color?)dictionary["TitleBarButtonHoverForegroundColor"];
-            //titleBar.ButtonPressedBackgroundColor = (Color?)dictionary["TitleBarButtonPressedBackgroundColor"]; 
+            titleBar.ButtonPressedBackgroundColor = (Color?)dictionary["TitleBarButtonPressedBackgroundColor"]; 
             titleBar.ButtonPressedForegroundColor = (Color?)dictionary["TitleBarButtonPressedForegroundColor"];
             titleBar.ButtonInactiveBackgroundColor = (Color?)dictionary["TitleBarButtonInactiveBackgroundColor"];
             titleBar.ButtonInactiveForegroundColor = (Color?)dictionary["TitleBarButtonInactiveForegroundColor"];
