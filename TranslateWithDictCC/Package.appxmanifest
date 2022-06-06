@@ -43,6 +43,6 @@
 	</Applications>
 
 	<Capabilities>
-		<rescap:Capability Name="internetClient" />
+		<rescap:Capability Name="runFullTrust" />
 	</Capabilities>
 </Package>
