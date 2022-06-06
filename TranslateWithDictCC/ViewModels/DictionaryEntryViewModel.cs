@@ -1,11 +1,16 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
+using Microsoft.UI.Xaml.Media;
 using Microsoft.Windows.ApplicationModel.Resources;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using TranslateWithDictCC.Models;
+using Windows.UI;
 
 namespace TranslateWithDictCC.ViewModels
 {
@@ -32,6 +37,7 @@ namespace TranslateWithDictCC.ViewModels
 
         Block word1;
         Block word2;
+        List<UIElement> subjects;
 
         public Block Word1
         {
@@ -55,6 +61,17 @@ namespace TranslateWithDictCC.ViewModels
             }
         }
 
+        public List<UIElement> Subjects
+        {
+            get
+            {
+                if (subjects == null)
+                    Initialize();
+
+                return subjects;
+            }
+        }
+
         public ICommand PlayStopAudioRecording1Command { get; }
         public ICommand PlayStopAudioRecording2Command { get; }
 
@@ -73,7 +90,38 @@ namespace TranslateWithDictCC.ViewModels
             bool reverseSearch = SearchContext.SelectedDirection.ReverseSearch;
             word1 = WordHighlighting.GenerateRichTextBlock(reverseSearch ? DictionaryEntry.Word2 : DictionaryEntry.Word1, DictionaryEntry.MatchSpans, true);
             word2 = WordHighlighting.GenerateRichTextBlock(reverseSearch ? DictionaryEntry.Word1 : DictionaryEntry.Word2, DictionaryEntry.MatchSpans, false);
-        }        
+
+            subjects = new List<UIElement>();
+
+            if (DictionaryEntry.Subjects != null)
+            {
+                IEnumerable<string> subjectStrings =
+                    Regex.Matches(DictionaryEntry.Subjects, @"\[([^\[\]]+)\]")
+                    .Cast<Match>()
+                    .Select(match => match.Groups[1].Value);
+
+                SubjectInfo.LoadAsync();
+
+                foreach (string subjectString in subjectStrings)
+                {
+                    string description = SubjectInfo.GetSubjectDescription(SearchContext.SelectedDirection.OriginLanguageCode, SearchContext.SelectedDirection.DestinationLanguageCode, subjectString);
+
+                    if (description != null)
+                    {
+                        Border border = new Border();
+                        border.Padding = new Thickness(5, 2, 5, 2);
+                        border.Background = new SolidColorBrush(Color.FromArgb(0xFF, 0xDA, 0xDA, 0xDA));
+                        if (subjects.Count != 0)
+                            border.Margin = new Thickness(5, 0, 0, 0);
+                        border.Child = new TextBlock() { Text = subjectString };
+                        ToolTip toolTip = new ToolTip();
+                        toolTip.Content = description;
+                        ToolTipService.SetToolTip(border, toolTip);
+                        subjects.Add(border);
+                    }
+                }
+            }
+        }
 
         public IconElement GetAudioRecordingButtonIcon(AudioRecordingState state)
         {

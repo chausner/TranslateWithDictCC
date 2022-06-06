@@ -260,6 +260,11 @@ namespace TranslateWithDictCC.Views
             SetRichTextBlockContent(word1RichTextBlock, viewModel.Word1);
             SetRichTextBlockContent(word2RichTextBlock, viewModel.Word2);
 
+            StackPanel stackPanel = (StackPanel)grid.Children[1];
+            stackPanel.Children.Clear();
+            foreach (UIElement element in viewModel.Subjects)
+                stackPanel.Children.Add(element);
+
             Border border = (Border)templateRoot.Children[0];
             if (args.ItemIndex % 2 == 0)
                 border.ClearValue(Border.BackgroundProperty);

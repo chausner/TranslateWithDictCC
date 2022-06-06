@@ -108,7 +108,8 @@ namespace TranslateWithDictCC
                 {
                     Word1 = word1,
                     Word2 = word2,
-                    WordClasses = s[2].Length != 0 ? s[2] : null
+                    WordClasses = s[2].Length != 0 ? s[2] : null,
+                    Subjects = s.Length >= 4 && s[3].Length != 0 ? s[3] : null
                 };
 
                 entries.Add(entry);

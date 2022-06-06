@@ -206,6 +206,7 @@ namespace TranslateWithDictCC
                                 command.Parameters[0].Value = entry.Word1;
                                 command.Parameters[1].Value = entry.Word2;
                                 command.Parameters[2].Value = (object)entry.WordClasses ?? DBNull.Value;
+                                command.Parameters[3].Value = (object)entry.Subjects ?? DBNull.Value;
 
                                 command.ExecuteNonQuery();
                             }
@@ -269,11 +270,24 @@ namespace TranslateWithDictCC
                 string word1 = dataReader.GetString(0);
                 string word2 = dataReader.GetString(1);
                 string wordClasses = dataReader.GetValue(2) as string;
-                string[] offsets = dataReader.GetString(3).Split(' ');
+                string subjects;
+                string[] offsets;
+
+                if (dataReader.FieldCount == 4)
+                {
+                    // old table format without Subjects column
+                    subjects = null;
+                    offsets = dataReader.GetString(3).Split(' ');
+                }
+                else
+                {
+                    subjects = dataReader.GetValue(3) as string;
+                    offsets = dataReader.GetString(4).Split(' ');
+                }
 
                 TextSpan[] matchSpans = GetMatchSpans(reverseSearch ? word2 : word1, offsets);
 
-                return new DictionaryEntry { Word1 = word1, Word2 = word2, WordClasses = wordClasses, MatchSpans = matchSpans };
+                return new DictionaryEntry { Word1 = word1, Word2 = word2, WordClasses = wordClasses, Subjects = subjects, MatchSpans = matchSpans };
             });
         }
 

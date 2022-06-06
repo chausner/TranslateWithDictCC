@@ -7,6 +7,7 @@ namespace TranslateWithDictCC.Models
         public string Word1 { get; init; }
         public string Word2 { get; init; }
         public string WordClasses { get; init; }
+        public string Subjects { get; init; }
         public TextSpan[] MatchSpans { get; init; }
     }
 
