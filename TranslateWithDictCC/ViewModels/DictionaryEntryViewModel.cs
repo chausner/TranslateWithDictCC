@@ -93,18 +93,16 @@ namespace TranslateWithDictCC.ViewModels
 
             subjects = new List<UIElement>();
 
-            if (DictionaryEntry.Subjects != null)
+            if (DictionaryEntry.Subjects != null && SubjectInfo.Instance.IsLoaded)
             {
                 IEnumerable<string> subjectStrings =
                     Regex.Matches(DictionaryEntry.Subjects, @"\[([^\[\]]+)\]")
                     .Cast<Match>()
                     .Select(match => match.Groups[1].Value);
 
-                SubjectInfo.LoadAsync();
-
                 foreach (string subjectString in subjectStrings)
                 {
-                    string description = SubjectInfo.GetSubjectDescription(SearchContext.SelectedDirection.OriginLanguageCode, SearchContext.SelectedDirection.DestinationLanguageCode, subjectString);
+                    string description = SubjectInfo.Instance.GetSubjectDescription(SearchContext.SelectedDirection.OriginLanguageCode, SearchContext.SelectedDirection.DestinationLanguageCode, subjectString);
 
                     if (description != null)
                     {

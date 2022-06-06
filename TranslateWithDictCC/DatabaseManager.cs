@@ -174,18 +174,19 @@ namespace TranslateWithDictCC
 
                 await using (DbCommand command = connection.CreateCommand())
                 {
-                    command.CommandText = $"CREATE VIRTUAL TABLE {tableName} USING fts4(Word1 VARCHAR NOT NULL, Word2 VARCHAR NOT NULL, WordClasses VARCHAR, tokenize=unicode61, notindexed=WordClasses)";
+                    command.CommandText = $"CREATE VIRTUAL TABLE {tableName} USING fts4(Word1 VARCHAR NOT NULL, Word2 VARCHAR NOT NULL, WordClasses VARCHAR, Subjects VARCHAR, tokenize=unicode61, notindexed=WordClasses, notindexed=Subjects)";
 
                     await command.ExecuteNonQueryAsync();
                 }
 
                 await using (DbCommand command = connection.CreateCommand())
                 {
-                    command.CommandText = $"INSERT INTO {tableName}(Word1, Word2, WordClasses) VALUES (@Word1, @Word2, @WordClasses)";
+                    command.CommandText = $"INSERT INTO {tableName}(Word1, Word2, WordClasses, Subjects) VALUES (@Word1, @Word2, @WordClasses, @Subjects)";
 
                     command.Parameters.Add(new SqliteParameter("@Word1", SqliteType.Text, 512));
                     command.Parameters.Add(new SqliteParameter("@Word2", SqliteType.Text, 512));
                     command.Parameters.Add(new SqliteParameter("@WordClasses", SqliteType.Text, 64));
+                    command.Parameters.Add(new SqliteParameter("@Subjects", SqliteType.Text, 128));
 
                     await command.PrepareAsync();
 

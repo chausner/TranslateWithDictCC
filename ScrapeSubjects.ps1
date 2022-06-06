@@ -22,4 +22,4 @@ foreach ($languagePair in $languagePairs)
     $subjects[$languagePair] = $pairs
 }
 
-$subjects | ConvertTo-Json | Out-File (Join-Path $PSScriptRoot "TranslateWithDictCC\Assets\Subjects.json")
+$subjects | ConvertTo-Json | Out-File (Join-Path $PSScriptRoot "TranslateWithDictCC\Assets\Subjects.json") -Encoding utf8NoBOM

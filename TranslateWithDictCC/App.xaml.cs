@@ -28,6 +28,8 @@ namespace TranslateWithDictCC
             await SettingsViewModel.Instance.Load();
             await SearchResultsViewModel.Instance.Load();
 
+            _ = SubjectInfo.Instance.LoadAsync();
+
             if (!Resources.ContainsKey("settings"))
                 Resources.Add("settings", Settings.Instance);
 
