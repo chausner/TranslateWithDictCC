@@ -100,6 +100,9 @@ namespace TranslateWithDictCC.ViewModels
                     .Cast<Match>()
                     .Select(match => match.Groups[1].Value);
 
+                Brush wordClassesBorderBackground = (Brush)Application.Current.Resources["DictionaryEntryWordClassesThemeBrush"];
+                double wordClassesFontSize = (double)Application.Current.Resources["wordFontSize"];
+
                 foreach (string subjectString in subjectStrings)
                 {
                     string description = SubjectInfo.Instance.GetSubjectDescription(SearchContext.SelectedDirection.OriginLanguageCode, SearchContext.SelectedDirection.DestinationLanguageCode, subjectString);
@@ -108,10 +111,10 @@ namespace TranslateWithDictCC.ViewModels
                     {
                         Border border = new Border();
                         border.Padding = new Thickness(5, 2, 5, 2);
-                        border.Background = new SolidColorBrush(Color.FromArgb(0xFF, 0xDA, 0xDA, 0xDA));
+                        border.Background = (Brush)Application.Current.Resources["DictionaryEntryWordClassesThemeBrush"];
                         if (subjects.Count != 0)
                             border.Margin = new Thickness(5, 0, 0, 0);
-                        border.Child = new TextBlock() { Text = subjectString };
+                        border.Child = new TextBlock() { Text = subjectString, FontSize = wordClassesFontSize };
                         ToolTip toolTip = new ToolTip();
                         toolTip.Content = description;
                         ToolTipService.SetToolTip(border, toolTip);

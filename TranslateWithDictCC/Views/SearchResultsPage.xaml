@@ -96,15 +96,9 @@
                             <TextBlock Text="{x:Bind DictionaryEntry.Subjects}" FontSize="{StaticResource wordFontSize}" />
                         </Border>
                     </Grid>-->
-                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Orientation="Horizontal">
-                        <Border Background="{ThemeResource DictionaryEntryWordClassesThemeBrush}" Padding="5,2,5,2">
-                            <TextBlock Text="{x:Bind DictionaryEntry.Subjects}" />
-                        </Border>
-                        <Border Background="{ThemeResource DictionaryEntryWordClassesThemeBrush}" Padding="5,2,5,2" Margin="2,0,0,0">
-                            <TextBlock Text="{x:Bind DictionaryEntry.Subjects}" />
-                        </Border>
-                    </StackPanel>
-                    </Grid>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Orientation="Horizontal"
+                                Visibility="{Binding Source={StaticResource settings}, Path=ShowWordClasses}" />
+                </Grid>
                 <RichTextBlock Grid.Column="2" VerticalAlignment="Center" Margin="0,8,0,8" FontSize="{StaticResource wordFontSize}" />
                 <AppBarButton Grid.Column="3" LabelPosition="Collapsed" Width="42" 
                         VerticalAlignment="Center" Icon="{x:Bind GetAudioRecordingButtonIcon(AudioRecordingState2), Mode=OneWay}" 
