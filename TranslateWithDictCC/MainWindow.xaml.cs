@@ -7,7 +7,6 @@ using System.ComponentModel;
 using System.IO;
 using System.Reflection;
 using TranslateWithDictCC.Views;
-using Windows.Graphics;
 using Windows.UI;
 using WinRT.Interop;
 using WinUIEx;
@@ -98,15 +97,10 @@ namespace TranslateWithDictCC
 
         private void SetWindowSizeAndLocation()
         {
-            SizeInt32 initialSize = new SizeInt32(1000, 650);
-            SizeInt32 minSize = new SizeInt32(680, 430);
+            this.CenterOnScreen(1000, 650);
 
-            this.CenterOnScreen(initialSize.Width, initialSize.Height);
-
-            // minimum size must be scaled by DPI
-            uint dpi = HwndExtensions.GetDpiForWindow(this.GetWindowHandle());
-            MinWidth = (int)(minSize.Width * dpi / 96.0);
-            MinHeight = (int)(minSize.Height * dpi / 96.0);
+            MinWidth = 680;
+            MinHeight = 430;
         }
     }
 }
