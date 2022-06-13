@@ -18,7 +18,9 @@
                                     <Color x:Key="SystemAccentColorDark1">#234D9A</Color>
                                     <Color x:Key="SystemAccentColorDark2">#14346B</Color>
                                     <Color x:Key="SystemAccentColorDark3">#0C2852</Color>
-                                    <SolidColorBrush x:Key="AccentFillColorDefaultBrush" Color="#3366CC" />
+                                    <SolidColorBrush x:Key="AccentFillColorDefaultBrush" Color="#3366CC" />                                    
+                                    <SolidColorBrush x:Key="NavigationViewDefaultPaneBackground" Color="#FF8C00" />
+                                    <SolidColorBrush x:Key="NavigationViewExpandedPaneBackground" Color="#FF8C00" />
                                 </ResourceDictionary>
                                 <ResourceDictionary x:Key="Dark">
                                     <Color x:Key="SystemAccentColorLight3">#FF8C00</Color>
@@ -29,6 +31,8 @@
                                     <Color x:Key="SystemAccentColorDark2">#664700</Color>
                                     <Color x:Key="SystemAccentColorDark3">#3E3700</Color>
                                     <SolidColorBrush x:Key="AccentFillColorDefaultBrush" Color="#FF8C00" />
+                                    <SolidColorBrush x:Key="NavigationViewDefaultPaneBackground" Color="#2D2D2D" />
+                                    <SolidColorBrush x:Key="NavigationViewExpandedPaneBackground" Color="#2D2D2D" />
                                 </ResourceDictionary>
                             </ResourceDictionary.ThemeDictionaries>
                         </ResourceDictionary>

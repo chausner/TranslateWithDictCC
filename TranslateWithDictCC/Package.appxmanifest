@@ -9,7 +9,7 @@
 	<Identity
 	  Name="3941373C7C64E.Translatewithdict.cc"
 	  Publisher="CN=DA195A6B-276E-4FD7-8623-FA61651B5286"
-	  Version="2.0.0.0" />
+	  Version="2.0.1.0" />
 
 	<Properties>
 		<DisplayName>ms-resource:Package_Display_Name</DisplayName>
@@ -43,6 +43,6 @@
 	</Applications>
 
 	<Capabilities>
-		<rescap:Capability Name="internetClient" />
+		<rescap:Capability Name="runFullTrust" />
 	</Capabilities>
 </Package>

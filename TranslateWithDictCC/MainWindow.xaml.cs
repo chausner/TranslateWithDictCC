@@ -7,7 +7,6 @@ using System.ComponentModel;
 using System.IO;
 using System.Reflection;
 using TranslateWithDictCC.Views;
-using Windows.Graphics;
 using Windows.UI;
 using WinRT.Interop;
 using WinUIEx;
@@ -62,35 +61,40 @@ namespace TranslateWithDictCC
             IntPtr hWnd = WindowNative.GetWindowHandle(this);
             WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
             AppWindow appWindow = AppWindow.GetFromWindowId(windowId);
-            AppWindowTitleBar titleBar = appWindow.TitleBar;
 
-            ResourceDictionary dictionary = null;
-
-            switch (Settings.Instance.AppTheme)
+            // Title bar customization is not supported on Windows 10
+            if (AppWindowTitleBar.IsCustomizationSupported())
             {
-                case ElementTheme.Default:
-                    dictionary = Application.Current.Resources;
-                    break;
-                case ElementTheme.Light:
-                    dictionary = (ResourceDictionary)Application.Current.Resources.ThemeDictionaries["Light"];
-                    break;
-                case ElementTheme.Dark:
-                    dictionary = (ResourceDictionary)Application.Current.Resources.ThemeDictionaries["Dark"];
-                    break;
-            }
+                AppWindowTitleBar titleBar = appWindow.TitleBar;
 
-            titleBar.BackgroundColor = (Color?)dictionary["TitleBarBackgroundColor"];
-            titleBar.ForegroundColor = (Color?)dictionary["TitleBarForegroundColor"];
-            titleBar.InactiveBackgroundColor = (Color?)dictionary["TitleBarInactiveBackgroundColor"];
-            titleBar.InactiveForegroundColor = (Color?)dictionary["TitleBarInactiveForegroundColor"];
-            titleBar.ButtonBackgroundColor = (Color?)dictionary["TitleBarButtonBackgroundColor"];
-            titleBar.ButtonHoverBackgroundColor = (Color?)dictionary["TitleBarButtonHoverBackgroundColor"];
-            titleBar.ButtonForegroundColor = (Color?)dictionary["TitleBarButtonForegroundColor"];
-            titleBar.ButtonHoverForegroundColor = (Color?)dictionary["TitleBarButtonHoverForegroundColor"];
-            titleBar.ButtonPressedBackgroundColor = (Color?)dictionary["TitleBarButtonPressedBackgroundColor"]; 
-            titleBar.ButtonPressedForegroundColor = (Color?)dictionary["TitleBarButtonPressedForegroundColor"];
-            titleBar.ButtonInactiveBackgroundColor = (Color?)dictionary["TitleBarButtonInactiveBackgroundColor"];
-            titleBar.ButtonInactiveForegroundColor = (Color?)dictionary["TitleBarButtonInactiveForegroundColor"];
+                ResourceDictionary dictionary = null;
+
+                switch (Settings.Instance.AppTheme)
+                {
+                    case ElementTheme.Default:
+                        dictionary = Application.Current.Resources;
+                        break;
+                    case ElementTheme.Light:
+                        dictionary = (ResourceDictionary)Application.Current.Resources.ThemeDictionaries["Light"];
+                        break;
+                    case ElementTheme.Dark:
+                        dictionary = (ResourceDictionary)Application.Current.Resources.ThemeDictionaries["Dark"];
+                        break;
+                }
+
+                titleBar.BackgroundColor = (Color?)dictionary["TitleBarBackgroundColor"];
+                titleBar.ForegroundColor = (Color?)dictionary["TitleBarForegroundColor"];
+                titleBar.InactiveBackgroundColor = (Color?)dictionary["TitleBarInactiveBackgroundColor"];
+                titleBar.InactiveForegroundColor = (Color?)dictionary["TitleBarInactiveForegroundColor"];
+                titleBar.ButtonBackgroundColor = (Color?)dictionary["TitleBarButtonBackgroundColor"];
+                titleBar.ButtonHoverBackgroundColor = (Color?)dictionary["TitleBarButtonHoverBackgroundColor"];
+                titleBar.ButtonForegroundColor = (Color?)dictionary["TitleBarButtonForegroundColor"];
+                titleBar.ButtonHoverForegroundColor = (Color?)dictionary["TitleBarButtonHoverForegroundColor"];
+                titleBar.ButtonPressedBackgroundColor = (Color?)dictionary["TitleBarButtonPressedBackgroundColor"];
+                titleBar.ButtonPressedForegroundColor = (Color?)dictionary["TitleBarButtonPressedForegroundColor"];
+                titleBar.ButtonInactiveBackgroundColor = (Color?)dictionary["TitleBarButtonInactiveBackgroundColor"];
+                titleBar.ButtonInactiveForegroundColor = (Color?)dictionary["TitleBarButtonInactiveForegroundColor"];
+            }
 
             string applicationRoot = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
             appWindow.SetIcon(Path.Combine(applicationRoot, @"Assets\Logo.ico"));
@@ -98,15 +102,10 @@ namespace TranslateWithDictCC
 
         private void SetWindowSizeAndLocation()
         {
-            SizeInt32 initialSize = new SizeInt32(1000, 650);
-            SizeInt32 minSize = new SizeInt32(680, 430);
+            this.CenterOnScreen(1000, 650);
 
-            this.CenterOnScreen(initialSize.Width, initialSize.Height);
-
-            // minimum size must be scaled by DPI
-            uint dpi = HwndExtensions.GetDpiForWindow(this.GetWindowHandle());
-            MinWidth = (int)(minSize.Width * dpi / 96.0);
-            MinHeight = (int)(minSize.Height * dpi / 96.0);
+            MinWidth = 680;
+            MinHeight = 430;
         }
     }
 }
