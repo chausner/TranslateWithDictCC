@@ -109,7 +109,7 @@ namespace TranslateWithDictCC.ViewModels
         {
             List<DictionaryEntry> results = await DatabaseManager.Instance.QueryEntries(selectedDirection.Dictionary, searchQuery, selectedDirection.ReverseSearch);
 
-            if (results.Count == 0 && Settings.Instance.SearchInBothDirections && !dontSearchInBothDirections)
+            if (results.Count == 0 && !dontSearchInBothDirections)
             {
                 results = await DatabaseManager.Instance.QueryEntries(selectedDirection.Dictionary, searchQuery, !selectedDirection.ReverseSearch);
 
@@ -278,7 +278,7 @@ namespace TranslateWithDictCC.ViewModels
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            if (results.Count == 0 && Settings.Instance.SearchInBothDirections)
+            if (results.Count == 0)
             {
                 reverseSearch = !reverseSearch;
                 results = await DatabaseManager.Instance.QueryEntries(SelectedDirection.Dictionary, searchQuery, reverseSearch, maxResults + 1);

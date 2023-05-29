@@ -41,24 +41,6 @@ namespace TranslateWithDictCC
             ApplicationData.Current.LocalSettings.Values["SelectedDirection"] = selectedDirection;
         }
 
-        bool searchInBothDirections;
-
-        public bool SearchInBothDirections
-        {
-            get
-            {
-                return searchInBothDirections;
-            }
-            set
-            {
-                if (value != searchInBothDirections)
-                {
-                    ApplicationData.Current.LocalSettings.Values["SearchInBothDirections"] = value;
-                    SetProperty(ref searchInBothDirections, value);
-                }
-            }
-        }
-
         bool caseSensitiveSearch;
 
         public bool CaseSensitiveSearch
@@ -136,7 +118,6 @@ namespace TranslateWithDictCC
             IPropertySet settingsValues = ApplicationData.Current.LocalSettings.Values;
 
             selectedDirection = settingsValues["SelectedDirection"] as ApplicationDataCompositeValue;
-            searchInBothDirections = (settingsValues["SearchInBothDirections"] as bool?).GetValueOrDefault(true);
             caseSensitiveSearch = (settingsValues["CaseSensitiveSearch"] as bool?).GetValueOrDefault(true);
             showAudioRecordingButton = (settingsValues["ShowAudioRecordingButton"] as bool?).GetValueOrDefault(true);
             showWordClasses = (settingsValues["ShowWordClasses"] as bool?).GetValueOrDefault(true);

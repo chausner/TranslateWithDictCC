@@ -72,11 +72,6 @@ namespace TranslateWithDictCC.Views
             FocusSearchBox();
         }
 
-        private void CaseSensitiveSearch_Click(object sender, RoutedEventArgs e)
-        {
-            PerformQuery();
-        }
-
         private void SwitchDirection_Click(object sender, RoutedEventArgs e)
         {
             ViewModel.SwitchDirectionOfTranslationCommand.Execute(null);

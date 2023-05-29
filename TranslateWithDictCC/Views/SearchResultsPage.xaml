@@ -63,13 +63,6 @@
                 <Image Grid.Column="4" Source="{x:Bind DestinationLanguageImage}" Width="21" Height="21" Margin="6,0,0,0" />
             </Grid>
         </DataTemplate>
-        <MenuFlyout x:Key="moreMenuFlyout">
-            <MenuFlyoutItem x:Uid="MainPage_SwitchDirectionOfTranslationMenuItem" Text="Switch direction of translation" Click="SwitchDirection_Click" 
-                            AutomationProperties.AcceleratorKey="Control S" />
-            <ToggleMenuFlyoutItem x:Uid="MainPage_SearchInBothDirectionsMenuItem" Text="Search in both directions" IsChecked="{x:Bind Settings.SearchInBothDirections, Mode=TwoWay}" />
-            <ToggleMenuFlyoutItem x:Uid="MainPage_CaseSensitiveSearchMenuItem" IsChecked="{x:Bind Settings.CaseSensitiveSearch, Mode=TwoWay}"
-                                  Text="Case-sensitive search" Click="CaseSensitiveSearch_Click" />
-        </MenuFlyout>
         <DataTemplate x:Key="DictionaryEntryDataTemplate" x:DataType="viewmodels:DictionaryEntryViewModel">
             <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
                 <Grid.ColumnDefinitions>
@@ -130,7 +123,8 @@
                               IsEnabled="{x:Bind ViewModel.AvailableDirections, Converter={StaticResource sourceNotEmptyValueConverter}, Mode=OneWay}"
                               DropDownOpened="directionComboBox_DropDownOpened" DropDownClosed="directionComboBox_DropDownClosed" SizeChanged="directionComboBox_SizeChanged" />
             <CommandBar Grid.Column="2" Margin="0" Padding="0">
-                <AppBarButton Icon="More" Flyout="{StaticResource moreMenuFlyout}" VerticalAlignment="Top" Margin="-6" Width="44" />
+                <AppBarButton x:Uid="MainPage_SwitchDirectionOfTranslationAppBarButton" Icon="Sync" VerticalAlignment="Top" Margin="-3,-8,-6,-6" Width="44" Click="SwitchDirection_Click"
+                              ToolTipService.ToolTip="Switch direction of translation" AutomationProperties.AcceleratorKey="Control S" />
             </CommandBar>
         </Grid>
         <ListView Grid.Row="1" ItemsSource="{x:Bind ViewModel.DictionaryEntries, Mode=OneWay}" ItemTemplate="{StaticResource DictionaryEntryDataTemplate}"
