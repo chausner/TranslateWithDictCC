@@ -825,6 +825,18 @@
   <data name="Remove_Dictionary_Confirmation_Remove" xml:space="preserve">
     <value>Remove</value>
   </data>
+  <data name="SearchResultsPage_ListenMenuItem1.Text" xml:space="preserve">
+    <value>Listen</value>
+  </data>
+  <data name="SearchResultsPage_SearchMenuItem1.Text" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="SearchResultsPage_ListenMenuItem2.Text" xml:space="preserve">
+    <value>Listen</value>
+  </data>
+  <data name="SearchResultsPage_SearchMenuItem2.Text" xml:space="preserve">
+    <value>Search</value>
+  </data>
   <data name="SearchResultsPage_ResultCount" xml:space="preserve">
     <value>{0} hits</value>
   </data>

@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using TranslateWithDictCC.Models;
 
@@ -210,6 +211,32 @@ namespace TranslateWithDictCC.ViewModels
                 .Cast<Match>()
                 .Select(match => new TextSpan(match.Index, match.Length))
                 .ToArray();
+        }
+
+        public static string RemoveAnnotations(string word)
+        {
+            TextSpan[] annotationSpans = GetAnnotationSpans(word);
+
+            StringBuilder wordWithoutAnnotations = new StringBuilder(word);
+
+            foreach (TextSpan annotationSpan in annotationSpans.Reverse())
+            {
+                int offset = annotationSpan.Offset;
+                int length = annotationSpan.Length;
+
+                // also remove leading or trailing spaces (but not both at the same time)
+                if (offset > 0 && wordWithoutAnnotations[offset - 1] == ' ')
+                {
+                    offset--;
+                    length++;
+                }
+                else if (offset + length < wordWithoutAnnotations.Length && wordWithoutAnnotations[offset + length] == ' ')
+                    length++;
+
+                wordWithoutAnnotations.Remove(offset, length);
+            }
+
+            return wordWithoutAnnotations.ToString().Trim();
         }
     }
 }

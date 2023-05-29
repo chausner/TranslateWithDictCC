@@ -63,6 +63,14 @@
                 <Image Grid.Column="4" Source="{x:Bind DestinationLanguageImage}" Width="21" Height="21" Margin="6,0,0,0" />
             </Grid>
         </DataTemplate>
+        <MenuFlyout x:Key="MoreButton1Flyout">
+            <MenuFlyoutItem x:Uid="SearchResultsPage_ListenMenuItem1" Text="Listen" Command="{Binding PlayStopAudioRecording1Command}" Icon="Volume" />
+            <MenuFlyoutItem x:Uid="SearchResultsPage_SearchMenuItem1" Text="Search" Command="{Binding Search1Command}" Icon="Find" />
+        </MenuFlyout>
+        <MenuFlyout x:Key="MoreButton2Flyout">
+            <MenuFlyoutItem x:Uid="SearchResultsPage_ListenMenuItem1" Text="Listen" Command="{Binding PlayStopAudioRecording2Command}" Icon="Volume" />
+            <MenuFlyoutItem x:Uid="SearchResultsPage_SearchMenuItem2" Text="Search" Command="{Binding Search2Command}" Icon="Find" />
+        </MenuFlyout>
         <DataTemplate x:Key="DictionaryEntryDataTemplate" x:DataType="viewmodels:DictionaryEntryViewModel">
             <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
                 <Grid.ColumnDefinitions>
@@ -72,10 +80,11 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <Border Grid.ColumnSpan="4" Margin="-12,2,-8,2" CornerRadius="4" />
-                <AppBarButton Grid.Column="0" LabelPosition="Collapsed" Width="42" 
-                        VerticalAlignment="Center" Icon="{x:Bind GetAudioRecordingButtonIcon(AudioRecordingState1), Mode=OneWay}" 
-                        Margin="-4,0,4,0" Visibility="{Binding Source={StaticResource settings}, Path=ShowAudioRecordingButton}" 
-                        Command="{x:Bind PlayStopAudioRecording1Command}" />
+                <CommandBar Grid.Column="0" Margin="-9,0,-4,0">
+                    <AppBarButton LabelPosition="Collapsed" Width="42" VerticalAlignment="Center" Icon="{x:Bind GetMoreButtonIcon(AudioRecordingState1), Mode=OneWay}" Margin="-4,0,4,0"
+                                  Click="MoreButton1_Click" />
+                </CommandBar>
+
                 <Grid Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="0,8,8,8">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
@@ -91,10 +100,10 @@
                     </Grid>
                 </Grid>
                 <RichTextBlock Grid.Column="2" VerticalAlignment="Center" Margin="0,8,0,8" FontSize="{StaticResource wordFontSize}" />
-                <AppBarButton Grid.Column="3" LabelPosition="Collapsed" Width="42" 
-                        VerticalAlignment="Center" Icon="{x:Bind GetAudioRecordingButtonIcon(AudioRecordingState2), Mode=OneWay}" 
-                        Margin="-4,0,4,0" Visibility="{Binding Source={StaticResource settings}, Path=ShowAudioRecordingButton}" 
-                        Command="{x:Bind PlayStopAudioRecording2Command}" />
+                <CommandBar Grid.Column="3" Margin="-4,0,-9,0">
+                    <AppBarButton LabelPosition="Collapsed" Width="42" VerticalAlignment="Center" Icon="{x:Bind GetMoreButtonIcon(AudioRecordingState2), Mode=OneWay}" Margin="-4,0,4,0"
+                                  Click="MoreButton2_Click" />
+                </CommandBar>
             </Grid>
         </DataTemplate>        
         <Storyboard x:Name="resultCountAnimation">
