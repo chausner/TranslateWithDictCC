@@ -21,7 +21,7 @@
                 <RichTextBlock Grid.Column="0" VerticalAlignment="Center" Margin="0,0,8,0" FontSize="{StaticResource wordFontSize}" DataContextChanged="RichTextBlock_DataContextChanged" />
                 <Grid Grid.Column="1" VerticalAlignment="Center" 
                     Visibility="{Binding Source={StaticResource settings}, Path=ShowWordClasses}">
-                    <Border Background="{ThemeResource DictionaryEntryWordClassesThemeBrush}" Padding="5,2,5,2"
+                    <Border Background="{ThemeResource DictionaryEntryWordClassesThemeBrush}" Padding="5,2,5,2" CornerRadius="4"
                             Visibility="{x:Bind GetWordClassVisibility(DictionaryEntry.WordClasses)}">
                         <TextBlock Text="{x:Bind DictionaryEntry.WordClasses}" FontSize="{StaticResource wordFontSize}" />
                     </Border>
@@ -93,7 +93,7 @@
                     <RichTextBlock Grid.Column="0" VerticalAlignment="Center" Margin="0,0,8,0" FontSize="{StaticResource wordFontSize}" />
                     <Grid Grid.Column="1" VerticalAlignment="Center"
                           Visibility="{Binding Source={StaticResource settings}, Path=ShowWordClasses}">
-                        <Border Background="{ThemeResource DictionaryEntryWordClassesThemeBrush}" Padding="5,2,5,2"
+                        <Border Background="{ThemeResource DictionaryEntryWordClassesThemeBrush}" Padding="5,2,5,2" CornerRadius="4"
                                 Visibility="{x:Bind GetWordClassVisibility(DictionaryEntry.WordClasses)}">
                             <TextBlock Text="{x:Bind DictionaryEntry.WordClasses}" FontSize="{StaticResource wordFontSize}" />
                         </Border>
