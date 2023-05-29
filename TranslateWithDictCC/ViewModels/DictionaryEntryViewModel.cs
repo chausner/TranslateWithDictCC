@@ -114,8 +114,9 @@ namespace TranslateWithDictCC.ViewModels
                     if (description != null)
                     {
                         Border border = new Border();
+                        border.CornerRadius = new CornerRadius(4);
                         border.Padding = new Thickness(5, 2, 5, 2);
-                        border.Background = (Brush)Application.Current.Resources["DictionaryEntryWordClassesThemeBrush"];
+                        border.Background = wordClassesBorderBackground;
                         if (subjects.Count != 0)
                             border.Margin = new Thickness(5, 0, 0, 0);
                         border.Child = new TextBlock() { Text = subjectString, FontSize = wordClassesFontSize };
