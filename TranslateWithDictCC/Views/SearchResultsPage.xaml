@@ -10,7 +10,6 @@
     NavigationCacheMode="Required"
     SizeChanged="Page_SizeChanged">
     <Page.Resources>
-        <x:Double x:Key="wordFontSize">15</x:Double>
         <local:SourceNotEmptyValueConverter x:Key="sourceNotEmptyValueConverter" />
         <DataTemplate x:Key="SearchSuggestionDataTemplate" x:DataType="viewmodels:SearchSuggestionViewModel">
             <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" IsHitTestVisible="False">

@@ -96,6 +96,7 @@
                     </Setter.Value>
                 </Setter>
             </Style>
+            <x:Double x:Key="wordFontSize">15</x:Double>
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Light">
                     <Color x:Key="TitleBarBackgroundColor">DarkOrange</Color>
