@@ -22,4 +22,6 @@ foreach ($languagePair in $languagePairs)
     $subjects[$languagePair] = $pairs
 }
 
-$subjects | ConvertTo-Json | Out-File (Join-Path $PSScriptRoot "TranslateWithDictCC\Assets\Subjects.json") -Encoding utf8NoBOM
+$json = $subjects | ConvertTo-Json
+$utf8NoBomEncoding = New-Object System.Text.UTF8Encoding $False
+[IO.File]::WriteAllLines((Join-Path $PSScriptRoot "TranslateWithDictCC\Assets\Subjects.json"), $json, $utf8NoBomEncoding)
