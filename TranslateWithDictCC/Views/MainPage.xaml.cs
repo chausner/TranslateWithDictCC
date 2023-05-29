@@ -43,7 +43,7 @@ namespace TranslateWithDictCC.Views
                             dvm => dvm.OriginLanguageCode == originLanguageCode && dvm.DestinationLanguageCode == destinationLanguageCode);
 
                     if (directionViewModel != null)
-                        searchContext = new SearchContext(null, directionViewModel, !Settings.Instance.SearchInBothDirections);
+                        searchContext = new SearchContext(null, directionViewModel, false);
                 }
             }
 
