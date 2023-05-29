@@ -20,6 +20,7 @@ namespace TranslateWithDictCC
         ZipArchive zipArchive;
         long uncompressedSize;
 
+        private bool IsOpen => streamReader != null;
         public string OriginLanguageCode { get; private set; }
         public string DestinationLanguageCode { get; private set; }
         public DateTimeOffset CreationDate { get; private set; }
@@ -31,28 +32,46 @@ namespace TranslateWithDictCC
 
         private async Task Open()
         {
-            Stream stream = await wordlistFile.OpenStreamForReadAsync();
+            Stream stream = null;
 
-            if (wordlistFile.FileType.Equals(".zip", StringComparison.OrdinalIgnoreCase))
+            try
             {
-                zipArchive = new ZipArchive(stream, ZipArchiveMode.Read, false);
+                stream = await wordlistFile.OpenStreamForReadAsync();
 
-                ZipArchiveEntry wordlistFile = zipArchive.Entries.SingleOrDefault(
-                    entry => Path.GetExtension(entry.FullName).Equals(".txt", StringComparison.OrdinalIgnoreCase));
+                if (wordlistFile.FileType.Equals(".zip", StringComparison.OrdinalIgnoreCase))
+                {
+                    zipArchive = new ZipArchive(stream, ZipArchiveMode.Read, false);
 
-                if (wordlistFile == null)
-                    throw new InvalidDataException("Could not find a dict.cc wordlist file in the ZIP archive.");
+                    ZipArchiveEntry wordlistFile = zipArchive.Entries.SingleOrDefault(
+                        entry => Path.GetExtension(entry.FullName).Equals(".txt", StringComparison.OrdinalIgnoreCase));
 
-                uncompressedSize = wordlistFile.Length;
+                    if (wordlistFile == null)
+                        throw new InvalidDataException("Could not find a dict.cc wordlist file in the ZIP archive.");
 
-                streamReader = new StreamReader(new StreamPositionWrapper(wordlistFile.Open()), Encoding.UTF8);
+                    uncompressedSize = wordlistFile.Length;
+
+                    streamReader = new StreamReader(new StreamPositionWrapper(wordlistFile.Open()), Encoding.UTF8);
+                }
+                else
+                    streamReader = new StreamReader(stream, Encoding.UTF8);
             }
-            else
-                streamReader = new StreamReader(stream, Encoding.UTF8);
+            catch
+            {
+                streamReader?.Dispose();
+                streamReader = null;
+                zipArchive?.Dispose();
+                zipArchive = null;
+                stream?.Dispose();
+                stream = null;
+                throw;
+            }
         }
 
         public async Task ReadHeader()
         {
+            if (IsOpen)
+                throw new InvalidOperationException("ReadHeader may only be called once");
+
             await Open();
 
             string line = await streamReader.ReadLineAsync();
@@ -79,6 +98,9 @@ namespace TranslateWithDictCC
 
         public async Task<IReadOnlyList<DictionaryEntry>> ReadEntries(int numEntries)
         {
+            if (!IsOpen)
+                throw new InvalidOperationException("ReadHeader must be called first");
+
             List<DictionaryEntry> entries = new List<DictionaryEntry>(numEntries);
 
             while (entries.Count < numEntries && !streamReader.EndOfStream)
@@ -122,6 +144,9 @@ namespace TranslateWithDictCC
         {
             get
             {
+                if (!IsOpen)
+                    return 0.0;
+
                 if (zipArchive == null)
                     return (double)streamReader.BaseStream.Position / streamReader.BaseStream.Length;
                 else

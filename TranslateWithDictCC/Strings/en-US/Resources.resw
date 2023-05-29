@@ -780,9 +780,6 @@
   <data name="MainPage_AboutHamburgerMenuItem.Content" xml:space="preserve">
     <value>About</value>
   </data>
-  <data name="MainPage_CaseSensitiveSearchMenuItem.Text" xml:space="preserve">
-    <value>Case-sensitive search</value>
-  </data>
   <data name="MainPage_DirectionComboBox.PlaceholderText" xml:space="preserve">
     <value>No dictionary installed</value>
   </data>
@@ -801,10 +798,7 @@
   <data name="MainPage_SearchHamburgerMenuItem.Content" xml:space="preserve">
     <value>Search</value>
   </data>
-  <data name="MainPage_SearchInBothDirectionsMenuItem.Text" xml:space="preserve">
-    <value>Search in both directions</value>
-  </data>
-  <data name="MainPage_SwitchDirectionOfTranslationMenuItem.Text" xml:space="preserve">
+  <data name="MainPage_SwitchDirectionOfTranslationAppBarButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Switch direction of translation</value>
   </data>
   <data name="No_Dictionary_Installed_Body" xml:space="preserve">
@@ -830,6 +824,18 @@
   </data>
   <data name="Remove_Dictionary_Confirmation_Remove" xml:space="preserve">
     <value>Remove</value>
+  </data>
+  <data name="SearchResultsPage_ListenMenuItem1.Text" xml:space="preserve">
+    <value>Listen</value>
+  </data>
+  <data name="SearchResultsPage_SearchMenuItem1.Text" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="SearchResultsPage_ListenMenuItem2.Text" xml:space="preserve">
+    <value>Listen</value>
+  </data>
+  <data name="SearchResultsPage_SearchMenuItem2.Text" xml:space="preserve">
+    <value>Search</value>
   </data>
   <data name="SearchResultsPage_ResultCount" xml:space="preserve">
     <value>{0} hits</value>

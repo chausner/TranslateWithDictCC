@@ -74,6 +74,8 @@ namespace TranslateWithDictCC.ViewModels
 
         public ICommand PlayStopAudioRecording1Command { get; }
         public ICommand PlayStopAudioRecording2Command { get; }
+        public ICommand Search1Command { get; }
+        public ICommand Search2Command { get; }
 
         public DictionaryEntryViewModel(DictionaryEntry entry, SearchContext searchContext)
         {
@@ -83,6 +85,8 @@ namespace TranslateWithDictCC.ViewModels
             AudioRecordingState2 = AudioRecordingState.Available;
             PlayStopAudioRecording1Command = new RelayCommand(() => { PlayStopAudioRecording(false); });
             PlayStopAudioRecording2Command = new RelayCommand(() => { PlayStopAudioRecording(true); });
+            Search1Command = new RelayCommand(() => { Search(false); });
+            Search2Command = new RelayCommand(() => { Search(true); });
         }
 
         private void Initialize()
@@ -124,13 +128,13 @@ namespace TranslateWithDictCC.ViewModels
             }
         }
 
-        public IconElement GetAudioRecordingButtonIcon(AudioRecordingState state)
+        public IconElement GetMoreButtonIcon(AudioRecordingState state)
         {
             return state switch
             {
-                AudioRecordingState.Available => new IconSourceElement() { IconSource = new SymbolIconSource() { Symbol = Symbol.Volume } },
+                AudioRecordingState.Available => new IconSourceElement() { IconSource = new SymbolIconSource() { Symbol = Symbol.More } },
                 AudioRecordingState.Playing => new IconSourceElement() { IconSource = new SymbolIconSource() { Symbol = Symbol.Pause } }, // Symbol.Stop
-                AudioRecordingState.Unavailable => new IconSourceElement() { IconSource = new SymbolIconSource() { Symbol = Symbol.Mute } },
+                AudioRecordingState.Unavailable => new IconSourceElement() { IconSource = new SymbolIconSource() { Symbol = Symbol.More } },
                 _ => throw new ArgumentException()
             };
         }
@@ -177,6 +181,21 @@ namespace TranslateWithDictCC.ViewModels
             };
 
             await contentDialog.ShowAsync();
+        }
+
+        private void Search(bool word2)
+        {
+            string word = (word2 ^ SearchContext.SelectedDirection.ReverseSearch) ? DictionaryEntry.Word2 : DictionaryEntry.Word1;
+
+            string searchTerm = WordHighlighting.RemoveAnnotations(word);
+
+            if (word2)
+                SearchResultsViewModel.Instance.SwitchDirectionOfTranslationCommand.Execute(null);
+
+            SearchContext searchContext = new SearchContext(searchTerm, SearchResultsViewModel.Instance.SelectedDirection, true);
+
+            // explicit type parameters required here
+            MainViewModel.Instance.NavigateToPageCommand.Execute(Tuple.Create<string, object>("SearchResultsPage", searchContext));
         }
     }
 

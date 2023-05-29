@@ -72,11 +72,6 @@ namespace TranslateWithDictCC.Views
             FocusSearchBox();
         }
 
-        private void CaseSensitiveSearch_Click(object sender, RoutedEventArgs e)
-        {
-            PerformQuery();
-        }
-
         private void SwitchDirection_Click(object sender, RoutedEventArgs e)
         {
             ViewModel.SwitchDirectionOfTranslationCommand.Execute(null);
@@ -296,6 +291,34 @@ namespace TranslateWithDictCC.Views
                 directionComboBox.SelectedItem = selectedItem;
                 directionComboBox.SelectionChanged += directionComboBox_SelectionChanged;
             }
+        }
+
+        private void MoreButton1_Click(object sender, RoutedEventArgs e)
+        {
+            DictionaryEntryViewModel viewModel = (DictionaryEntryViewModel)((FrameworkElement)sender).DataContext;
+
+            if (viewModel.AudioRecordingState1 != AudioRecordingState.Playing)
+            {
+                MenuFlyout flyout = (MenuFlyout)Resources["MoreButton1Flyout"];
+                flyout.ShowAt((FrameworkElement)sender);
+            }
+            else
+                if (viewModel.PlayStopAudioRecording1Command.CanExecute(null))
+                viewModel.PlayStopAudioRecording1Command.Execute(null);
+        }
+
+        private void MoreButton2_Click(object sender, RoutedEventArgs e)
+        {
+            DictionaryEntryViewModel viewModel = (DictionaryEntryViewModel)((FrameworkElement)sender).DataContext;
+
+            if (viewModel.AudioRecordingState2 != AudioRecordingState.Playing)
+            {
+                MenuFlyout flyout = (MenuFlyout)Resources["MoreButton2Flyout"];
+                flyout.ShowAt((FrameworkElement)sender);
+            }
+            else
+                if (viewModel.PlayStopAudioRecording2Command.CanExecute(null))
+                    viewModel.PlayStopAudioRecording2Command.Execute(null);
         }
     }
 }
