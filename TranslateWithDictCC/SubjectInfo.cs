@@ -10,7 +10,7 @@ namespace TranslateWithDictCC
     {
         public static SubjectInfo Instance { get; } = new SubjectInfo();
 
-        JsonDocument subjectInfoRoot;
+        JsonDocument subjectInfoJson;
 
         private SubjectInfo()
         {
@@ -18,22 +18,25 @@ namespace TranslateWithDictCC
 
         public async Task LoadAsync()
         {
-            if (subjectInfoRoot != null)
+            if (IsLoaded)
                 return;
 
             StorageFile storageFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Subjects.json"));
 
             using Stream stream = await storageFile.OpenStreamForReadAsync();
 
-            subjectInfoRoot = await JsonDocument.ParseAsync(stream);
+            subjectInfoJson = await JsonDocument.ParseAsync(stream);
         }
 
         public string GetSubjectDescription(string originLanguageCode, string destinationLanguageCode, string subject)
         {
+            if (!IsLoaded)
+                throw new InvalidOperationException("Subjects have not been loaded yet");
+
             JsonElement subjectsOfLanguagePair;
 
-            if (!subjectInfoRoot.RootElement.TryGetProperty(originLanguageCode + destinationLanguageCode, out subjectsOfLanguagePair) &&
-                !subjectInfoRoot.RootElement.TryGetProperty(destinationLanguageCode + originLanguageCode, out subjectsOfLanguagePair))
+            if (!subjectInfoJson.RootElement.TryGetProperty(originLanguageCode + destinationLanguageCode, out subjectsOfLanguagePair) &&
+                !subjectInfoJson.RootElement.TryGetProperty(destinationLanguageCode + originLanguageCode, out subjectsOfLanguagePair))
                 return null;
 
             if (!subjectsOfLanguagePair.TryGetProperty(subject, out JsonElement description))
@@ -42,6 +45,6 @@ namespace TranslateWithDictCC
             return description.GetString();
         }
 
-        public bool IsLoaded => subjectInfoRoot != null;
+        public bool IsLoaded => subjectInfoJson != null;
     }
 }
