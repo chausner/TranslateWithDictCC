@@ -861,15 +861,6 @@
   <data name="SettingsPage_AppThemeLightComboBoxItem.Content" xml:space="preserve">
     <value>Light</value>
   </data>
-  <data name="SettingsPage_AudioRecordingButtonToggleSwitch.Header" xml:space="preserve">
-    <value>Audio recording button</value>
-  </data>
-  <data name="SettingsPage_AudioRecordingButtonToggleSwitch.OffContent" xml:space="preserve">
-    <value>Hide</value>
-  </data>
-  <data name="SettingsPage_AudioRecordingButtonToggleSwitch.OnContent" xml:space="preserve">
-    <value>Show</value>
-  </data>
   <data name="SettingsPage_DictionariesTextBlock.Text" xml:space="preserve">
     <value>Dictionaries</value>
   </data>
