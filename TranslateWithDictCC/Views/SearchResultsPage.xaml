@@ -142,7 +142,7 @@
         <ProgressBar Grid.Row="1" IsIndeterminate="{x:Bind ViewModel.IsSearchInProgress, Mode=OneWay}" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="12"
                                  Background="Transparent" />
 
-        <Border Grid.Row="1" Name="resultCountBorder" Background="{ThemeResource ResultCountBorderBackgroundThemeBrush}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="8,4,4,4">
+        <Border Grid.Row="1" Name="resultCountBorder" Background="{ThemeResource ResultCountBorderBackgroundThemeBrush}" CornerRadius="4,0,0,0" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="8,4,4,4">
             <Border.RenderTransform>
                 <TranslateTransform Y="100" />
             </Border.RenderTransform>
