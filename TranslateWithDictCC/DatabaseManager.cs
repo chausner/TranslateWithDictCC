@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -40,7 +41,8 @@ namespace TranslateWithDictCC
                       OriginLanguageCode VARCHAR(255) NOT NULL,
                       DestinationLanguageCode VARCHAR(255) NOT NULL,
                       CreationDate BIGINT NOT NULL,
-                      NumberOfEntries BIGINT NOT NULL)");
+                      NumberOfEntries BIGINT NOT NULL,
+                      AppVersionWhenCreated VARCHAR(255))");
         }
 
         public async Task<DbConnection> OpenConnection()
@@ -154,7 +156,8 @@ namespace TranslateWithDictCC
                     OriginLanguageCode = dataReader.GetString(1),
                     DestinationLanguageCode = dataReader.GetString(2),
                     CreationDate = new DateTimeOffset(dataReader.GetInt64(3), TimeSpan.Zero),
-                    NumberOfEntries = dataReader.GetInt32(4)
+                    NumberOfEntries = dataReader.GetInt32(4),
+                    AppVersionWhenCreated = dataReader.IsDBNull(5) ? null : Version.Parse(dataReader.GetString(5))
                 };
             });
         }
@@ -220,16 +223,24 @@ namespace TranslateWithDictCC
 
                 dictionaryViewModel.ImportProgress = 1.0;
 
-                Dictionary dictionary = new Dictionary(wordlistReader.OriginLanguageCode, wordlistReader.DestinationLanguageCode, wordlistReader.CreationDate, dictionaryViewModel.NumberOfEntries);
+                Version appVersion = GetType().GetTypeInfo().Assembly.GetName().Version;
+
+                Dictionary dictionary = new Dictionary(
+                    wordlistReader.OriginLanguageCode,
+                    wordlistReader.DestinationLanguageCode,
+                    wordlistReader.CreationDate,
+                    dictionaryViewModel.NumberOfEntries,
+                    appVersion);
 
                 await using (DbCommand command = connection.CreateCommand())
                 {
-                    command.CommandText = "INSERT INTO Dictionaries(OriginLanguageCode, DestinationLanguageCode, CreationDate, NumberOfEntries) VALUES (@OriginLanguageCode, @DestinationLanguageCode, @CreationDate, @NumberOfEntries)";
+                    command.CommandText = "INSERT INTO Dictionaries(OriginLanguageCode, DestinationLanguageCode, CreationDate, NumberOfEntries, AppVersionWhenCreated) VALUES (@OriginLanguageCode, @DestinationLanguageCode, @CreationDate, @NumberOfEntries, @AppVersionWhenCreated)";
 
                     command.Parameters.Add(new SqliteParameter("@OriginLanguageCode", dictionary.OriginLanguageCode));
                     command.Parameters.Add(new SqliteParameter("@DestinationLanguageCode", dictionary.DestinationLanguageCode));
                     command.Parameters.Add(new SqliteParameter("@CreationDate", dictionary.CreationDate.UtcTicks));
                     command.Parameters.Add(new SqliteParameter("@NumberOfEntries", dictionary.NumberOfEntries));
+                    command.Parameters.Add(new SqliteParameter("@AppVersionWhenCreated", (object)dictionary.AppVersionWhenCreated?.ToString() ?? DBNull.Value));
 
                     await command.ExecuteNonQueryAsync();
                 }
@@ -258,6 +269,9 @@ namespace TranslateWithDictCC
             string column = reverseSearch ? "Word2" : "Word1";
             string escapedQuery = '\"' + searchQuery.Replace("\"", "\"\"") + '\"';
 
+            bool hasSubjectsColumn = dictionary.AppVersionWhenCreated != null &&
+                dictionary.AppVersionWhenCreated >= Version.Parse("2.1.0");
+
             return await ExecuteReader(command =>
             {
                 command.CommandText = $"SELECT *, offsets({tableName}) FROM {tableName} WHERE {column} MATCH @Query";
@@ -274,7 +288,7 @@ namespace TranslateWithDictCC
                 string subjects;
                 string[] offsets;
 
-                if (dataReader.FieldCount == 4)
+                if (!hasSubjectsColumn)
                 {
                     // old table format without Subjects column
                     subjects = null;
