@@ -104,6 +104,7 @@
             <TextBlock x:Uid="SettingsPage_ViewTextBlock" Style="{StaticResource TitleTextBlockStyle}" Text="View" Margin="0,0,0,8" />
             <ToggleSwitch x:Uid="SettingsPage_AudioRecordingButtonToggleSwitch" OnContent="Show" OffContent="Hide" IsOn="{Binding Source={StaticResource settings}, Path=ShowAudioRecordingButton, Mode=TwoWay}">Audio recording button</ToggleSwitch>
             <ToggleSwitch x:Uid="SettingsPage_WordClassesToggleSwitch" OnContent="Show" OffContent="Hide" IsOn="{Binding Source={StaticResource settings}, Path=ShowWordClasses, Mode=TwoWay}">Word classes</ToggleSwitch>
+            <ToggleSwitch x:Uid="SettingsPage_SubjectsToggleSwitch" OnContent="Show" OffContent="Hide" IsOn="{Binding Source={StaticResource settings}, Path=ShowSubjects, Mode=TwoWay}">Subjects</ToggleSwitch>
             <ComboBox x:Uid="SettingsPage_AppThemeComboBox" Header="App theme" SelectedValue="{Binding Source={StaticResource settings}, Path=AppTheme, Mode=TwoWay, Converter={StaticResource appThemeValueConverter}}" SelectedValuePath="Tag">
                 <ComboBoxItem x:Uid="SettingsPage_AppThemeDefaultComboBoxItem" Content="Default" Tag="Default" />
                 <ComboBoxItem x:Uid="SettingsPage_AppThemeLightComboBoxItem" Content="Light" Tag="Light" />

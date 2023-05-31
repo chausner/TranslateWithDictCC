@@ -909,4 +909,13 @@
   <data name="SettingsPage_WordClassesToggleSwitch.OnContent" xml:space="preserve">
     <value>Show</value>
   </data>
+  <data name="SettingsPage_SubjectsToggleSwitch.Header" xml:space="preserve">
+    <value>Subjects</value>
+  </data>
+  <data name="SettingsPage_SubjectsToggleSwitch.OffContent" xml:space="preserve">
+    <value>Hide</value>
+  </data>
+  <data name="SettingsPage_SubjectsToggleSwitch.OnContent" xml:space="preserve">
+    <value>Show</value>
+  </data>
 </root>

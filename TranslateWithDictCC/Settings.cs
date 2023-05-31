@@ -95,6 +95,24 @@ namespace TranslateWithDictCC
             }
         }
 
+        bool showSubjects;
+
+        public bool ShowSubjects
+        {
+            get
+            {
+                return showSubjects;
+            }
+            set
+            {
+                if (value != showSubjects)
+                {
+                    ApplicationData.Current.LocalSettings.Values["ShowSubjects"] = value;
+                    SetProperty(ref showSubjects, value);
+                }
+            }
+        }
+
         ElementTheme appTheme;
 
         public ElementTheme AppTheme
@@ -121,6 +139,7 @@ namespace TranslateWithDictCC
             caseSensitiveSearch = (settingsValues["CaseSensitiveSearch"] as bool?).GetValueOrDefault(true);
             showAudioRecordingButton = (settingsValues["ShowAudioRecordingButton"] as bool?).GetValueOrDefault(true);
             showWordClasses = (settingsValues["ShowWordClasses"] as bool?).GetValueOrDefault(true);
+            showSubjects = (settingsValues["ShowSubjects"] as bool?).GetValueOrDefault(true);
             appTheme = Enum.Parse<ElementTheme>((settingsValues["AppTheme"] as string) ?? Enum.GetName(ElementTheme.Default));
         }     
     }
