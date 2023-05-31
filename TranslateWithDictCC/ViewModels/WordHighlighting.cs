@@ -91,6 +91,9 @@ namespace TranslateWithDictCC.ViewModels
 
         private static IReadOnlyList<TextSpan> MergeSpans(TextSpan[] matchSpans, string word)
         {
+            if (matchSpans.Length == 0)
+                return Array.Empty<TextSpan>();
+
             List<TextSpan> mergedSpans = new List<TextSpan>(matchSpans.Length);
 
             TextSpan currentSpan = matchSpans[0];
