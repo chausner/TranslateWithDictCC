@@ -10,7 +10,6 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using TranslateWithDictCC.Models;
-using Windows.UI;
 
 namespace TranslateWithDictCC.ViewModels
 {
@@ -37,7 +36,7 @@ namespace TranslateWithDictCC.ViewModels
 
         Block word1;
         Block word2;
-        List<UIElement> subjects;
+        List<UIElement> attributes;
 
         public Block Word1
         {
@@ -61,14 +60,14 @@ namespace TranslateWithDictCC.ViewModels
             }
         }
 
-        public List<UIElement> Subjects
+        public IReadOnlyList<UIElement> Attributes
         {
             get
             {
-                if (subjects == null)
+                if (attributes == null)
                     Initialize();
 
-                return subjects;
+                return attributes;
             }
         }
 
@@ -95,36 +94,45 @@ namespace TranslateWithDictCC.ViewModels
             word1 = WordHighlighting.GenerateRichTextBlock(reverseSearch ? DictionaryEntry.Word2 : DictionaryEntry.Word1, DictionaryEntry.MatchSpans, true);
             word2 = WordHighlighting.GenerateRichTextBlock(reverseSearch ? DictionaryEntry.Word1 : DictionaryEntry.Word2, DictionaryEntry.MatchSpans, false);
 
-            subjects = new List<UIElement>();
+            Brush wordClassesBorderBackground = (Brush)Application.Current.Resources["DictionaryEntryWordClassesThemeBrush"];
+            double wordClassesFontSize = (double)Application.Current.Resources["wordFontSize"];
 
-            if (DictionaryEntry.Subjects != null && SubjectInfo.Instance.IsLoaded)
+            attributes = new List<UIElement>();
+
+            void AddAttribute(string text, string toolTipText = null)
+            {
+                Border border = new Border();
+                border.CornerRadius = new CornerRadius(4);
+                border.Padding = new Thickness(5, 2, 5, 2);
+                border.Background = wordClassesBorderBackground;
+                if (attributes.Count != 0)
+                    border.Margin = new Thickness(5, 0, 0, 0);
+                border.Child = new TextBlock() { Text = text, FontSize = wordClassesFontSize };
+                if (toolTipText != null)
+                {
+                    ToolTip toolTip = new ToolTip();
+                    toolTip.Content = toolTipText;
+                    ToolTipService.SetToolTip(border, toolTip);
+                }
+                attributes.Add(border);
+            };
+
+            if (Settings.Instance.ShowWordClasses && DictionaryEntry.WordClasses != null)
+                AddAttribute(DictionaryEntry.WordClasses);
+
+            if (Settings.Instance.ShowSubjects && DictionaryEntry.Subjects != null && SubjectInfo.Instance.IsLoaded)
             {
                 IEnumerable<string> subjectStrings =
                     Regex.Matches(DictionaryEntry.Subjects, @"\[([^\[\]]+)\]")
                     .Cast<Match>()
                     .Select(match => match.Groups[1].Value);
 
-                Brush wordClassesBorderBackground = (Brush)Application.Current.Resources["DictionaryEntryWordClassesThemeBrush"];
-                double wordClassesFontSize = (double)Application.Current.Resources["wordFontSize"];
-
                 foreach (string subjectString in subjectStrings)
                 {
                     string description = SubjectInfo.Instance.GetSubjectDescription(SearchContext.SelectedDirection.OriginLanguageCode, SearchContext.SelectedDirection.DestinationLanguageCode, subjectString);
 
                     if (description != null)
-                    {
-                        Border border = new Border();
-                        border.CornerRadius = new CornerRadius(4);
-                        border.Padding = new Thickness(5, 2, 5, 2);
-                        border.Background = wordClassesBorderBackground;
-                        if (subjects.Count != 0)
-                            border.Margin = new Thickness(5, 0, 0, 0);
-                        border.Child = new TextBlock() { Text = subjectString, FontSize = wordClassesFontSize };
-                        ToolTip toolTip = new ToolTip();
-                        toolTip.Content = description;
-                        ToolTipService.SetToolTip(border, toolTip);
-                        subjects.Add(border);
-                    }
+                        AddAttribute(subjectString, description);
                 }
             }
         }

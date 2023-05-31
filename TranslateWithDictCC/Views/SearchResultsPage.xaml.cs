@@ -257,8 +257,16 @@ namespace TranslateWithDictCC.Views
 
             StackPanel stackPanel = (StackPanel)grid.Children[1];
             stackPanel.Children.Clear();
-            foreach (UIElement element in viewModel.Subjects)
+            foreach (UIElement element in viewModel.Attributes)
+            {
+                // it can happen that the UIElement is still part of another (no longer visible) ListView container
+                // in this case, we must remove it first from the old container before we may add it again
+                StackPanel parent = (StackPanel)VisualTreeHelper.GetParent(element);
+                if (parent != null)
+                    parent.Children.Remove(element);
+                
                 stackPanel.Children.Add(element);
+            }
 
             Border border = (Border)templateRoot.Children[0];
             if (args.ItemIndex % 2 == 0)
