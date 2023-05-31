@@ -59,24 +59,6 @@ namespace TranslateWithDictCC
             }
         }
 
-        bool showAudioRecordingButton;
-
-        public bool ShowAudioRecordingButton
-        {
-            get
-            {
-                return showAudioRecordingButton;
-            }
-            set
-            {
-                if (value != showAudioRecordingButton)
-                {
-                    ApplicationData.Current.LocalSettings.Values["ShowAudioRecordingButton"] = value;
-                    SetProperty(ref showAudioRecordingButton, value);                    
-                }
-            }
-        }
-
         bool showWordClasses;
 
         public bool ShowWordClasses
@@ -137,7 +119,6 @@ namespace TranslateWithDictCC
 
             selectedDirection = settingsValues["SelectedDirection"] as ApplicationDataCompositeValue;
             caseSensitiveSearch = (settingsValues["CaseSensitiveSearch"] as bool?).GetValueOrDefault(true);
-            showAudioRecordingButton = (settingsValues["ShowAudioRecordingButton"] as bool?).GetValueOrDefault(true);
             showWordClasses = (settingsValues["ShowWordClasses"] as bool?).GetValueOrDefault(true);
             showSubjects = (settingsValues["ShowSubjects"] as bool?).GetValueOrDefault(true);
             appTheme = Enum.Parse<ElementTheme>((settingsValues["AppTheme"] as string) ?? Enum.GetName(ElementTheme.Default));

@@ -33,19 +33,22 @@
                 <TextBlock Grid.Column="2" VerticalAlignment="Center" Text="{x:Bind StatusText, Mode=OneWay}" />
                 <ProgressBar Grid.Row="0" Grid.ColumnSpan="4" VerticalAlignment="Bottom"
                              Minimum="0.0" Maximum="1.0" Value="{x:Bind ImportProgress, Mode=OneWay}" Visibility="{x:Bind ProgressBarVisibility, Mode=OneWay}" />
-                <AppBarButton x:Uid="SettingsPage_RemoveDictionaryButton" Grid.Column="3" Grid.RowSpan="2" VerticalAlignment="Center" Width="48" Height="48" Margin="8,0,0,0" Icon="Delete"
-                              ToolTipService.ToolTip="Remove dictionary" Visibility="{x:Bind RemoveDictionaryButtonVisibility, Mode=OneWay}">
-                    <AppBarButton.Flyout>
-                        <Flyout>
-                            <StackPanel>
-                                <TextBlock x:Uid="SettingsPage_RemoveDictionaryConfirmationTextBlock" Style="{ThemeResource BaseTextBlockStyle}" Text="Are you sure you want to remove this dictionary?" Margin="0,0,0,12" />
-                                <Button x:Uid="SettingsPage_RemoveDictionaryConfirmationButton" Content="Remove" Command="{x:Bind RemoveDictionaryCommand}" HorizontalAlignment="Right" />
-                            </StackPanel>
-                        </Flyout>
-                    </AppBarButton.Flyout>
-                </AppBarButton>
-                <AppBarButton x:Uid="SettingsPage_AbortImportButton" Grid.Column="3" Grid.RowSpan="2" VerticalAlignment="Center" Width="48" Height="48" Margin="8,0,0,0" Icon="Cancel"
-                              ToolTipService.ToolTip="Abort import" Visibility="{x:Bind AbortImportButtonVisibility, Mode=OneWay}" Command="{x:Bind AbortImportCommand}" />
+                <CommandBar Grid.Column="3" Grid.RowSpan="2" IsDynamicOverflowEnabled="False" Margin="-9,0,-7,0">
+                    <AppBarButton x:Uid="SettingsPage_RemoveDictionaryButton" VerticalAlignment="Center" Width="42" Margin="8,0,-4,0" Icon="Delete"
+                                  LabelPosition="Collapsed" ToolTipService.ToolTip="Remove dictionary" Visibility="{x:Bind RemoveDictionaryButtonVisibility, Mode=OneWay}">
+                        <AppBarButton.Flyout>
+                            <Flyout>
+                                <StackPanel>
+                                    <TextBlock x:Uid="SettingsPage_RemoveDictionaryConfirmationTextBlock" Style="{ThemeResource BaseTextBlockStyle}" Text="Are you sure you want to remove this dictionary?" Margin="0,0,0,12" />
+                                    <Button x:Uid="SettingsPage_RemoveDictionaryConfirmationButton" Content="Remove" Command="{x:Bind RemoveDictionaryCommand}" HorizontalAlignment="Right" />
+                                </StackPanel>
+                            </Flyout>
+                        </AppBarButton.Flyout>
+                    </AppBarButton>
+                    <AppBarButton x:Uid="SettingsPage_AbortImportButton" VerticalAlignment="Center" Width="42" Margin="8,0,-4,0" Icon="Cancel"
+                                  LabelPosition="Collapsed" ToolTipService.ToolTip="Abort import" Visibility="{x:Bind AbortImportButtonVisibility, Mode=OneWay}"
+                                  Command="{x:Bind AbortImportCommand}" />
+                </CommandBar>
             </Grid>
         </DataTemplate>
         <DataTemplate x:Key="LanguageItemDataTemplateCompact" x:DataType="viewmodels:DictionaryViewModel">
@@ -102,7 +105,6 @@
         <StackPanel Margin="24,16">
             <TextBlock x:Uid="SettingsPage_TitleTextBlock" Style="{StaticResource SubheaderTextBlockStyle}" Text="Settings" Margin="0,0,0,16"/>
             <TextBlock x:Uid="SettingsPage_ViewTextBlock" Style="{StaticResource TitleTextBlockStyle}" Text="View" Margin="0,0,0,8" />
-            <ToggleSwitch x:Uid="SettingsPage_AudioRecordingButtonToggleSwitch" OnContent="Show" OffContent="Hide" IsOn="{Binding Source={StaticResource settings}, Path=ShowAudioRecordingButton, Mode=TwoWay}">Audio recording button</ToggleSwitch>
             <ToggleSwitch x:Uid="SettingsPage_WordClassesToggleSwitch" OnContent="Show" OffContent="Hide" IsOn="{Binding Source={StaticResource settings}, Path=ShowWordClasses, Mode=TwoWay}">Word classes</ToggleSwitch>
             <ToggleSwitch x:Uid="SettingsPage_SubjectsToggleSwitch" OnContent="Show" OffContent="Hide" IsOn="{Binding Source={StaticResource settings}, Path=ShowSubjects, Mode=TwoWay}">Subjects</ToggleSwitch>
             <ComboBox x:Uid="SettingsPage_AppThemeComboBox" Header="App theme" SelectedValue="{Binding Source={StaticResource settings}, Path=AppTheme, Mode=TwoWay, Converter={StaticResource appThemeValueConverter}}" SelectedValuePath="Tag">
