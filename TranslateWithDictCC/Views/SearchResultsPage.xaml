@@ -80,7 +80,7 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <Border Grid.ColumnSpan="4" Margin="-12,2,-8,2" CornerRadius="4" />
-                <CommandBar Grid.Column="0" Margin="-9,0,-4,0">
+                <CommandBar Grid.Column="0" Margin="-9,0,-4,0" VerticalAlignment="Center">
                     <AppBarButton LabelPosition="Collapsed" Width="42" VerticalAlignment="Center" Icon="{x:Bind GetMoreButtonIcon(AudioRecordingState1), Mode=OneWay}" Margin="-4,0,4,0"
                                   Click="MoreButton1_Click" />
                 </CommandBar>
@@ -100,7 +100,7 @@
                     </Grid>
                 </Grid>
                 <RichTextBlock Grid.Column="2" VerticalAlignment="Center" Margin="0,8,0,8" FontSize="{StaticResource wordFontSize}" />
-                <CommandBar Grid.Column="3" Margin="-4,0,-9,0">
+                <CommandBar Grid.Column="3" Margin="-4,0,-9,0" VerticalAlignment="Center">
                     <AppBarButton LabelPosition="Collapsed" Width="42" VerticalAlignment="Center" Icon="{x:Bind GetMoreButtonIcon(AudioRecordingState2), Mode=OneWay}" Margin="-4,0,4,0"
                                   Click="MoreButton2_Click" />
                 </CommandBar>
