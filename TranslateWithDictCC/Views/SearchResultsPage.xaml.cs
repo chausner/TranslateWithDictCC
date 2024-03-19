@@ -19,7 +19,6 @@ namespace TranslateWithDictCC.Views
 
         Settings Settings => Settings.Instance;
 
-        bool isPageBeingShown;
         string lastQuery;
 
         public SearchResultsPage()
@@ -150,8 +149,6 @@ namespace TranslateWithDictCC.Views
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
-            isPageBeingShown = true;
-
             FocusSearchBox();
 
             SearchContext searchContext = (SearchContext)e.Parameter;
@@ -203,15 +200,8 @@ namespace TranslateWithDictCC.Views
 
             if (!MainViewModel.Instance.NoDictionaryInstalledTeachingTipShown && ViewModel.AvailableDirections.Length == 0)
             {
-                // workaround https://github.com/microsoft/microsoft-ui-xaml/issues/6628
-                await Task.Delay(1000);
-
-                // make sure that the user hasn't navigated to another page in the meantime
-                if (isPageBeingShown)
-                {
-                    MainViewModel.Instance.ShowNoDictionaryInstalledTeachingTip = true;
-                    MainViewModel.Instance.NoDictionaryInstalledTeachingTipShown = true;
-                }
+                MainViewModel.Instance.ShowNoDictionaryInstalledTeachingTip = true;
+                MainViewModel.Instance.NoDictionaryInstalledTeachingTipShown = true;
             }
         }
 
@@ -220,7 +210,6 @@ namespace TranslateWithDictCC.Views
             if (e.SourcePageType != typeof(SearchResultsPage))
             {
                 MainViewModel.Instance.ShowNoDictionaryInstalledTeachingTip = false;
-                isPageBeingShown = false;
             }
         }
 
