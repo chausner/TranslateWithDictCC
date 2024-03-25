@@ -48,9 +48,18 @@ namespace TranslateWithDictCC.ViewModels
 
         public ObservableCollection<SearchSuggestionViewModel> SearchSuggestions { get; }
 
-        public ICommand SwitchDirectionOfTranslationCommand { get; }
+		bool isOutdatedDictionariesInfoBarShown;
 
-        SemaphoreSlim querySemaphore = new SemaphoreSlim(1);
+		public bool IsOutdatedDictionariesInfoBarShown
+		{
+			get { return isOutdatedDictionariesInfoBarShown; }
+			set { SetProperty(ref isOutdatedDictionariesInfoBarShown, value); }
+		}
+
+		public ICommand SwitchDirectionOfTranslationCommand { get; }
+		public ICommand GoToOptionsCommand { get; }
+
+		SemaphoreSlim querySemaphore = new SemaphoreSlim(1);
 
         CancellationTokenSource searchSuggestionCancellationTokenSource;
 
@@ -59,8 +68,9 @@ namespace TranslateWithDictCC.ViewModels
             SearchSuggestions = new ObservableCollection<SearchSuggestionViewModel>();
 
             SwitchDirectionOfTranslationCommand = new RelayCommand(SwitchDirectionOfTranslation, CanSwitchDirectionOfTranslation);
+			GoToOptionsCommand = new RelayCommand(GoToOptions);
 
-            SettingsViewModel.Instance.DictionariesChanged += SettingsViewModel_DictionariesChanged;
+			SettingsViewModel.Instance.DictionariesChanged += SettingsViewModel_DictionariesChanged;
         }
 
         private async void SettingsViewModel_DictionariesChanged(object sender, EventArgs e)
@@ -73,6 +83,20 @@ namespace TranslateWithDictCC.ViewModels
             await UpdateDirection();
 
             LoadSettings();
+
+            bool hasOutdatedDictionaries = await DatabaseManager.Instance.HasOutdatedDictionaries();
+
+            if (!Settings.Instance.OutdatedDictionariesNoticeRead)
+            {
+                IsOutdatedDictionariesInfoBarShown = hasOutdatedDictionaries;
+                Settings.Instance.OutdatedDictionariesNoticeRead = hasOutdatedDictionaries;
+            }
+            else
+            {
+                IsOutdatedDictionariesInfoBarShown = false;
+                if (!hasOutdatedDictionaries)
+                    Settings.Instance.OutdatedDictionariesNoticeRead = false;
+			}
         }
 
         public void LoadSettings()
@@ -104,6 +128,11 @@ namespace TranslateWithDictCC.ViewModels
         {
             return SelectedDirection != null;
         }
+
+        private void GoToOptions()
+        {
+            MainViewModel.Instance.NavigateToPageCommand.Execute(Tuple.Create<string, object>("SettingsPage", null));
+		}
 
         private async Task<List<DictionaryEntry>> PerformQueryInner(string searchQuery, bool dontSearchInBothDirections)
         {

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading;
@@ -338,6 +339,15 @@ namespace TranslateWithDictCC
 
             return matchSpans;
         }
+
+        public async Task<bool> HasOutdatedDictionaries()
+        {
+			Version lastUpdateRequiringReimport = new Version("2.1.0");
+
+			List<Dictionary> dictionaries = await GetDictionaries();
+
+            return dictionaries.Any(dictionary => dictionary.AppVersionWhenCreated == null || dictionary.AppVersionWhenCreated < lastUpdateRequiringReimport);
+		}
 
         public async Task OptimizeTable(Dictionary dictionary)
         {

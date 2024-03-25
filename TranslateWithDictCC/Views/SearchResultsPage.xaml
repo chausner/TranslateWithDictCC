@@ -93,6 +93,7 @@
     <Grid Background="{ThemeResource SearchResultsPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
         <Grid Grid.Row="0" Padding="8" Height="48">
@@ -116,13 +117,21 @@
                               ToolTipService.ToolTip="Switch direction of translation" AutomationProperties.AcceleratorKey="Control S" />
             </CommandBar>
         </Grid>
-        <ListView Grid.Row="1" ItemsSource="{x:Bind ViewModel.DictionaryEntries, Mode=OneWay}" ItemTemplate="{StaticResource DictionaryEntryDataTemplate}"
+
+        <InfoBar x:Uid="SearchResultsPage_AppUpdateInfoBar" Grid.Row="1" Margin="8,0,8,0" HorizontalAlignment="Stretch" VerticalAlignment="Top" IsOpen="{x:Bind ViewModel.IsOutdatedDictionariesInfoBarShown}"
+                 Title="App update" Message="The app was recently updated. To enable some of the new functionality in this update, your dictionaries need to be reimported. You may choose to do this at a later date but until then, some new app features will remain unavailable.">
+            <InfoBar.ActionButton>
+                <Button x:Uid="SearchResultsPage_GoToOptionsButton" Command="{x:Bind ViewModel.GoToOptionsCommand}">Go to Options</Button>
+            </InfoBar.ActionButton>
+        </InfoBar>
+        
+        <ListView Grid.Row="2" ItemsSource="{x:Bind ViewModel.DictionaryEntries, Mode=OneWay}" ItemTemplate="{StaticResource DictionaryEntryDataTemplate}"
                   HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" ContainerContentChanging="ListView_ContainerContentChanging"
                   ShowsScrollingPlaceholders="False" />
-        <ProgressBar Grid.Row="1" IsIndeterminate="{x:Bind ViewModel.IsSearchInProgress, Mode=OneWay}" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="12"
+        <ProgressBar Grid.Row="2" IsIndeterminate="{x:Bind ViewModel.IsSearchInProgress, Mode=OneWay}" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="12"
                                  Background="Transparent" />
 
-        <Border Grid.Row="1" Name="resultCountBorder" Background="{ThemeResource ResultCountBorderBackgroundThemeBrush}" CornerRadius="4,0,0,0" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="8,4,4,4">
+        <Border Grid.Row="2" Name="resultCountBorder" Background="{ThemeResource ResultCountBorderBackgroundThemeBrush}" CornerRadius="4,0,0,0" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="8,4,4,4">
             <Border.RenderTransform>
                 <TranslateTransform Y="100" />
             </Border.RenderTransform>

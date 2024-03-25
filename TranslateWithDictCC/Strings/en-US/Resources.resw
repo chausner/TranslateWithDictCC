@@ -909,4 +909,16 @@
   <data name="SettingsPage_SubjectsToggleSwitch.OnContent" xml:space="preserve">
     <value>Show</value>
   </data>
+  <data name="SearchResultsPage_AppUpdateInfoBar.Message" xml:space="preserve">
+    <value>The app was recently updated. To enable some of the new functionality in this update, your dictionaries need to be reimported. You may choose to do this at a later date but until then, some new app features will remain unavailable.</value>
+  </data>
+  <data name="SearchResultsPage_AppUpdateInfoBar.Title" xml:space="preserve">
+    <value>App update</value>
+  </data>
+  <data name="SearchResultsPage_GoToOptionsButton.Content" xml:space="preserve">
+    <value>Go to Options</value>
+  </data>
+  <data name="SettingsPage_OutdatedDictionariesInfoBar.Message" xml:space="preserve">
+    <value>Some of your dictionaries were imported with a previous version of this app. Newer app features may not be available for these dictionaries until they are reimported.</value>
+  </data>
 </root>

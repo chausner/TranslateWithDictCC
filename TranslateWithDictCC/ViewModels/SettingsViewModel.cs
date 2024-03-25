@@ -36,6 +36,20 @@ namespace TranslateWithDictCC.ViewModels
             }
         }
 
+        Visibility outdatedDictionariesInfoBarVisibility;
+
+        public Visibility OutdatedDictionariesInfoBarVisibility
+        {
+            get
+            {
+                return outdatedDictionariesInfoBarVisibility;
+            }
+            private set
+            {
+                SetProperty(ref outdatedDictionariesInfoBarVisibility, value);
+            }
+        }
+
         public ICommand ImportDictionaryCommand { get; }
 
         Task importQueueProcessTask;
@@ -60,12 +74,21 @@ namespace TranslateWithDictCC.ViewModels
             Dictionaries = new ObservableCollection<DictionaryViewModel>();
 
             RestartAppTextBlockVisibility = Visibility.Collapsed;
+            OutdatedDictionariesInfoBarVisibility = Visibility.Collapsed;
+
+            DictionariesChanged += SettingsViewModel_DictionariesChanged;
 
             ImportDictionaryCommand = new RelayCommand(RunImportDictionaryCommand);
 
             appThemeAtStartup = Settings.Instance.AppTheme;
 
             Settings.Instance.PropertyChanged += Settings_PropertyChanged;
+        }
+
+        private async void SettingsViewModel_DictionariesChanged(object sender, EventArgs e)
+        {
+            bool hasOutdatedDictionaries = await DatabaseManager.Instance.HasOutdatedDictionaries();
+            OutdatedDictionariesInfoBarVisibility = hasOutdatedDictionaries ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void Settings_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -83,6 +106,8 @@ namespace TranslateWithDictCC.ViewModels
 
             foreach (Dictionary dictionary in await DatabaseManager.Instance.GetDictionaries())
                 Dictionaries.Add(new DictionaryViewModel(dictionary));
+
+            DictionariesChanged?.Invoke(this, EventArgs.Empty);
         }
 
         private async void RunImportDictionaryCommand()
