@@ -59,7 +59,7 @@ namespace TranslateWithDictCC
         private void SetTitleBarColorsAndIcon()
         {
             IntPtr hWnd = WindowNative.GetWindowHandle(this);
-            WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
+            Microsoft.UI.WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
             AppWindow appWindow = AppWindow.GetFromWindowId(windowId);
 
             // Title bar customization is not supported on Windows 10

@@ -1,113 +1,51 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-	<PropertyGroup>
-		<OutputType>WinExe</OutputType>
-		<TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
-		<TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
-		<RootNamespace>TranslateWithDictCC</RootNamespace>
-		<ApplicationManifest>app.manifest</ApplicationManifest>
-		<Platforms>x86;x64;arm64</Platforms>
-		<RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
-		<PublishProfile>win-$(Platform).pubxml</PublishProfile>
-		<UseWinUI>true</UseWinUI>
-		<EnablePreviewMsixTooling>true</EnablePreviewMsixTooling>
-		<StartupObject></StartupObject>
-		<AssemblyVersion>2.1.0.0</AssemblyVersion>
-		<FileVersion>2.1.0.0</FileVersion>
-		<GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
-		<GenerateAppInstallerFile>False</GenerateAppInstallerFile>
-		<AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
-		<AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
-		<GenerateTestArtifacts>True</GenerateTestArtifacts>
-		<AppxBundle>Always</AppxBundle>
-		<AppxBundlePlatforms>x86|x64|arm64</AppxBundlePlatforms>
-		<HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
-	</PropertyGroup>
-
-	<ItemGroup>
-		<Content Include="Assets\AboutLogo.png" />
-		<Content Include="Assets\Flags\AL.ico" />
-		<Content Include="Assets\Flags\BA.ico" />
-		<Content Include="Assets\Flags\BG.ico" />
-		<Content Include="Assets\Flags\CZ.ico" />
-		<Content Include="Assets\Flags\DE.ico" />
-		<Content Include="Assets\Flags\DK.ico" />
-		<Content Include="Assets\Flags\ES.ico" />
-		<Content Include="Assets\Flags\FI.ico" />
-		<Content Include="Assets\Flags\FR.ico" />
-		<Content Include="Assets\Flags\GB.ico" />
-		<Content Include="Assets\Flags\GR.ico" />
-		<Content Include="Assets\Flags\HR.ico" />
-		<Content Include="Assets\Flags\HU.ico" />
-		<Content Include="Assets\Flags\IS.ico" />
-		<Content Include="Assets\Flags\IT.ico" />
-		<Content Include="Assets\Flags\NL.ico" />
-		<Content Include="Assets\Flags\NO.ico" />
-		<Content Include="Assets\Flags\PL.ico" />
-		<Content Include="Assets\Flags\PT.ico" />
-		<Content Include="Assets\Flags\RO.ico" />
-		<Content Include="Assets\Flags\RS.ico" />
-		<Content Include="Assets\Flags\RU.ico" />
-		<Content Include="Assets\Flags\SE.ico" />
-		<Content Include="Assets\Flags\SK.ico" />
-		<Content Include="Assets\Flags\TR.ico" />
-		<Content Include="Assets\LargeTile.scale-100.png" />
-		<Content Include="Assets\LargeTile.scale-125.png" />
-		<Content Include="Assets\LargeTile.scale-150.png" />
-		<Content Include="Assets\LargeTile.scale-200.png" />
-		<Content Include="Assets\LargeTile.scale-400.png" />
-		<Content Include="Assets\SplashScreen.scale-100.png" />
-		<Content Include="Assets\SplashScreen.scale-125.png" />
-		<Content Include="Assets\SplashScreen.scale-150.png" />
-		<Content Include="Assets\SplashScreen.scale-200.png" />
-		<Content Include="Assets\SplashScreen.scale-400.png" />
-		<Content Include="Assets\Square150x150Logo.scale-100.png" />
-		<Content Include="Assets\Square150x150Logo.scale-125.png" />
-		<Content Include="Assets\Square150x150Logo.scale-150.png" />
-		<Content Include="Assets\Square150x150Logo.scale-400.png" />
-		<Content Include="Assets\Square44x44Logo.altform-unplated_targetsize-16.png" />
-		<Content Include="Assets\Square44x44Logo.altform-unplated_targetsize-256.png" />
-		<Content Include="Assets\Square44x44Logo.altform-unplated_targetsize-32.png" />
-		<Content Include="Assets\Square44x44Logo.altform-unplated_targetsize-48.png" />
-		<Content Include="Assets\Square44x44Logo.scale-100.png" />
-		<Content Include="Assets\Square44x44Logo.scale-125.png" />
-		<Content Include="Assets\Square44x44Logo.scale-150.png" />
-		<Content Include="Assets\Square44x44Logo.scale-400.png" />
-		<Content Include="Assets\Square44x44Logo.targetsize-16.png" />
-		<Content Include="Assets\Square44x44Logo.targetsize-24.png" />
-		<Content Include="Assets\Square44x44Logo.targetsize-256.png" />
-		<Content Include="Assets\Square44x44Logo.targetsize-32.png" />
-		<Content Include="Assets\Square44x44Logo.targetsize-48.png" />
-		<Content Include="Assets\StoreLogo.scale-100.png" />
-		<Content Include="Assets\StoreLogo.scale-125.png" />
-		<Content Include="Assets\StoreLogo.scale-150.png" />
-		<Content Include="Assets\StoreLogo.scale-200.png" />
-		<Content Include="Assets\StoreLogo.scale-400.png" />
-		<Content Include="Assets\Wide310x150Logo.scale-100.png" />
-		<Content Include="Assets\Flags\_unknown.ico" />
-		<Content Include="Assets\Wide310x150Logo.scale-125.png" />
-		<Content Include="Assets\Wide310x150Logo.scale-150.png" />
-		<Content Include="Assets\Wide310x150Logo.scale-400.png" />
-		<Content Include="Licences\GoSquared Flag Icon Set.txt" />
-		<Content Include="Assets\Square150x150Logo.scale-200.png" />
-		<Content Include="Assets\Square44x44Logo.scale-200.png" />
-		<Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
-		<Content Include="Assets\Wide310x150Logo.scale-200.png" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.3" />
-		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.5.240311000" />
-		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.3233" />
-		<PackageReference Include="WinUIEx" Version="2.3.4" />
-		<Manifest Remove="app.manifest" />
-		<None Remove="Assets\Logo.ico" />
-		<Manifest Include="$(ApplicationManifest)" />
-	</ItemGroup>
-
-	<!-- Defining the "Msix" ProjectCapability here allows the Single-project MSIX Packaging
-       Tools extension to be activated for this project even if the Windows App SDK Nuget
-       package has not yet been restored -->
-	<ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnablePreviewMsixTooling)'=='true'">
-		<ProjectCapability Include="Msix" />
-	</ItemGroup>
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows10.0.22621.0</TargetFramework>
+    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+    <RootNamespace>TranslateWithDictCC</RootNamespace>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Platforms>x86;x64;ARM64</Platforms>
+    <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
+    <UseWinUI>true</UseWinUI>
+    <AssemblyVersion>2.1.0.0</AssemblyVersion>
+    <FileVersion>2.1.0.0</FileVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="Assets\AboutLogo.png" />
+    <Content Include="Assets\Flags\_unknown.ico" />
+    <Content Include="Assets\Flags\AL.ico" />
+    <Content Include="Assets\Flags\BA.ico" />
+    <Content Include="Assets\Flags\BG.ico" />
+    <Content Include="Assets\Flags\CZ.ico" />
+    <Content Include="Assets\Flags\DE.ico" />
+    <Content Include="Assets\Flags\DK.ico" />
+    <Content Include="Assets\Flags\ES.ico" />
+    <Content Include="Assets\Flags\FI.ico" />
+    <Content Include="Assets\Flags\FR.ico" />
+    <Content Include="Assets\Flags\GB.ico" />
+    <Content Include="Assets\Flags\GR.ico" />
+    <Content Include="Assets\Flags\HR.ico" />
+    <Content Include="Assets\Flags\HU.ico" />
+    <Content Include="Assets\Flags\IS.ico" />
+    <Content Include="Assets\Flags\IT.ico" />
+    <Content Include="Assets\Flags\NL.ico" />
+    <Content Include="Assets\Flags\NO.ico" />
+    <Content Include="Assets\Flags\PL.ico" />
+    <Content Include="Assets\Flags\PT.ico" />
+    <Content Include="Assets\Flags\RO.ico" />
+    <Content Include="Assets\Flags\RS.ico" />
+    <Content Include="Assets\Flags\RU.ico" />
+    <Content Include="Assets\Flags\SE.ico" />
+    <Content Include="Assets\Flags\SK.ico" />
+    <Content Include="Assets\Flags\TR.ico" />
+    <Content Include="Licences\GoSquared Flag Icon Set.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.3" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.5.240311000" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.3233" />
+    <PackageReference Include="WinUIEx" Version="2.3.4" />
+    <Manifest Include="$(ApplicationManifest)" />
+  </ItemGroup>
 </Project>
