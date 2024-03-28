@@ -5,8 +5,8 @@ using Microsoft.Windows.ApplicationModel.Resources;
 using System;
 using System.ComponentModel;
 using System.IO;
-using System.Reflection;
 using TranslateWithDictCC.Views;
+using Windows.ApplicationModel;
 using Windows.UI;
 using WinRT.Interop;
 using WinUIEx;
@@ -96,8 +96,8 @@ namespace TranslateWithDictCC
                 titleBar.ButtonInactiveForegroundColor = (Color?)dictionary["TitleBarButtonInactiveForegroundColor"];
             }
 
-            string applicationRoot = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
-            appWindow.SetIcon(Path.Combine(applicationRoot, @"Assets\Logo.ico"));
+			string packagePath = Package.Current.InstalledLocation.Path;
+			appWindow.SetIcon(Path.Combine(packagePath, @"Assets\Logo.ico"));
         }
 
         private void SetWindowSizeAndLocation()
