@@ -18,7 +18,7 @@
                 <StackPanel Grid.Column="1">
                     <TextBlock x:Uid="AboutPage_DescriptionTextBlock" Text="Unofficial app to search and manage offline dictionaries downloaded from dict.cc." Margin="0,0,0,8" TextWrapping="WrapWholeWords" />
                     <TextBlock Text="{x:Bind ViewModel.AppVersion}" Margin="0,0,0,8" />
-                    <TextBlock Text="Copyright © Christoph Hausner 2016, 2022-2023" Margin="0,0,0,8" />
+                    <TextBlock Text="Copyright © Christoph Hausner 2016, 2022-2024" Margin="0,0,0,8" />
                 </StackPanel>
             </Grid>            
             <HyperlinkButton x:Uid="AboutPage_PrivacyStatementLink" Content="Privacy Statement" NavigateUri="http://www.dict.cc/?s=about:&amp;l=e" Margin="-12,8,0,16" />
