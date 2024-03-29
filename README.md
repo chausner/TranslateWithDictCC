@@ -1,5 +1,5 @@
 # Translate with dict.cc
-UWP app to search and manage [dict.cc](https://www.dict.cc/) offline dictionaries
+Windows app to search and manage [dict.cc](https://www.dict.cc/) offline dictionaries
 
 [![](https://img.shields.io/badge/Microsoft%20Store-Translate%20with%20dict.cc-blue)](https://www.microsoft.com/store/apps/9NBLGGH4SGKM)
 [![license](https://img.shields.io/github/license/chausner/TranslateWithDictCC.svg)](https://github.com/chausner/TranslateWithDictCC/blob/master/LICENSE)
