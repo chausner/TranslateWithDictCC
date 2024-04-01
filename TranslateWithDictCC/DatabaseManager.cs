@@ -9,7 +9,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using TranslateWithDictCC.Models;
-using TranslateWithDictCC.ViewModels;
 using Windows.Storage;
 
 namespace TranslateWithDictCC
@@ -131,7 +130,7 @@ namespace TranslateWithDictCC
         {
             await using DbConnection connection = await OpenConnection();
             await using DbCommand command = connection.CreateCommand();
-            
+
             commandFunc(command);
 
             await using DbDataReader dataReader = await command.ExecuteReaderAsync();
@@ -142,7 +141,7 @@ namespace TranslateWithDictCC
             {
                 T result = dataReaderFunc(dataReader);
                 results.Add(result);
-            }            
+            }
 
             return results;
         }
@@ -168,12 +167,10 @@ namespace TranslateWithDictCC
             return "Dictionary" + originLanguageCode + destinationLanguageCode;
         }
 
-        public async Task<Dictionary> ImportWordlist(DictionaryViewModel dictionaryViewModel, CancellationToken cancellationToken)
+        public async Task<Dictionary> ImportWordlist(WordlistReader wordlistReader, IProgress<WordlistImportProgress> progress, CancellationToken cancellationToken)
         {
             return await OpenTransactedConnection(async connection =>
             {
-                WordlistReader wordlistReader = dictionaryViewModel.WordlistReader;
-
                 string tableName = GetDictionaryTableName(wordlistReader.OriginLanguageCode, wordlistReader.DestinationLanguageCode);
 
                 await using (DbCommand command = connection.CreateCommand())
@@ -182,6 +179,8 @@ namespace TranslateWithDictCC
 
                     await command.ExecuteNonQueryAsync();
                 }
+
+                int numberOfEntries = 0;
 
                 await using (DbCommand command = connection.CreateCommand())
                 {
@@ -203,26 +202,23 @@ namespace TranslateWithDictCC
                         if (entries.Count == 0)
                             break;
 
-                        // run on the thread pool for better UI responsiveness
-                        await Task.Run(delegate ()
+                        foreach (DictionaryEntry entry in entries)
                         {
-                            foreach (DictionaryEntry entry in entries)
-                            {
-                                command.Parameters[0].Value = entry.Word1;
-                                command.Parameters[1].Value = entry.Word2;
-                                command.Parameters[2].Value = (object)entry.WordClasses ?? DBNull.Value;
-                                command.Parameters[3].Value = (object)entry.Subjects ?? DBNull.Value;
+                            command.Parameters[0].Value = entry.Word1;
+                            command.Parameters[1].Value = entry.Word2;
+                            command.Parameters[2].Value = (object)entry.WordClasses ?? DBNull.Value;
+                            command.Parameters[3].Value = (object)entry.Subjects ?? DBNull.Value;
 
-                                command.ExecuteNonQuery();
-                            }
-                        });
+                            command.ExecuteNonQuery();
+                        }
 
-                        dictionaryViewModel.NumberOfEntries += entries.Count;
-                        dictionaryViewModel.ImportProgress = wordlistReader.Progress;
+                        numberOfEntries += entries.Count;
+
+                        progress?.Report(new(numberOfEntries, wordlistReader.Progress));
                     }
                 }
 
-                dictionaryViewModel.ImportProgress = 1.0;
+                progress?.Report(new(numberOfEntries, 1.0));
 
                 Version appVersion = GetType().GetTypeInfo().Assembly.GetName().Version;
 
@@ -230,7 +226,7 @@ namespace TranslateWithDictCC
                     wordlistReader.OriginLanguageCode,
                     wordlistReader.DestinationLanguageCode,
                     wordlistReader.CreationDate,
-                    dictionaryViewModel.NumberOfEntries,
+                    numberOfEntries,
                     appVersion);
 
                 await using (DbCommand command = connection.CreateCommand())
@@ -252,8 +248,6 @@ namespace TranslateWithDictCC
 
                     dictionary.ID = (int)(long)await command.ExecuteScalarAsync();
                 }
-
-                dictionaryViewModel.Dictionary = dictionary;
 
                 return dictionary;
             });
@@ -342,48 +336,42 @@ namespace TranslateWithDictCC
 
         public async Task<bool> HasOutdatedDictionaries()
         {
-			Version lastUpdateRequiringReimport = new Version("2.1.0");
+            Version lastUpdateRequiringReimport = new Version("2.1.0");
 
-			List<Dictionary> dictionaries = await GetDictionaries();
+            List<Dictionary> dictionaries = await GetDictionaries();
 
             return dictionaries.Any(dictionary => dictionary.AppVersionWhenCreated == null || dictionary.AppVersionWhenCreated < lastUpdateRequiringReimport);
-		}
+        }
 
         public async Task OptimizeTable(Dictionary dictionary)
         {
-            // run on the thread pool for better UI responsiveness
-            await Task.Run(async delegate ()
-            {
-                string tableName = GetDictionaryTableName(dictionary.OriginLanguageCode, dictionary.DestinationLanguageCode);
+            string tableName = GetDictionaryTableName(dictionary.OriginLanguageCode, dictionary.DestinationLanguageCode);
 
-                await ExecuteNonQuery($"INSERT INTO {tableName}({tableName}) VALUES('optimize');");
-            });
+            await ExecuteNonQuery($"INSERT INTO {tableName}({tableName}) VALUES('optimize');");
         }
 
         public async Task DeleteDictionary(Dictionary dictionary)
         {
-            // run on the thread pool for better UI responsiveness
-            await Task.Run(async delegate ()
+            await OpenTransactedConnection(async connection =>
             {
-                await OpenTransactedConnection(async connection =>
+                await using (DbCommand command = connection.CreateCommand())
                 {
-                    await using (DbCommand command = connection.CreateCommand())
-                    {
-                        command.CommandText = $"DELETE FROM Dictionaries WHERE ID = {dictionary.ID}";
+                    command.CommandText = $"DELETE FROM Dictionaries WHERE ID = {dictionary.ID}";
 
-                        await command.ExecuteNonQueryAsync();
-                    }
+                    await command.ExecuteNonQueryAsync();
+                }
 
-                    await using (DbCommand command = connection.CreateCommand())
-                    {
-                        string tableName = GetDictionaryTableName(dictionary.OriginLanguageCode, dictionary.DestinationLanguageCode);
+                await using (DbCommand command = connection.CreateCommand())
+                {
+                    string tableName = GetDictionaryTableName(dictionary.OriginLanguageCode, dictionary.DestinationLanguageCode);
 
-                        command.CommandText = $"DROP TABLE {tableName}";
+                    command.CommandText = $"DROP TABLE {tableName}";
 
-                        await command.ExecuteNonQueryAsync();
-                    }
-                });
+                    await command.ExecuteNonQueryAsync();
+                }
             });
-        }
+        }        
     }
+
+    record struct WordlistImportProgress(int NumberOfEntriesImported, double Progress);
 }

@@ -222,11 +222,21 @@ namespace TranslateWithDictCC.ViewModels
 
                 dictionaryViewModel.Status = DictionaryStatus.Installing;
 
+                Progress<WordlistImportProgress> progress = new Progress<WordlistImportProgress>(p =>
+                {
+                    dictionaryViewModel.NumberOfEntries = p.NumberOfEntriesImported;
+                    dictionaryViewModel.ImportProgress = p.Progress;
+                });
+
                 try
                 {
-                    await DatabaseManager.Instance.ImportWordlist(dictionaryViewModel, cancellationTokenSource.Token);
+                    // run on the thread pool for better UI responsiveness
+                    await Task.Run(async delegate ()
+                    {
+						dictionaryViewModel.Dictionary = await DatabaseManager.Instance.ImportWordlist(dictionaryViewModel.WordlistReader, progress, cancellationTokenSource.Token);
 
-                    await DatabaseManager.Instance.OptimizeTable(dictionaryViewModel.Dictionary);
+						await DatabaseManager.Instance.OptimizeTable(dictionaryViewModel.Dictionary);
+                    });
                 }
                 catch (OperationCanceledException)
                 {
@@ -280,7 +290,12 @@ namespace TranslateWithDictCC.ViewModels
                 return false;
             }
 
-            await DatabaseManager.Instance.DeleteDictionary(dictionaryViewModel.Dictionary);
+            // run on the thread pool for better UI responsiveness
+            await Task.Run(async delegate ()
+            {
+                await DatabaseManager.Instance.DeleteDictionary(dictionaryViewModel.Dictionary);
+            });
+
             Dictionaries.Remove(dictionaryViewModel);
 
             DictionariesChanged?.Invoke(this, EventArgs.Empty);
