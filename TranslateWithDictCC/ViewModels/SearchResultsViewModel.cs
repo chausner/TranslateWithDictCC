@@ -56,6 +56,8 @@ namespace TranslateWithDictCC.ViewModels
 			set { SetProperty(ref isOutdatedDictionariesInfoBarShown, value); }
 		}
 
+        public ObservableCollection<SubjectViewModel> Subjects { get; }
+
 		public ICommand SwitchDirectionOfTranslationCommand { get; }
 		public ICommand GoToOptionsCommand { get; }
 
@@ -66,8 +68,9 @@ namespace TranslateWithDictCC.ViewModels
         private SearchResultsViewModel()
         {
             SearchSuggestions = new ObservableCollection<SearchSuggestionViewModel>();
+            Subjects = new ObservableCollection<SubjectViewModel>();
 
-            SwitchDirectionOfTranslationCommand = new RelayCommand(SwitchDirectionOfTranslation, CanSwitchDirectionOfTranslation);
+			SwitchDirectionOfTranslationCommand = new RelayCommand(SwitchDirectionOfTranslation, CanSwitchDirectionOfTranslation);
 			GoToOptionsCommand = new RelayCommand(GoToOptions);
 
 			SettingsViewModel.Instance.DictionariesChanged += SettingsViewModel_DictionariesChanged;
@@ -185,6 +188,20 @@ namespace TranslateWithDictCC.ViewModels
 
                 DictionaryEntries = new LazyCollection<DictionaryEntry, DictionaryEntryViewModel>(
                     results, entry => new DictionaryEntryViewModel(entry, searchContext));
+
+                Subjects.Clear();
+                var subjects = 
+                    results
+                    .Where(entry => !string.IsNullOrEmpty(entry.Subjects))
+                    .SelectMany(entry => entry.Subjects.Split(" "))
+                    .Select(subject => subject.Trim('[', ']'))
+                    .GroupBy(subject => subject)
+                    .OrderByDescending(grouping => grouping.Count());
+
+				foreach (var grouping in subjects)
+                {
+                    Subjects.Add(new SubjectViewModel(grouping.Count(), grouping.Key));
+				}            
             }
             finally
             {

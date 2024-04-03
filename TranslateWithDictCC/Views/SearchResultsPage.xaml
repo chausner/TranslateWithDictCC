@@ -94,6 +94,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
         <Grid Grid.Row="0" Padding="8" Height="48">
@@ -124,14 +125,32 @@
                 <Button x:Uid="SearchResultsPage_GoToOptionsButton" Command="{x:Bind ViewModel.GoToOptionsCommand}">Go to Options</Button>
             </InfoBar.ActionButton>
         </InfoBar>
-        
-        <ListView Grid.Row="2" ItemsSource="{x:Bind ViewModel.DictionaryEntries, Mode=OneWay}" ItemTemplate="{StaticResource DictionaryEntryDataTemplate}"
+
+        <ItemsView Grid.Row="2" Margin="8,0,8,8" ItemsSource="{x:Bind ViewModel.Subjects}">
+            <ItemsView.ItemTemplate>
+                <DataTemplate x:DataType="viewmodels:SubjectViewModel">
+                    <ItemContainer>
+                        <ToggleButton>
+                            <StackPanel Orientation="Horizontal">
+                                <InfoBadge Value="{x:Bind Count}" Margin="0,0,8,0" Foreground="White" Background="Gray" />
+                                <TextBlock Text="{x:Bind Subject}" />
+                            </StackPanel>
+                        </ToggleButton>
+                    </ItemContainer>
+                </DataTemplate>
+            </ItemsView.ItemTemplate>
+            <ItemsView.Layout>
+                <StackLayout Orientation="Horizontal" Spacing="8" />
+            </ItemsView.Layout>
+        </ItemsView>
+
+        <ListView Grid.Row="3" ItemsSource="{x:Bind ViewModel.DictionaryEntries, Mode=OneWay}" ItemTemplate="{StaticResource DictionaryEntryDataTemplate}"
                   HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" ContainerContentChanging="ListView_ContainerContentChanging"
                   ShowsScrollingPlaceholders="False" />
-        <ProgressBar Grid.Row="2" IsIndeterminate="{x:Bind ViewModel.IsSearchInProgress, Mode=OneWay}" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="12"
+        <ProgressBar Grid.Row="3" IsIndeterminate="{x:Bind ViewModel.IsSearchInProgress, Mode=OneWay}" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="12"
                                  Background="Transparent" />
 
-        <Border Grid.Row="2" Name="resultCountBorder" Background="{ThemeResource ResultCountBorderBackgroundThemeBrush}" CornerRadius="4,0,0,0" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="8,4,4,4">
+        <Border Grid.Row="3" Name="resultCountBorder" Background="{ThemeResource ResultCountBorderBackgroundThemeBrush}" CornerRadius="4,0,0,0" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="8,4,4,4">
             <Border.RenderTransform>
                 <TranslateTransform Y="100" />
             </Border.RenderTransform>
