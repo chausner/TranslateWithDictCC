@@ -6,6 +6,8 @@
     xmlns:viewmodels="using:TranslateWithDictCC.ViewModels"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="using:CommunityToolkit.WinUI"
+    xmlns:controls="using:CommunityToolkit.WinUI.Controls"
     mc:Ignorable="d"    
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     NavigationCacheMode="Required">
@@ -105,13 +107,19 @@
         <StackPanel Margin="24,16">
             <TextBlock x:Uid="SettingsPage_TitleTextBlock" Style="{StaticResource SubheaderTextBlockStyle}" Text="Settings" Margin="0,0,0,16"/>
             <TextBlock x:Uid="SettingsPage_ViewTextBlock" Style="{StaticResource TitleTextBlockStyle}" Text="View" Margin="0,0,0,8" />
-            <ToggleSwitch x:Uid="SettingsPage_WordClassesToggleSwitch" OnContent="Show" OffContent="Hide" IsOn="{Binding Source={StaticResource settings}, Path=ShowWordClasses, Mode=TwoWay}">Word classes</ToggleSwitch>
-            <ToggleSwitch x:Uid="SettingsPage_SubjectsToggleSwitch" OnContent="Show" OffContent="Hide" IsOn="{Binding Source={StaticResource settings}, Path=ShowSubjects, Mode=TwoWay}">Subjects</ToggleSwitch>
-            <ComboBox x:Uid="SettingsPage_AppThemeComboBox" Header="App theme" SelectedValue="{Binding Source={StaticResource settings}, Path=AppTheme, Mode=TwoWay, Converter={StaticResource appThemeValueConverter}}" SelectedValuePath="Tag">
-                <ComboBoxItem x:Uid="SettingsPage_AppThemeDefaultComboBoxItem" Content="Default" Tag="Default" />
-                <ComboBoxItem x:Uid="SettingsPage_AppThemeLightComboBoxItem" Content="Light" Tag="Light" />
-                <ComboBoxItem x:Uid="SettingsPage_AppThemeDarkComboBoxItem" Content="Dark" Tag="Dark" />
-            </ComboBox>
+            <controls:SettingsCard x:Uid="SettingsPage_WordClassesSettingsCard" Description="Show the word class of words, such as noun, verb, or adjective." Header="Word classes" HeaderIcon="{ui:FontIcon Glyph=&#xE8F1;}" Margin="0,0,0,8">
+                <ToggleSwitch x:Uid="SettingsPage_WordClassesToggleSwitch" OnContent="Show" OffContent="Hide" IsOn="{Binding Source={StaticResource settings}, Path=ShowWordClasses, Mode=TwoWay}" />
+            </controls:SettingsCard>
+            <controls:SettingsCard x:Uid="SettingsPage_SubjectsSettingsCard" Description="Show the subject area of words, such as botany, philosophy, or travel." Header="Subject areas" HeaderIcon="{ui:FontIcon Glyph=&#xE8EC;}" Margin="0,0,0,8">
+                <ToggleSwitch x:Uid="SettingsPage_SubjectsToggleSwitch" OnContent="Show" OffContent="Hide" IsOn="{Binding Source={StaticResource settings}, Path=ShowSubjects, Mode=TwoWay}" />
+            </controls:SettingsCard>
+            <controls:SettingsCard x:Uid="SettingsPage_AppThemeSettingsCard" Description="Switch between light and dark app colors." Header="App theme" HeaderIcon="{ui:FontIcon Glyph=&#xE790;}" Margin="0,0,0,8">
+                <ComboBox x:Uid="SettingsPage_AppThemeComboBox" SelectedValue="{Binding Source={StaticResource settings}, Path=AppTheme, Mode=TwoWay, Converter={StaticResource appThemeValueConverter}}" SelectedValuePath="Tag">
+                    <ComboBoxItem x:Uid="SettingsPage_AppThemeDefaultComboBoxItem" Content="Default" Tag="Default" />
+                    <ComboBoxItem x:Uid="SettingsPage_AppThemeLightComboBoxItem" Content="Light" Tag="Light" />
+                    <ComboBoxItem x:Uid="SettingsPage_AppThemeDarkComboBoxItem" Content="Dark" Tag="Dark" />
+                </ComboBox>
+            </controls:SettingsCard>
             <TextBlock x:Uid="SettingsPage_RestartAppTextBlock" Margin="0,8,0,0" Text="Restart the app for the theme change to take full effect." Visibility="{x:Bind ViewModel.RestartAppTextBlockVisibility, Mode=OneWay}" />
             <TextBlock x:Uid="SettingsPage_DictionariesTextBlock" Style="{StaticResource TitleTextBlockStyle}" Text="Dictionaries" Margin="0,16,0,8" />
             <TextBlock x:Uid="SettingsPage_AcquireDictionariesTextBlock" TextWrapping="WrapWholeWords" Margin="0,0,0,8">Follow the link below to acquire dictionaries from dict.cc. Then, click on "Import dictionary" and select the downloaded files to start the import process.</TextBlock>
