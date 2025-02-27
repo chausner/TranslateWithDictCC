@@ -130,7 +130,7 @@
             <ItemsView.ItemTemplate>
                 <DataTemplate x:DataType="viewmodels:SubjectViewModel">
                     <ItemContainer>
-                        <ToggleButton>
+                        <ToggleButton IsChecked="{x:Bind IsFilterActive, Mode=TwoWay}" ToolTipService.ToolTip="{x:Bind Description}">
                             <StackPanel Orientation="Horizontal">
                                 <InfoBadge Value="{x:Bind Count}" Margin="0,0,8,0" Foreground="White" Background="Gray" />
                                 <TextBlock Text="{x:Bind Subject}" />

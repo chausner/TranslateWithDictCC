@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Microsoft.UI.Xaml.Data;
 using TranslateWithDictCC.Models;
 using Windows.UI.StartScreen;
 
@@ -13,6 +14,9 @@ namespace TranslateWithDictCC.ViewModels
     class SearchResultsViewModel : ViewModel
     {
         public static readonly SearchResultsViewModel Instance = new SearchResultsViewModel();
+
+        SearchContext searchContext;
+        List<DictionaryEntry> results;
 
         DirectionViewModel[] availableDirections;
 
@@ -182,12 +186,12 @@ namespace TranslateWithDictCC.ViewModels
                     await searchTask;
                 }
 
-                SearchContext searchContext = new SearchContext(searchQuery, selectedDirection, dontSearchInBothDirections);
+                searchContext = new SearchContext(searchQuery, selectedDirection, dontSearchInBothDirections);
 
-                List<DictionaryEntry> results = searchTask.Result;
+                results = searchTask.Result;
 
                 DictionaryEntries = new LazyCollection<DictionaryEntry, DictionaryEntryViewModel>(
-                    results, entry => new DictionaryEntryViewModel(entry, searchContext));
+                    results, entry => new DictionaryEntryViewModel(entry, searchContext));                
 
                 Subjects.Clear();
                 var subjects = 
@@ -200,7 +204,11 @@ namespace TranslateWithDictCC.ViewModels
 
 				foreach (var grouping in subjects)
                 {
-                    Subjects.Add(new SubjectViewModel(grouping.Count(), grouping.Key));
+                    string description = SubjectInfo.Instance.GetSubjectDescription(selectedDirection.OriginLanguageCode, selectedDirection.DestinationLanguageCode, grouping.Key);
+
+                    SubjectViewModel viewModel = new SubjectViewModel(grouping.Count(), grouping.Key, description);
+                    viewModel.PropertyChanged += SubjectViewModel_PropertyChanged;
+                    Subjects.Add(viewModel);
 				}            
             }
             finally
@@ -209,6 +217,62 @@ namespace TranslateWithDictCC.ViewModels
 
                 querySemaphore.Release();
             }
+        }
+
+        private void SubjectViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(SubjectViewModel.IsFilterActive))
+            {
+                UpdateSubjectFilter();
+            }            
+        }
+
+        private void UpdateSubjectFilter()
+        {
+            if (querySemaphore.Wait(0))
+            {
+                try
+                {
+                    if (results != null)
+                    {
+                        List<DictionaryEntry> filteredResults;
+
+                        if (Subjects.All(subjects => !subjects.IsFilterActive))
+                            filteredResults = results;
+                        else
+                        {
+                            string[] activeSubjectFilters =
+                                Subjects
+                                .Where(subject => subject.IsFilterActive)
+                                .Select(subject => subject.Subject)
+                                .ToArray();
+
+                            bool MatchesFilter(DictionaryEntry entry)
+                            {
+                                if (string.IsNullOrEmpty(entry.Subjects))
+                                    return false;
+
+                                IEnumerable<string> subjects = entry.Subjects.Split(" ").Select(subject => subject.Trim('[', ']'));
+
+                                return subjects.Any(subject => activeSubjectFilters.Contains(subject));
+                            }
+
+                            filteredResults =
+                               results
+                               .Where(entry => MatchesFilter(entry))
+                               .ToList();
+                        }
+
+                        DictionaryEntries = new LazyCollection<DictionaryEntry, DictionaryEntryViewModel>(
+                            filteredResults, entry => new DictionaryEntryViewModel(entry, searchContext));
+                    }
+                }
+                finally
+                {
+                    querySemaphore.Release();
+                }
+            }
+
         }
 
         private async Task UpdateSearchSuggestionsInner(string partialSearchQuery, CancellationToken cancellationToken)
