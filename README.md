@@ -6,7 +6,7 @@ Windows app to search and manage [dict.cc](https://www.dict.cc/) offline diction
 
 ## Features
 * Import offline dictionary files downloaded from dict.cc
-* All 26 language pairs of dict.cc are supported
+* All 27 language pairs of dict.cc are supported
 * Play back pronounciation samples (internet connection required)
 * Light and dark mode
 * Localized app for English and German
