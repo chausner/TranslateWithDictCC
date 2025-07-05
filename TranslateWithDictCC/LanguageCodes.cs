@@ -36,7 +36,8 @@ namespace TranslateWithDictCC
             { "SQ", "AL" },
             { "SR", "RS" },
             { "SV", "SE" },
-            { "TR", "TR" }
+            { "TR", "TR" },
+            { "UK", "UA" }
         };
 
         static Dictionary<string, BitmapImage> flagImages = new Dictionary<string, BitmapImage>();

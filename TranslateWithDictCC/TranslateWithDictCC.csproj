@@ -39,6 +39,7 @@
     <Content Include="Assets\Flags\SE.ico" />
     <Content Include="Assets\Flags\SK.ico" />
     <Content Include="Assets\Flags\TR.ico" />
+    <Content Include="Assets\Flags\UA.ico" />
     <Content Include="Licences\GoSquared Flag Icon Set.txt" />
   </ItemGroup>
   <ItemGroup>
