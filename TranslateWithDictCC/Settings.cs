@@ -115,23 +115,23 @@ class Settings : ViewModel
 
     bool outdatedDictionariesNoticeRead;
 
-		public bool OutdatedDictionariesNoticeRead
-		{
-			get
-			{
-				return outdatedDictionariesNoticeRead;
-			}
-			set
-			{
-				if (value != outdatedDictionariesNoticeRead)
-				{
-					ApplicationData.Current.LocalSettings.Values["OutdatedDictionariesNoticeRead"] = value;
-					SetProperty(ref outdatedDictionariesNoticeRead, value);
-				}
-			}
-		}
+    public bool OutdatedDictionariesNoticeRead
+    {
+        get
+        {
+            return outdatedDictionariesNoticeRead;
+        }
+        set
+        {
+            if (value != outdatedDictionariesNoticeRead)
+            {
+                ApplicationData.Current.LocalSettings.Values["OutdatedDictionariesNoticeRead"] = value;
+                SetProperty(ref outdatedDictionariesNoticeRead, value);
+            }
+        }
+    }
 
-		private Settings()
+    private Settings()
     {
         IPropertySet settingsValues = ApplicationData.Current.LocalSettings.Values;
 
@@ -140,6 +140,6 @@ class Settings : ViewModel
         showWordClasses = (settingsValues["ShowWordClasses"] as bool?).GetValueOrDefault(true);
         showSubjects = (settingsValues["ShowSubjects"] as bool?).GetValueOrDefault(true);
         appTheme = Enum.Parse<ElementTheme>((settingsValues["AppTheme"] as string) ?? Enum.GetName(ElementTheme.Default));
-			outdatedDictionariesNoticeRead = (settingsValues["OutdatedDictionariesNoticeRead"] as bool?).GetValueOrDefault(false);
-		}     
+        outdatedDictionariesNoticeRead = (settingsValues["OutdatedDictionariesNoticeRead"] as bool?).GetValueOrDefault(false);
+    }
 }
