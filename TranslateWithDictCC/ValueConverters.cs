@@ -3,40 +3,39 @@ using Microsoft.UI.Xaml.Data;
 using System;
 using System.Collections;
 
-namespace TranslateWithDictCC
-{
-    class SourceNotEmptyValueConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, string language)
-        {
-            if (value is IEnumerable enumerable)
-                return enumerable.GetEnumerator().MoveNext();
-            else
-                return null;
-        }
+namespace TranslateWithDictCC;
 
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
-        {
-            throw new NotSupportedException();
-        }
+class SourceNotEmptyValueConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, string language)
+    {
+        if (value is IEnumerable enumerable)
+            return enumerable.GetEnumerator().MoveNext();
+        else
+            return null;
     }
 
-    class AppThemeValueConverter : IValueConverter
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
     {
-        public object Convert(object value, Type targetType, object parameter, string language)
-        {
-            if (value is ElementTheme appTheme)
-                return Enum.GetName(appTheme);
-            else
-                return null;
-        }
+        throw new NotSupportedException();
+    }
+}
 
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
-        {
-            if (value is string appTheme)
-                return Enum.Parse<ElementTheme>(appTheme);
-            else
-                return null;
-        }
+class AppThemeValueConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, string language)
+    {
+        if (value is ElementTheme appTheme)
+            return Enum.GetName(appTheme);
+        else
+            return null;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
+    {
+        if (value is string appTheme)
+            return Enum.Parse<ElementTheme>(appTheme);
+        else
+            return null;
     }
 }

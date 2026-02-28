@@ -2,14 +2,13 @@
 using Microsoft.UI.Xaml.Media.Animation;
 using System;
 
-namespace TranslateWithDictCC
+namespace TranslateWithDictCC;
+
+static class ExtensionMethods
 {
-    static class ExtensionMethods
+    public static void NavigateIfNeeded(this Frame frame, Type sourcePageType, object parameter = null, NavigationTransitionInfo transitionInfo = null)
     {
-        public static void NavigateIfNeeded(this Frame frame, Type sourcePageType, object parameter = null, NavigationTransitionInfo transitionInfo = null)
-        {
-            if (frame.SourcePageType != sourcePageType)
-                frame.Navigate(sourcePageType, parameter, transitionInfo);
-        }
+        if (frame.SourcePageType != sourcePageType)
+            frame.Navigate(sourcePageType, parameter, transitionInfo);
     }
 }

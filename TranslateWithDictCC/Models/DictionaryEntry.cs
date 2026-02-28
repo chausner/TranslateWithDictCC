@@ -1,26 +1,25 @@
 ﻿using System;
 
-namespace TranslateWithDictCC.Models
+namespace TranslateWithDictCC.Models;
+
+record DictionaryEntry
 {
-    record DictionaryEntry
+    public string Word1 { get; init; }
+    public string Word2 { get; init; }
+    public string WordClasses { get; init; }
+    public string Subjects { get; init; }
+    public TextSpan[] MatchSpans { get; init; }
+}
+
+record struct TextSpan(int Offset, int Length)
+{ 
+    public bool Intersects(TextSpan span)
     {
-        public string Word1 { get; init; }
-        public string Word2 { get; init; }
-        public string WordClasses { get; init; }
-        public string Subjects { get; init; }
-        public TextSpan[] MatchSpans { get; init; }
+        return Math.Max(Offset, span.Offset) < Math.Min(Offset + Length, span.Offset + span.Length);
     }
 
-    record struct TextSpan(int Offset, int Length)
-    { 
-        public bool Intersects(TextSpan span)
-        {
-            return Math.Max(Offset, span.Offset) < Math.Min(Offset + Length, span.Offset + span.Length);
-        }
-
-        public bool Contains(TextSpan span)
-        {
-            return Offset <= span.Offset && Offset + Length >= span.Offset + span.Length;
-        }
+    public bool Contains(TextSpan span)
+    {
+        return Offset <= span.Offset && Offset + Length >= span.Offset + span.Length;
     }
 }

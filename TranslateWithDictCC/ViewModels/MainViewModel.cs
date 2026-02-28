@@ -1,26 +1,25 @@
 ﻿using System.Windows.Input;
 
-namespace TranslateWithDictCC.ViewModels
+namespace TranslateWithDictCC.ViewModels;
+
+class MainViewModel : ViewModel
 {
-    class MainViewModel : ViewModel
+    public static readonly MainViewModel Instance = new MainViewModel();
+
+    bool showNoDictionaryInstalledTeachingTip;
+
+    public bool ShowNoDictionaryInstalledTeachingTip
     {
-        public static readonly MainViewModel Instance = new MainViewModel();
+        get { return showNoDictionaryInstalledTeachingTip; }
+        set { SetProperty(ref showNoDictionaryInstalledTeachingTip, value); }
+    }
 
-        bool showNoDictionaryInstalledTeachingTip;
+    public bool NoDictionaryInstalledTeachingTipShown { get; set; }
 
-        public bool ShowNoDictionaryInstalledTeachingTip
-        {
-            get { return showNoDictionaryInstalledTeachingTip; }
-            set { SetProperty(ref showNoDictionaryInstalledTeachingTip, value); }
-        }
+    public ICommand NavigateToPageCommand { get; set; }
+    public ICommand GoBackToPageCommand { get; set; }
 
-        public bool NoDictionaryInstalledTeachingTipShown { get; set; }
-
-        public ICommand NavigateToPageCommand { get; set; }
-        public ICommand GoBackToPageCommand { get; set; }
-
-        private MainViewModel()
-        {
-        }
+    private MainViewModel()
+    {
     }
 }

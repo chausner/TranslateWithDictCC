@@ -2,52 +2,51 @@
 using Microsoft.UI.Xaml.Documents;
 using TranslateWithDictCC.Models;
 
-namespace TranslateWithDictCC.ViewModels
+namespace TranslateWithDictCC.ViewModels;
+
+class SearchSuggestionViewModel : ViewModel
 {
-    class SearchSuggestionViewModel : ViewModel
+    public DictionaryEntry DictionaryEntry { get; }
+    public SearchContext SearchContext { get; }
+
+    Block word;
+
+    public Block Word
     {
-        public DictionaryEntry DictionaryEntry { get; }
-        public SearchContext SearchContext { get; }
-
-        Block word;
-
-        public Block Word
+        get
         {
-            get
-            {
-                if (word == null)
-                    Initialize();
+            if (word == null)
+                Initialize();
 
-                return word;
-            }
+            return word;
         }
+    }
 
-        public string WordText
+    public string WordText
+    {
+        get
         {
-            get
-            {
-                return SearchContext.SelectedDirection.ReverseSearch ? DictionaryEntry.Word2 : DictionaryEntry.Word1;
-            }
+            return SearchContext.SelectedDirection.ReverseSearch ? DictionaryEntry.Word2 : DictionaryEntry.Word1;
         }
+    }
 
-        public SearchSuggestionViewModel(DictionaryEntry entry, SearchContext searchContext)
-        {
-            DictionaryEntry = entry;
-            SearchContext = searchContext;
-        }
+    public SearchSuggestionViewModel(DictionaryEntry entry, SearchContext searchContext)
+    {
+        DictionaryEntry = entry;
+        SearchContext = searchContext;
+    }
 
-        private void Initialize()
-        {
-            bool reverseSearch = SearchContext.SelectedDirection.ReverseSearch;
-            word = WordHighlighting.GenerateRichTextBlock(reverseSearch ? DictionaryEntry.Word2 : DictionaryEntry.Word1, DictionaryEntry.MatchSpans, false);
-        }
+    private void Initialize()
+    {
+        bool reverseSearch = SearchContext.SelectedDirection.ReverseSearch;
+        word = WordHighlighting.GenerateRichTextBlock(reverseSearch ? DictionaryEntry.Word2 : DictionaryEntry.Word1, DictionaryEntry.MatchSpans, false);
+    }
 
-        public Visibility GetWordClassVisibility(string wordClasses)
-        {
-            if (!string.IsNullOrEmpty(wordClasses))
-                return Visibility.Visible;
-            else
-                return Visibility.Collapsed;
-        }
+    public Visibility GetWordClassVisibility(string wordClasses)
+    {
+        if (!string.IsNullOrEmpty(wordClasses))
+            return Visibility.Visible;
+        else
+            return Visibility.Collapsed;
     }
 }

@@ -4,26 +4,25 @@ using System.Reflection;
 using System.Windows.Input;
 using Windows.System;
 
-namespace TranslateWithDictCC.ViewModels
+namespace TranslateWithDictCC.ViewModels;
+
+class AboutViewModel : ViewModel
 {
-    class AboutViewModel : ViewModel
+    public string AppVersion { get; }
+
+    public ICommand GiveFeedbackCommand { get; }
+
+    public AboutViewModel()
     {
-        public string AppVersion { get; }
+        ResourceLoader resourceLoader = new ResourceLoader();
 
-        public ICommand GiveFeedbackCommand { get; }
+        AppVersion = string.Format(resourceLoader.GetString("AboutPage_Version"), GetType().GetTypeInfo().Assembly.GetName().Version);
 
-        public AboutViewModel()
-        {
-            ResourceLoader resourceLoader = new ResourceLoader();
+        GiveFeedbackCommand = new RelayCommand(RunGiveFeedbackCommand);
+    }
 
-            AppVersion = string.Format(resourceLoader.GetString("AboutPage_Version"), GetType().GetTypeInfo().Assembly.GetName().Version);
-
-            GiveFeedbackCommand = new RelayCommand(RunGiveFeedbackCommand);
-        }
-
-        private async void RunGiveFeedbackCommand()
-        {
-            await Launcher.LaunchUriAsync(new Uri("mailto:translatewithdict.cc@outlook.com"));
-        }
+    private async void RunGiveFeedbackCommand()
+    {
+        await Launcher.LaunchUriAsync(new Uri("mailto:translatewithdict.cc@outlook.com"));
     }
 }

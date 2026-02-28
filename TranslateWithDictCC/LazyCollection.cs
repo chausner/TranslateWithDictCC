@@ -2,125 +2,124 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace TranslateWithDictCC
+namespace TranslateWithDictCC;
+
+class LazyCollection<Source, T> : ICollection<T>, IReadOnlyList<T>, IReadOnlyCollection<T> where T : class
 {
-    class LazyCollection<Source, T> : ICollection<T>, IReadOnlyList<T>, IReadOnlyCollection<T> where T : class
+    IList<Source> sources;
+    Func<Source, T> generator;
+
+    T[] results;
+
+    public LazyCollection(IList<Source> sources, Func<Source, T> generator)
     {
-        IList<Source> sources;
-        Func<Source, T> generator;
+        this.sources = sources;
+        this.generator = generator;
 
-        T[] results;
+        results = new T[sources.Count];
+    }
 
-        public LazyCollection(IList<Source> sources, Func<Source, T> generator)
+    public T this[int index]
+    {
+        get
         {
-            this.sources = sources;
-            this.generator = generator;
+            T result = results[index];
 
-            results = new T[sources.Count];
-        }
-
-        public T this[int index]
-        {
-            get
+            if (result == null)
             {
-                T result = results[index];
-
-                if (result == null)
-                {
-                    result = generator(sources[index]);
-                    results[index] = result;
-                }
-
-                return result;
-            }
-        }
-
-        public int Count => results.Length;
-
-        public bool IsReadOnly => true;
-
-        public void Add(T item)
-        {
-            throw new NotSupportedException();
-        }
-
-        public void Clear()
-        {
-            throw new NotSupportedException();
-        }
-
-        public bool Contains(T item)
-        {
-            GenerateAll();
-
-            return Array.IndexOf(results, item) != -1;
-        }
-
-        public void CopyTo(T[] array, int arrayIndex)
-        {
-            GenerateAll();
-
-            results.CopyTo(array, arrayIndex);
-        }
-
-        public IEnumerator<T> GetEnumerator()
-        {
-            return new LazyEnumerator(this);
-        }
-
-        public bool Remove(T item)
-        {
-            throw new NotSupportedException();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return new LazyEnumerator(this);
-        }
-
-        private void GenerateAll()
-        {
-            for (int i = 0; i < results.Length; i++)
-                if (results[i] == null)
-                    results[i] = generator(sources[i]);
-        }
-
-        private class LazyEnumerator : IEnumerator<T>
-        {
-            LazyCollection<Source, T> lazyCollection;
-
-            int currentIndex = -1;            
-
-            public LazyEnumerator(LazyCollection<Source, T> lazyCollection)
-            {
-                this.lazyCollection = lazyCollection;
+                result = generator(sources[index]);
+                results[index] = result;
             }
 
-            public T Current => lazyCollection[currentIndex];
+            return result;
+        }
+    }
 
-            object IEnumerator.Current => lazyCollection[currentIndex];
+    public int Count => results.Length;
 
-            public bool MoveNext()
-            {
-                currentIndex++;
+    public bool IsReadOnly => true;
 
-                return currentIndex < lazyCollection.results.Length;
-            }
+    public void Add(T item)
+    {
+        throw new NotSupportedException();
+    }
 
-            public void Reset()
-            {
-                currentIndex = -1;
-            }
+    public void Clear()
+    {
+        throw new NotSupportedException();
+    }
 
-            protected virtual void Dispose(bool disposing)
-            {
-                lazyCollection = null;
-            }
+    public bool Contains(T item)
+    {
+        GenerateAll();
 
-            public void Dispose()
-            {
-                Dispose(true);
-            }
+        return Array.IndexOf(results, item) != -1;
+    }
+
+    public void CopyTo(T[] array, int arrayIndex)
+    {
+        GenerateAll();
+
+        results.CopyTo(array, arrayIndex);
+    }
+
+    public IEnumerator<T> GetEnumerator()
+    {
+        return new LazyEnumerator(this);
+    }
+
+    public bool Remove(T item)
+    {
+        throw new NotSupportedException();
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return new LazyEnumerator(this);
+    }
+
+    private void GenerateAll()
+    {
+        for (int i = 0; i < results.Length; i++)
+            if (results[i] == null)
+                results[i] = generator(sources[i]);
+    }
+
+    private class LazyEnumerator : IEnumerator<T>
+    {
+        LazyCollection<Source, T> lazyCollection;
+
+        int currentIndex = -1;            
+
+        public LazyEnumerator(LazyCollection<Source, T> lazyCollection)
+        {
+            this.lazyCollection = lazyCollection;
+        }
+
+        public T Current => lazyCollection[currentIndex];
+
+        object IEnumerator.Current => lazyCollection[currentIndex];
+
+        public bool MoveNext()
+        {
+            currentIndex++;
+
+            return currentIndex < lazyCollection.results.Length;
+        }
+
+        public void Reset()
+        {
+            currentIndex = -1;
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            lazyCollection = null;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
         }
     }
 }
