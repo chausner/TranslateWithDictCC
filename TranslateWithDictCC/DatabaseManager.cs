@@ -36,13 +36,16 @@ class DatabaseManager
         await ExecuteNonQuery("PRAGMA journal_mode=WAL");
 
         await ExecuteNonQuery(
-            @"CREATE TABLE IF NOT EXISTS Dictionaries(
-                      ID INTEGER PRIMARY KEY NOT NULL,
-                      OriginLanguageCode VARCHAR(255) NOT NULL,
-                      DestinationLanguageCode VARCHAR(255) NOT NULL,
-                      CreationDate BIGINT NOT NULL,
-                      NumberOfEntries BIGINT NOT NULL,
-                      AppVersionWhenCreated VARCHAR(255))");
+            """
+            CREATE TABLE IF NOT EXISTS Dictionaries(
+                ID INTEGER PRIMARY KEY NOT NULL,
+                OriginLanguageCode VARCHAR(255) NOT NULL,
+                DestinationLanguageCode VARCHAR(255) NOT NULL,
+                CreationDate BIGINT NOT NULL,
+                NumberOfEntries BIGINT NOT NULL,
+                AppVersionWhenCreated VARCHAR(255)
+            )
+            """);
     }
 
     public async Task<DbConnection> OpenConnection()
@@ -175,7 +178,18 @@ class DatabaseManager
 
             await using (DbCommand command = connection.CreateCommand())
             {
-                command.CommandText = $"CREATE VIRTUAL TABLE {tableName} USING fts4(Word1 VARCHAR NOT NULL, Word2 VARCHAR NOT NULL, WordClasses VARCHAR, Subjects VARCHAR, tokenize=unicode61, notindexed=WordClasses, notindexed=Subjects)";
+                command.CommandText =
+                    $"""
+                    CREATE VIRTUAL TABLE {tableName} USING fts4(
+                        Word1 VARCHAR NOT NULL,
+                        Word2 VARCHAR NOT NULL,
+                        WordClasses VARCHAR,
+                        Subjects VARCHAR,
+                        tokenize=unicode61,
+                        notindexed=WordClasses,
+                        notindexed=Subjects
+                    )
+                    """;
 
                 await command.ExecuteNonQueryAsync();
             }
@@ -184,7 +198,11 @@ class DatabaseManager
 
             await using (DbCommand command = connection.CreateCommand())
             {
-                command.CommandText = $"INSERT INTO {tableName}(Word1, Word2, WordClasses, Subjects) VALUES (@Word1, @Word2, @WordClasses, @Subjects)";
+                command.CommandText = 
+                    $"""
+                    INSERT INTO {tableName}(Word1, Word2, WordClasses, Subjects)
+                    VALUES (@Word1, @Word2, @WordClasses, @Subjects)
+                    """;
 
                 command.Parameters.Add(new SqliteParameter("@Word1", SqliteType.Text, 512));
                 command.Parameters.Add(new SqliteParameter("@Word2", SqliteType.Text, 512));
@@ -231,7 +249,11 @@ class DatabaseManager
 
             await using (DbCommand command = connection.CreateCommand())
             {
-                command.CommandText = "INSERT INTO Dictionaries(OriginLanguageCode, DestinationLanguageCode, CreationDate, NumberOfEntries, AppVersionWhenCreated) VALUES (@OriginLanguageCode, @DestinationLanguageCode, @CreationDate, @NumberOfEntries, @AppVersionWhenCreated)";
+                command.CommandText =
+                    """
+                    INSERT INTO Dictionaries(OriginLanguageCode, DestinationLanguageCode, CreationDate, NumberOfEntries, AppVersionWhenCreated)
+                    VALUES (@OriginLanguageCode, @DestinationLanguageCode, @CreationDate, @NumberOfEntries, @AppVersionWhenCreated)
+                    """;
 
                 command.Parameters.Add(new SqliteParameter("@OriginLanguageCode", dictionary.OriginLanguageCode));
                 command.Parameters.Add(new SqliteParameter("@DestinationLanguageCode", dictionary.DestinationLanguageCode));
