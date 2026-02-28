@@ -13,7 +13,7 @@ using Windows.Storage;
 
 namespace TranslateWithDictCC;
 
-class WordlistReader : IDisposable
+partial class WordlistReader : IDisposable
 {
     StorageFile wordlistFile;
     StreamReader streamReader;
@@ -24,6 +24,12 @@ class WordlistReader : IDisposable
     public string OriginLanguageCode { get; private set; }
     public string DestinationLanguageCode { get; private set; }
     public DateTimeOffset CreationDate { get; private set; }
+
+    [GeneratedRegex("^# ([A-Z]{2})-([A-Z]{2}) vocabulary database")]
+    private static partial Regex HeaderRegex();
+
+    [GeneratedRegex(@"\s\s+")]
+    private static partial Regex ConsecutiveSpacesRegex();
 
     public WordlistReader(StorageFile wordlistFile)
     {
@@ -76,7 +82,7 @@ class WordlistReader : IDisposable
 
         string line = await streamReader.ReadLineAsync();
 
-        Match match = Regex.Match(line, "^# ([A-Z]{2})-([A-Z]{2}) vocabulary database");
+        Match match = HeaderRegex().Match(line);
 
         if (!match.Success)
             throw new InvalidDataException("File is not recognized as a dict.cc wordlist file.");
@@ -122,9 +128,9 @@ class WordlistReader : IDisposable
 
             // replace two or more spaces in words by a single space
             if (word1.Contains("  "))
-                word1 = Regex.Replace(word1, @"\s\s+", " ");
+                word1 = ConsecutiveSpacesRegex().Replace(word1, " ");
             if (word2.Contains("  "))
-                word2 = Regex.Replace(word2, @"\s\s+", " ");
+                word2 = ConsecutiveSpacesRegex().Replace(word2, " ");
 
             DictionaryEntry entry = new DictionaryEntry
             {

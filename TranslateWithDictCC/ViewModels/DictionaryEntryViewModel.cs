@@ -13,7 +13,7 @@ using TranslateWithDictCC.Models;
 
 namespace TranslateWithDictCC.ViewModels;
 
-class DictionaryEntryViewModel : ViewModel
+partial class DictionaryEntryViewModel : ViewModel
 {
     public DictionaryEntry DictionaryEntry { get; }
     public SearchContext SearchContext { get; }
@@ -76,6 +76,9 @@ class DictionaryEntryViewModel : ViewModel
     public ICommand Search1Command { get; }
     public ICommand Search2Command { get; }
 
+    [GeneratedRegex(@"\[([^\[\]]+)\]")]
+    private static partial Regex SubjectsRegex();
+
     public DictionaryEntryViewModel(DictionaryEntry entry, SearchContext searchContext)
     {
         DictionaryEntry = entry;
@@ -123,7 +126,7 @@ class DictionaryEntryViewModel : ViewModel
         if (Settings.Instance.ShowSubjects && DictionaryEntry.Subjects != null && SubjectInfo.Instance.IsLoaded)
         {
             IEnumerable<string> subjectStrings =
-                Regex.Matches(DictionaryEntry.Subjects, @"\[([^\[\]]+)\]")
+                SubjectsRegex().Matches(DictionaryEntry.Subjects)
                 .Cast<Match>()
                 .Select(match => match.Groups[1].Value);
 

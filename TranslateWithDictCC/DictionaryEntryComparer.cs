@@ -6,7 +6,7 @@ using TranslateWithDictCC.Models;
 
 namespace TranslateWithDictCC;
 
-class DictionaryEntryComparer : Comparer<DictionaryEntry>
+partial class DictionaryEntryComparer : Comparer<DictionaryEntry>
 {
     string searchQuery;
     bool reverseSearch;
@@ -84,7 +84,7 @@ class DictionaryEntryComparer : Comparer<DictionaryEntry>
         }
     }
 
-    private class MatchInfo
+    private partial class MatchInfo
     {
         public bool IsCaseSensitiveMatch { get; }
         public int AnnotationLength { get; }
@@ -92,14 +92,12 @@ class DictionaryEntryComparer : Comparer<DictionaryEntry>
         public int AdditionalWordCount { get; }
         public bool IsMatchInAnnotation { get; }
 
-        static readonly Regex annotationSpanRegex = new Regex(@"(\{.*?\})|(\[.*?\])|(\<.*?\>)", RegexOptions.ExplicitCapture);
-
         public MatchInfo(string searchQuery, string searchResult, TextSpan[] matchSpans)
         {
             IsCaseSensitiveMatch = matchSpans.Any(matchSpan => searchResult.AsSpan(matchSpan.Offset, matchSpan.Length).Equals(searchQuery, StringComparison.InvariantCulture));
 
             TextSpan[] annotationSpans =
-                annotationSpanRegex.Matches(searchResult)
+                AnnotationsRegex().Matches(searchResult)
                 .Cast<Match>()
                 .Select(match => new TextSpan(match.Index, match.Length))
                 .ToArray();
@@ -134,5 +132,8 @@ class DictionaryEntryComparer : Comparer<DictionaryEntry>
                 AdditionalWordCount++;
             }
         }
+
+        [GeneratedRegex(@"(\{.*?\})|(\[.*?\])|(\<.*?\>)", RegexOptions.ExplicitCapture)]
+        private static partial Regex AnnotationsRegex();
     }
 }

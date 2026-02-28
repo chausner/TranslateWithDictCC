@@ -14,10 +14,14 @@ using TranslateWithDictCC.Models;
 
 namespace TranslateWithDictCC.ViewModels;
 
-static class WordHighlighting
+static partial class WordHighlighting
 {
     static SolidColorBrush annotationBrush;
     static SolidColorBrush queryHighlightBrush;
+
+
+    [GeneratedRegex(@"(\{.*?\})|(\[.*?\])|(\<.*?\>)")]
+    private static partial Regex AnnotationsRegex();
 
     static WordHighlighting()
     {
@@ -210,7 +214,7 @@ static class WordHighlighting
 
     private static TextSpan[] GetAnnotationSpans(string word)
     {
-        return Regex.Matches(word, @"(\{.*?\})|(\[.*?\])|(\<.*?\>)")
+        return AnnotationsRegex().Matches(word)
             .Cast<Match>()
             .Select(match => new TextSpan(match.Index, match.Length))
             .ToArray();

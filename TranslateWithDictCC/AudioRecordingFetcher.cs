@@ -8,10 +8,20 @@ using Windows.Web.Http;
 
 namespace TranslateWithDictCC;
 
-static class AudioRecordingFetcher
+static partial class AudioRecordingFetcher
 {
     static HttpClient httpClient = new HttpClient();
     static Dictionary<LanguageWordPair, Uri> urlCache = new Dictionary<LanguageWordPair, Uri>();
+
+    [GeneratedRegex(@" ?((\{.*?\})|(\[.*?\])|(\<.*?\>))")]
+    private static partial Regex AnnotationsRegex();
+
+    [GeneratedRegex(@"var idArr = new Array\((?:(\d+),?)*\);")]
+    private static partial Regex IDsRegex();
+    [GeneratedRegex(@"var c1Arr = new Array\((?:(""([^""]*)""),?)*\);")]
+    private static partial Regex Words1Regex();
+    [GeneratedRegex(@"var c2Arr = new Array\((?:(""([^""]*)""),?)*\);")]
+    private static partial Regex Words2Regex();
 
     public static async Task<Uri> GetAudioRecordingUri(DictionaryEntryViewModel dictionaryEntryViewModel, bool word2)
     {
@@ -55,7 +65,7 @@ static class AudioRecordingFetcher
 
     private static string GetJSLiteralOfWord(string word)
     {
-        word = Regex.Replace(word, @" ?((\{.*?\})|(\[.*?\])|(\<.*?\>))", string.Empty).Trim();
+        word = AnnotationsRegex().Replace(word, string.Empty).Trim();
 
         word = word.Replace("\\", "\\\\").Replace("'", "\\'").Replace("\"", "\\\"");
 
@@ -87,21 +97,21 @@ static class AudioRecordingFetcher
 
     private static DictCCSearchResult[] ExtractDictCCSearchResults(string html, string originLanguageCode, string destinationLanguageCode)
     {
-        Match match = Regex.Match(html, @"var idArr = new Array\((?:(\d+),?)*\);");
+        Match match = IDsRegex().Match(html);
 
         if (!match.Success)
             return Array.Empty<DictCCSearchResult>();
 
         int[] ids = match.Groups[1].Captures.Cast<Capture>().Select(capture => Convert.ToInt32(capture.Value)).ToArray();
 
-        match = Regex.Match(html, @"var c1Arr = new Array\((?:(""([^""]*)""),?)*\);");
+        match = Words1Regex().Match(html);
 
         if (!match.Success)
             return Array.Empty<DictCCSearchResult>();
 
         string[] words1 = match.Groups[2].Captures.Cast<Capture>().Select(capture => capture.Value).ToArray();
 
-        match = Regex.Match(html, @"var c2Arr = new Array\((?:(""([^""]*)""),?)*\);");
+        match = Words2Regex().Match(html);
 
         if (!match.Success)
             return Array.Empty<DictCCSearchResult>();
