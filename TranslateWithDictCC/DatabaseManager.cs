@@ -211,28 +211,21 @@ class DatabaseManager
 
                 await command.PrepareAsync();
 
-                while (true)
+                IAsyncEnumerable<DictionaryEntry> entries = wordlistReader.ReadEntries(cancellationToken);
+
+                await foreach (DictionaryEntry entry in entries)
                 {
-                    cancellationToken.ThrowIfCancellationRequested();
+                    command.Parameters[0].Value = entry.Word1;
+                    command.Parameters[1].Value = entry.Word2;
+                    command.Parameters[2].Value = (object)entry.WordClasses ?? DBNull.Value;
+                    command.Parameters[3].Value = (object)entry.Subjects ?? DBNull.Value;
 
-                    IReadOnlyList<DictionaryEntry> entries = await wordlistReader.ReadEntries(2500);
+                    command.ExecuteNonQuery();
 
-                    if (entries.Count == 0)
-                        break;
+                    numberOfEntries++;
 
-                    foreach (DictionaryEntry entry in entries)
-                    {
-                        command.Parameters[0].Value = entry.Word1;
-                        command.Parameters[1].Value = entry.Word2;
-                        command.Parameters[2].Value = (object)entry.WordClasses ?? DBNull.Value;
-                        command.Parameters[3].Value = (object)entry.Subjects ?? DBNull.Value;
-
-                        command.ExecuteNonQuery();
-                    }
-
-                    numberOfEntries += entries.Count;
-
-                    progress?.Report(new(numberOfEntries, wordlistReader.Progress));
+                    if (numberOfEntries % 2500 == 0)
+                        progress?.Report(new(numberOfEntries, wordlistReader.Progress));
                 }
             }
 

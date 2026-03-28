@@ -5,8 +5,10 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using TranslateWithDictCC.Models;
 using Windows.Storage;
@@ -102,16 +104,14 @@ partial class WordlistReader : IDisposable
             CreationDate = DateTimeOffset.Now;
     }
 
-    public async Task<IReadOnlyList<DictionaryEntry>> ReadEntries(int numEntries)
+    public async IAsyncEnumerable<DictionaryEntry> ReadEntries([EnumeratorCancellation] CancellationToken cancellationToken)
     {
         if (!IsOpen)
             throw new InvalidOperationException("ReadHeader must be called first");
 
-        List<DictionaryEntry> entries = new List<DictionaryEntry>(numEntries);
-
-        while (entries.Count < numEntries)
+        while (true)
         {
-            string line = await streamReader.ReadLineAsync();
+            string line = await streamReader.ReadLineAsync(cancellationToken);
 
             if (line == null)
                 break;
@@ -143,10 +143,8 @@ partial class WordlistReader : IDisposable
                 Subjects = s.Length >= 4 && s[3].Length != 0 ? s[3] : null
             };
 
-            entries.Add(entry);
+            yield return entry;
         }
-
-        return entries;
     }
 
     public double Progress
