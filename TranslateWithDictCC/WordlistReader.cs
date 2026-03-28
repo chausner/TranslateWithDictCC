@@ -109,9 +109,12 @@ partial class WordlistReader : IDisposable
 
         List<DictionaryEntry> entries = new List<DictionaryEntry>(numEntries);
 
-        while (entries.Count < numEntries && !streamReader.EndOfStream)
+        while (entries.Count < numEntries)
         {
             string line = await streamReader.ReadLineAsync();
+
+            if (line == null)
+                break;
 
             line = line.Trim(' ');
 
