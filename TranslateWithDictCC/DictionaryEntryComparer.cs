@@ -11,7 +11,7 @@ partial class DictionaryEntryComparer : Comparer<DictionaryEntry>
     readonly string searchQuery;
     readonly bool reverseSearch;
 
-    readonly Dictionary<string, MatchInfo> matchInfos = new Dictionary<string, MatchInfo>();
+    readonly Dictionary<string, MatchInfo> matchInfos = [];
 
     public DictionaryEntryComparer(string searchQuery, bool reverseSearch)
     {

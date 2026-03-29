@@ -40,7 +40,7 @@ static class LanguageCodes
         { "UK", "UA" }
     };
 
-    static readonly Dictionary<string, BitmapImage> flagImages = new Dictionary<string, BitmapImage>();
+    static readonly Dictionary<string, BitmapImage> flagImages = [];
 
     public static string GetLanguageName(string languageCode)
     {

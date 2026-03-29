@@ -11,7 +11,7 @@ namespace TranslateWithDictCC;
 static partial class AudioRecordingFetcher
 {
     static readonly HttpClient httpClient = new HttpClient();
-    static readonly Dictionary<LanguageWordPair, Uri?> urlCache = new Dictionary<LanguageWordPair, Uri?>();
+    static readonly Dictionary<LanguageWordPair, Uri?> urlCache = [];
 
     [GeneratedRegex(@" ?((\{.*?\})|(\[.*?\])|(\<.*?\>))")]
     private static partial Regex AnnotationsRegex();

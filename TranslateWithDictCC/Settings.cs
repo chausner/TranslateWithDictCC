@@ -30,10 +30,11 @@ class Settings : ViewModel
     {
         if (originLanguageCode != null && destinationLanguageCode != null)
         {
-            selectedDirection = new ApplicationDataCompositeValue();
-
-            selectedDirection["OriginLanguageCode"] = originLanguageCode;
-            selectedDirection["DestinationLanguageCode"] = destinationLanguageCode;
+            selectedDirection = new ApplicationDataCompositeValue
+            {
+                ["OriginLanguageCode"] = originLanguageCode,
+                ["DestinationLanguageCode"] = destinationLanguageCode
+            };
         }
         else
             selectedDirection = null;

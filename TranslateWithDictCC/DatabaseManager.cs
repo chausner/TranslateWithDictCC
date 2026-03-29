@@ -138,7 +138,7 @@ class DatabaseManager
 
         await using DbDataReader dataReader = await command.ExecuteReaderAsync();
 
-        List<T> results = new List<T>();
+        List<T> results = [];
 
         while (await dataReader.ReadAsync())
         {

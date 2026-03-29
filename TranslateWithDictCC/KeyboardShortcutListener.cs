@@ -13,7 +13,7 @@ class KeyboardShortcutListener
     bool menuPressed;
     bool shiftPressed;
 
-    readonly List<ShortcutHandler> shortcutHandlers = new List<ShortcutHandler>();
+    readonly List<ShortcutHandler> shortcutHandlers = [];
 
     public KeyboardShortcutListener(UIElement element)
     {
