@@ -8,10 +8,10 @@ namespace TranslateWithDictCC;
 
 partial class DictionaryEntryComparer : Comparer<DictionaryEntry>
 {
-    string searchQuery;
-    bool reverseSearch;
+    readonly string searchQuery;
+    readonly bool reverseSearch;
 
-    Dictionary<string, MatchInfo> matchInfos = new Dictionary<string, MatchInfo>();
+    readonly Dictionary<string, MatchInfo> matchInfos = new Dictionary<string, MatchInfo>();
 
     public DictionaryEntryComparer(string searchQuery, bool reverseSearch)
     {

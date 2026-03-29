@@ -6,10 +6,10 @@ namespace TranslateWithDictCC;
 
 class LazyCollection<Source, T> : ICollection<T>, IReadOnlyList<T>, IReadOnlyCollection<T> where T : class
 {
-    IList<Source> sources;
-    Func<Source, T> generator;
+    readonly IList<Source> sources;
+    readonly Func<Source, T> generator;
 
-    T?[] results;
+    readonly T?[] results;
 
     public LazyCollection(IList<Source> sources, Func<Source, T> generator)
     {
@@ -87,7 +87,7 @@ class LazyCollection<Source, T> : ICollection<T>, IReadOnlyList<T>, IReadOnlyCol
 
     private class LazyEnumerator : IEnumerator<T>
     {
-        LazyCollection<Source, T> lazyCollection;
+        readonly LazyCollection<Source, T> lazyCollection;
 
         int currentIndex = -1;
 

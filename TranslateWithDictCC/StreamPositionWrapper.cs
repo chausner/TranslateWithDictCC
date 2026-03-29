@@ -7,7 +7,7 @@ namespace TranslateWithDictCC;
 
 class StreamPositionWrapper : Stream
 {
-    Stream stream;
+    readonly Stream stream;
     long position;
 
     public override bool CanRead => stream.CanRead;

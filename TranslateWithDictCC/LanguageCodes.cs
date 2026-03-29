@@ -7,9 +7,9 @@ namespace TranslateWithDictCC;
 
 static class LanguageCodes
 {
-    static ResourceLoader resourceLoader = new ResourceLoader();
+    static readonly ResourceLoader resourceLoader = new ResourceLoader();
 
-    static Dictionary<string, string> countryCodes = new Dictionary<string, string> {
+    static readonly Dictionary<string, string> countryCodes = new Dictionary<string, string> {
         { "BG", "BG" },
         { "BS", "BA" },
         { "CS", "CZ" },
@@ -40,7 +40,7 @@ static class LanguageCodes
         { "UK", "UA" }
     };
 
-    static Dictionary<string, BitmapImage> flagImages = new Dictionary<string, BitmapImage>();
+    static readonly Dictionary<string, BitmapImage> flagImages = new Dictionary<string, BitmapImage>();
 
     public static string GetLanguageName(string languageCode)
     {

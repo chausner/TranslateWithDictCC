@@ -21,7 +21,7 @@ public sealed partial class MainWindow : WindowEx
 
     public MainWindow(string? launchArguments)
     {
-        this.InitializeComponent();
+        InitializeComponent();
 
         Instance = this;
 

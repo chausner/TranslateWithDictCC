@@ -43,7 +43,7 @@ class SettingsViewModel : ViewModel
     Task? importQueueProcessTask;
     CancellationTokenSource? cancellationTokenSource;
 
-    ResourceLoader resourceLoader = new ResourceLoader();
+    readonly ResourceLoader resourceLoader = new ResourceLoader();
 
     private bool IsImportInProgress
     {
@@ -55,7 +55,7 @@ class SettingsViewModel : ViewModel
 
     public event EventHandler<EventArgs>? DictionariesChanged;
 
-    ElementTheme appThemeAtStartup;
+    readonly ElementTheme appThemeAtStartup;
 
     private SettingsViewModel()
     {

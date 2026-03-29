@@ -59,7 +59,7 @@ class SearchResultsViewModel : ViewModel
     public ICommand SwitchDirectionOfTranslationCommand { get; }
     public ICommand GoToOptionsCommand { get; }
 
-    SemaphoreSlim querySemaphore = new SemaphoreSlim(1);
+    readonly SemaphoreSlim querySemaphore = new SemaphoreSlim(1);
 
     CancellationTokenSource? searchSuggestionCancellationTokenSource;
 
@@ -249,8 +249,8 @@ class SearchResultsViewModel : ViewModel
 
     private class SearchSuggestionViewModelComparer : EqualityComparer<SearchSuggestionViewModel>
     {
-        bool reverseSearch;
-        bool compareWordClasses;
+        readonly bool reverseSearch;
+        readonly bool compareWordClasses;
 
         public SearchSuggestionViewModelComparer(bool reverseSearch, bool compareWordClasses)
         {
