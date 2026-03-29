@@ -10,9 +10,9 @@ class Settings : ViewModel
 {
     public static readonly Settings Instance = new Settings();
 
-    ApplicationDataCompositeValue selectedDirection;
+    ApplicationDataCompositeValue? selectedDirection;
 
-    public void GetSelectedDirection(out string originLanguageCode, out string destinationLanguageCode)
+    public void GetSelectedDirection(out string? originLanguageCode, out string? destinationLanguageCode)
     {
         if (selectedDirection != null)
         {
@@ -26,7 +26,7 @@ class Settings : ViewModel
         }
     }
 
-    public void SetSelectedDirection(string originLanguageCode, string destinationLanguageCode)
+    public void SetSelectedDirection(string? originLanguageCode, string? destinationLanguageCode)
     {
         if (originLanguageCode != null && destinationLanguageCode != null)
         {
@@ -139,7 +139,7 @@ class Settings : ViewModel
         caseSensitiveSearch = (settingsValues["CaseSensitiveSearch"] as bool?).GetValueOrDefault(true);
         showWordClasses = (settingsValues["ShowWordClasses"] as bool?).GetValueOrDefault(true);
         showSubjects = (settingsValues["ShowSubjects"] as bool?).GetValueOrDefault(true);
-        appTheme = Enum.Parse<ElementTheme>((settingsValues["AppTheme"] as string) ?? Enum.GetName(ElementTheme.Default));
+        appTheme = Enum.Parse<ElementTheme>((settingsValues["AppTheme"] as string) ?? Enum.GetName(ElementTheme.Default)!);
         outdatedDictionariesNoticeRead = (settingsValues["OutdatedDictionariesNoticeRead"] as bool?).GetValueOrDefault(false);
     }
 }

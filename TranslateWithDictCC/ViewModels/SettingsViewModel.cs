@@ -52,8 +52,8 @@ class SettingsViewModel : ViewModel
 
     public ICommand ImportDictionaryCommand { get; }
 
-    Task importQueueProcessTask;
-    CancellationTokenSource cancellationTokenSource;
+    Task? importQueueProcessTask;
+    CancellationTokenSource? cancellationTokenSource;
 
     ResourceLoader resourceLoader = new ResourceLoader();
 
@@ -65,7 +65,7 @@ class SettingsViewModel : ViewModel
         }
     }
 
-    public event EventHandler<EventArgs> DictionariesChanged;
+    public event EventHandler<EventArgs>? DictionariesChanged;
 
     ElementTheme appThemeAtStartup;
 
@@ -85,13 +85,13 @@ class SettingsViewModel : ViewModel
         Settings.Instance.PropertyChanged += Settings_PropertyChanged;
     }
 
-    private async void SettingsViewModel_DictionariesChanged(object sender, EventArgs e)
+    private async void SettingsViewModel_DictionariesChanged(object? sender, EventArgs e)
     {
         bool hasOutdatedDictionaries = await DatabaseManager.Instance.HasOutdatedDictionaries();
         OutdatedDictionariesInfoBarVisibility = hasOutdatedDictionaries ? Visibility.Visible : Visibility.Collapsed;
     }
 
-    private void Settings_PropertyChanged(object sender, PropertyChangedEventArgs e)
+    private void Settings_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(Settings.AppTheme))
             if (Settings.Instance.AppTheme != appThemeAtStartup)
@@ -120,7 +120,7 @@ class SettingsViewModel : ViewModel
         IntPtr hwnd = WinRT.Interop.WindowNative.GetWindowHandle(MainWindow.Instance);
         WinRT.Interop.InitializeWithWindow.Initialize(fileOpenPicker, hwnd);
 
-        IReadOnlyList<StorageFile> wordlistFiles = await fileOpenPicker.PickMultipleFilesAsync();
+        IReadOnlyList<StorageFile>? wordlistFiles = await fileOpenPicker.PickMultipleFilesAsync();
 
         if (wordlistFiles == null)
             return;
@@ -170,7 +170,7 @@ class SettingsViewModel : ViewModel
 
     private async Task<bool> CheckForConflictingDictionary(WordlistReader wordlistReader)
     {
-        DictionaryViewModel conflictingDictionary = Dictionaries.FirstOrDefault(dict =>
+        DictionaryViewModel? conflictingDictionary = Dictionaries.FirstOrDefault(dict =>
              (dict.OriginLanguageCode == wordlistReader.OriginLanguageCode && dict.DestinationLanguageCode == wordlistReader.DestinationLanguageCode) ||
              (dict.OriginLanguageCode == wordlistReader.DestinationLanguageCode && dict.DestinationLanguageCode == wordlistReader.OriginLanguageCode));
 
@@ -215,7 +215,7 @@ class SettingsViewModel : ViewModel
     {
         while (true)
         {
-            DictionaryViewModel dictionaryViewModel = Dictionaries.FirstOrDefault(dict => dict.Status == DictionaryStatus.Queued);
+            DictionaryViewModel? dictionaryViewModel = Dictionaries.FirstOrDefault(dict => dict.Status == DictionaryStatus.Queued);
 
             if (dictionaryViewModel == null)
                 break;
@@ -233,9 +233,9 @@ class SettingsViewModel : ViewModel
                 // run on the thread pool for better UI responsiveness
                 await Task.Run(async delegate ()
                 {
-						dictionaryViewModel.Dictionary = await DatabaseManager.Instance.ImportWordlist(dictionaryViewModel.WordlistReader, progress, cancellationTokenSource.Token);
+                    dictionaryViewModel.Dictionary = await DatabaseManager.Instance.ImportWordlist(dictionaryViewModel.WordlistReader!, progress, cancellationTokenSource!.Token);
 
-						await DatabaseManager.Instance.OptimizeTable(dictionaryViewModel.Dictionary);
+                    await DatabaseManager.Instance.OptimizeTable(dictionaryViewModel.Dictionary!);
                 });
             }
             catch (OperationCanceledException)
@@ -261,7 +261,7 @@ class SettingsViewModel : ViewModel
             }
             finally
             {
-                dictionaryViewModel.WordlistReader.Dispose();
+                dictionaryViewModel.WordlistReader!.Dispose();
                 dictionaryViewModel.WordlistReader = null;
             }
 
@@ -293,7 +293,7 @@ class SettingsViewModel : ViewModel
         // run on the thread pool for better UI responsiveness
         await Task.Run(async delegate ()
         {
-            await DatabaseManager.Instance.DeleteDictionary(dictionaryViewModel.Dictionary);
+            await DatabaseManager.Instance.DeleteDictionary(dictionaryViewModel.Dictionary!);
         });
 
         Dictionaries.Remove(dictionaryViewModel);
@@ -311,7 +311,7 @@ class SettingsViewModel : ViewModel
                 Dictionaries.Remove(dictionaryViewModel);
                 break;
             case DictionaryStatus.Installing:
-                cancellationTokenSource.Cancel();
+                cancellationTokenSource!.Cancel();
                 break;
         }
     }

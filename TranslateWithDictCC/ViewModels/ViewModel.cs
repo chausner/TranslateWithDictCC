@@ -6,7 +6,7 @@ namespace TranslateWithDictCC.ViewModels;
 
 abstract class ViewModel : INotifyPropertyChanged
 {
-    protected void SetProperty<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+    protected void SetProperty<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
     {
         if (!EqualityComparer<T>.Default.Equals(field, value))
         {
@@ -15,5 +15,5 @@ abstract class ViewModel : INotifyPropertyChanged
         }
     }
 
-    public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 }

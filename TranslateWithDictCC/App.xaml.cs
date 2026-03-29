@@ -9,8 +9,6 @@ namespace TranslateWithDictCC;
 
 sealed partial class App : Application
 {
-    MainWindow mainWindow;
-
     public App()
     {
         InitializeComponent();
@@ -34,15 +32,15 @@ sealed partial class App : Application
             Resources.Add("settings", Settings.Instance);
 
         string[] args = Environment.GetCommandLineArgs();
-        string launchArguments = args.Length >= 2 ? args[1] : null;
+        string? launchArguments = args.Length >= 2 ? args[1] : null;
 
-        mainWindow = new MainWindow(launchArguments);
+        MainWindow window = new MainWindow(launchArguments);
 
-        IntPtr hWnd = WindowNative.GetWindowHandle(mainWindow);
+        IntPtr hWnd = WindowNative.GetWindowHandle(window);
         WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
         AppWindow appWindow = AppWindow.GetFromWindowId(windowId);
 
-        mainWindow.Activate();
+        window.Activate();
 
         appWindow.Closing += AppWindow_Closing;
     }

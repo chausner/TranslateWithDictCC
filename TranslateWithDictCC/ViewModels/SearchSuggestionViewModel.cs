@@ -9,7 +9,7 @@ class SearchSuggestionViewModel : ViewModel
     public DictionaryEntry DictionaryEntry { get; }
     public SearchContext SearchContext { get; }
 
-    Block word;
+    Block? word;
 
     public Block Word
     {
@@ -18,7 +18,7 @@ class SearchSuggestionViewModel : ViewModel
             if (word == null)
                 Initialize();
 
-            return word;
+            return word!;
         }
     }
 
@@ -39,7 +39,7 @@ class SearchSuggestionViewModel : ViewModel
     private void Initialize()
     {
         bool reverseSearch = SearchContext.SelectedDirection.ReverseSearch;
-        word = WordHighlighting.GenerateRichTextBlock(reverseSearch ? DictionaryEntry.Word2 : DictionaryEntry.Word1, DictionaryEntry.MatchSpans, false);
+        word = WordHighlighting.GenerateRichTextBlock(reverseSearch ? DictionaryEntry.Word2 : DictionaryEntry.Word1, DictionaryEntry.MatchSpans!, false);
     }
 
     public Visibility GetWordClassVisibility(string wordClasses)

@@ -16,8 +16,8 @@ namespace TranslateWithDictCC.ViewModels;
 
 static partial class WordHighlighting
 {
-    static SolidColorBrush annotationBrush;
-    static SolidColorBrush queryHighlightBrush;
+    static SolidColorBrush annotationBrush = null!;
+    static SolidColorBrush queryHighlightBrush = null!;
 
 
     [GeneratedRegex(@"(\{.*?\})|(\[.*?\])|(\<.*?\>)")]
@@ -32,26 +32,19 @@ static partial class WordHighlighting
 
     private static void SetBrushes()
     {
-        ResourceDictionary dictionary = null;
-
-        switch (Settings.Instance.AppTheme)
+        ResourceDictionary dictionary = Settings.Instance.AppTheme switch
         {
-            case ElementTheme.Default:
-                dictionary = Application.Current.Resources;
-                break;
-            case ElementTheme.Light:
-                dictionary = (ResourceDictionary)Application.Current.Resources.ThemeDictionaries["Light"];
-                break;
-            case ElementTheme.Dark:
-                dictionary = (ResourceDictionary)Application.Current.Resources.ThemeDictionaries["Dark"];
-                break;
-        }
+            ElementTheme.Default => Application.Current.Resources,
+            ElementTheme.Light => (ResourceDictionary)Application.Current.Resources.ThemeDictionaries["Light"],
+            ElementTheme.Dark => (ResourceDictionary)Application.Current.Resources.ThemeDictionaries["Dark"],
+            _ => Application.Current.Resources
+        };
 
         annotationBrush = (SolidColorBrush)dictionary["DictionaryEntryAnnotationThemeBrush"];
         queryHighlightBrush = (SolidColorBrush)dictionary["DictionaryEntryQueryHighlightThemeBrush"];
     }
 
-    private static void Settings_PropertyChanged(object sender, PropertyChangedEventArgs e)
+    private static void Settings_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(Settings.AppTheme))
             SetBrushes();

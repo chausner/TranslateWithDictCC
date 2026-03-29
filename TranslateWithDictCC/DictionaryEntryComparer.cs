@@ -19,8 +19,15 @@ partial class DictionaryEntryComparer : Comparer<DictionaryEntry>
         this.reverseSearch = reverseSearch;
     }
 
-    public override int Compare(DictionaryEntry x, DictionaryEntry y)
+    public override int Compare(DictionaryEntry? x, DictionaryEntry? y)
     {
+        if (ReferenceEquals(x, y))
+            return 0;
+        if (x is null)
+            return -1;
+        if (y is null)
+            return 1;
+
         string searchResultX, searchResultY;
 
         if (!reverseSearch)
@@ -34,15 +41,15 @@ partial class DictionaryEntryComparer : Comparer<DictionaryEntry>
             searchResultY = y.Word2;
         }
 
-        if (!matchInfos.TryGetValue(searchResultX, out MatchInfo matchInfoX))
+        if (!matchInfos.TryGetValue(searchResultX, out MatchInfo? matchInfoX))
         {
-            matchInfoX = new MatchInfo(searchQuery, searchResultX, x.MatchSpans);
+            matchInfoX = new MatchInfo(searchQuery, searchResultX, x.MatchSpans!);
             matchInfos.Add(searchResultX, matchInfoX);
         }
 
-        if (!matchInfos.TryGetValue(searchResultY, out MatchInfo matchInfoY))
+        if (!matchInfos.TryGetValue(searchResultY, out MatchInfo? matchInfoY))
         {
-            matchInfoY = new MatchInfo(searchQuery, searchResultY, y.MatchSpans);
+            matchInfoY = new MatchInfo(searchQuery, searchResultY, y.MatchSpans!);
             matchInfos.Add(searchResultY, matchInfoY);
         }
 

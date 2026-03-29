@@ -14,14 +14,14 @@ class AudioPlayer
 {
     public static AudioPlayer Instance { get; } = new AudioPlayer();
 
-    DictionaryEntryViewModel currentlyPlayingAudioRecording;
+    DictionaryEntryViewModel? currentlyPlayingAudioRecording;
     bool currentlyPlayingAudioRecordingWord2;
 
-    MediaPlayer mediaPlayer = new MediaPlayer();
-    SemaphoreSlim audioPlayerSemaphore = new SemaphoreSlim(1);
-    DispatcherQueue dispatcherQueue;
+    readonly MediaPlayer mediaPlayer = new MediaPlayer();
+    readonly SemaphoreSlim audioPlayerSemaphore = new SemaphoreSlim(1);
+    DispatcherQueue? dispatcherQueue = null;
 
-    public DictionaryEntryViewModel CurrentlyPlayingAudioRecording { get => currentlyPlayingAudioRecording; }        
+    public DictionaryEntryViewModel? CurrentlyPlayingAudioRecording => currentlyPlayingAudioRecording;
 
     private AudioPlayer()
     {
@@ -64,7 +64,7 @@ class AudioPlayer
                 currentlyPlayingAudioRecording = null;
             }
 
-            Uri audioUri = await AudioRecordingFetcher.GetAudioRecordingUri(dictionaryEntryViewModel, word2);
+            Uri? audioUri = await AudioRecordingFetcher.GetAudioRecordingUri(dictionaryEntryViewModel, word2);
 
             if (audioUri != null)
             {
@@ -117,7 +117,7 @@ class AudioPlayer
 
     private void MediaPlayer_MediaOpened(MediaPlayer sender, object args)
     {
-        dispatcherQueue.TryEnqueue(() =>
+        dispatcherQueue!.TryEnqueue(() =>
         {
             if (currentlyPlayingAudioRecording != null)
                 SetState(currentlyPlayingAudioRecording, currentlyPlayingAudioRecordingWord2, AudioRecordingState.Playing);
@@ -126,7 +126,7 @@ class AudioPlayer
 
     private void MediaPlayer_MediaEnded(MediaPlayer sender, object args)
     {
-        dispatcherQueue.TryEnqueue(() =>
+        dispatcherQueue!.TryEnqueue(() =>
         {
             if (currentlyPlayingAudioRecording != null)
             {
@@ -138,7 +138,7 @@ class AudioPlayer
 
     private void MediaPlayer_MediaFailed(MediaPlayer sender, MediaPlayerFailedEventArgs args)
     {
-        dispatcherQueue.TryEnqueue(() =>
+        dispatcherQueue!.TryEnqueue(() =>
         {
             if (currentlyPlayingAudioRecording != null)
             {

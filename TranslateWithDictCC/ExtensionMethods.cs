@@ -8,7 +8,7 @@ static class ExtensionMethods
 {
     extension(Frame frame)
     {
-        public void NavigateIfNeeded(Type sourcePageType, object parameter = null, NavigationTransitionInfo transitionInfo = null)
+        public void NavigateIfNeeded(Type sourcePageType, object? parameter = null, NavigationTransitionInfo? transitionInfo = null)
         {
             if (frame.SourcePageType != sourcePageType)
                 frame.Navigate(sourcePageType, parameter, transitionInfo);

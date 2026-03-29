@@ -9,21 +9,21 @@ class LazyCollection<Source, T> : ICollection<T>, IReadOnlyList<T>, IReadOnlyCol
     IList<Source> sources;
     Func<Source, T> generator;
 
-    T[] results;
+    T?[] results;
 
     public LazyCollection(IList<Source> sources, Func<Source, T> generator)
     {
         this.sources = sources;
         this.generator = generator;
 
-        results = new T[sources.Count];
+        results = new T?[sources.Count];
     }
 
     public T this[int index]
     {
         get
         {
-            T result = results[index];
+            T? result = results[index];
 
             if (result == null)
             {
@@ -89,7 +89,7 @@ class LazyCollection<Source, T> : ICollection<T>, IReadOnlyList<T>, IReadOnlyCol
     {
         LazyCollection<Source, T> lazyCollection;
 
-        int currentIndex = -1;            
+        int currentIndex = -1;
 
         public LazyEnumerator(LazyCollection<Source, T> lazyCollection)
         {
@@ -112,14 +112,8 @@ class LazyCollection<Source, T> : ICollection<T>, IReadOnlyList<T>, IReadOnlyCol
             currentIndex = -1;
         }
 
-        protected virtual void Dispose(bool disposing)
-        {
-            lazyCollection = null;
-        }
-
         public void Dispose()
         {
-            Dispose(true);
         }
     }
 }

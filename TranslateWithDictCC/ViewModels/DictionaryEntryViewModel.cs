@@ -34,9 +34,9 @@ partial class DictionaryEntryViewModel : ViewModel
         set { SetProperty(ref audioRecordingState2, value); }
     }
 
-    Block word1;
-    Block word2;
-    List<UIElement> attributes;
+    Block? word1;
+    Block? word2;
+    List<UIElement>? attributes;
 
     public Block Word1
     {
@@ -45,7 +45,7 @@ partial class DictionaryEntryViewModel : ViewModel
             if (word1 == null)
                 Initialize();
 
-            return word1;
+            return word1!;
         }
     }
 
@@ -56,7 +56,7 @@ partial class DictionaryEntryViewModel : ViewModel
             if (word2 == null)
                 Initialize();
 
-            return word2;
+            return word2!;
         }
     }
 
@@ -67,7 +67,7 @@ partial class DictionaryEntryViewModel : ViewModel
             if (attributes == null)
                 Initialize();
 
-            return attributes;
+            return attributes!;
         }
     }
 
@@ -94,15 +94,15 @@ partial class DictionaryEntryViewModel : ViewModel
     private void Initialize()
     {
         bool reverseSearch = SearchContext.SelectedDirection.ReverseSearch;
-        word1 = WordHighlighting.GenerateRichTextBlock(reverseSearch ? DictionaryEntry.Word2 : DictionaryEntry.Word1, DictionaryEntry.MatchSpans, true);
-        word2 = WordHighlighting.GenerateRichTextBlock(reverseSearch ? DictionaryEntry.Word1 : DictionaryEntry.Word2, DictionaryEntry.MatchSpans, false);
+        word1 = WordHighlighting.GenerateRichTextBlock(reverseSearch ? DictionaryEntry.Word2 : DictionaryEntry.Word1, DictionaryEntry.MatchSpans!, true);
+        word2 = WordHighlighting.GenerateRichTextBlock(reverseSearch ? DictionaryEntry.Word1 : DictionaryEntry.Word2, DictionaryEntry.MatchSpans!, false);
 
         Brush wordClassesBorderBackground = (Brush)Application.Current.Resources["DictionaryEntryWordClassesThemeBrush"];
         double wordClassesFontSize = (double)Application.Current.Resources["wordFontSize"];
 
         attributes = new List<UIElement>();
 
-        void AddAttribute(string text, string toolTipText = null)
+        void AddAttribute(string text, string? toolTipText = null)
         {
             Border border = new Border();
             border.CornerRadius = new CornerRadius(4);
@@ -132,7 +132,7 @@ partial class DictionaryEntryViewModel : ViewModel
 
             foreach (string subjectString in subjectStrings)
             {
-                string description = SubjectInfo.Instance.GetSubjectDescription(SearchContext.SelectedDirection.OriginLanguageCode, SearchContext.SelectedDirection.DestinationLanguageCode, subjectString);
+                string? description = SubjectInfo.Instance.GetSubjectDescription(SearchContext.SelectedDirection.OriginLanguageCode, SearchContext.SelectedDirection.DestinationLanguageCode, subjectString);
 
                 if (description != null)
                     AddAttribute(subjectString, description);
@@ -204,7 +204,7 @@ partial class DictionaryEntryViewModel : ViewModel
         if (word2)
             SearchResultsViewModel.Instance.SwitchDirectionOfTranslationCommand.Execute(null);
 
-        SearchContext searchContext = new SearchContext(searchTerm, SearchResultsViewModel.Instance.SelectedDirection, true);
+        SearchContext searchContext = new SearchContext(searchTerm, SearchResultsViewModel.Instance.SelectedDirection!, true);
 
         // explicit type parameters required here
         MainViewModel.Instance.NavigateToPageCommand.Execute(Tuple.Create<string, object>("SearchResultsPage", searchContext));

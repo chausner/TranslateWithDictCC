@@ -4,11 +4,11 @@ namespace TranslateWithDictCC.Models;
 
 record DictionaryEntry
 {
-    public string Word1 { get; init; }
-    public string Word2 { get; init; }
-    public string WordClasses { get; init; }
-    public string Subjects { get; init; }
-    public TextSpan[] MatchSpans { get; init; }
+    public required string Word1 { get; init; }
+    public required string Word2 { get; init; }
+    public string? WordClasses { get; init; }
+    public string? Subjects { get; init; }
+    public TextSpan[]? MatchSpans { get; init; }
 }
 
 record struct TextSpan(int Offset, int Length)

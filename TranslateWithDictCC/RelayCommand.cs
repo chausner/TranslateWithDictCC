@@ -5,12 +5,12 @@ namespace TranslateWithDictCC;
 
 class RelayCommand : ICommand
 {
-    Action action;
-    Func<bool> canExecuteEvaluator;
+    readonly Action action;
+    readonly Func<bool>? canExecuteEvaluator;
 
-    public event EventHandler CanExecuteChanged;
+    public event EventHandler? CanExecuteChanged;
 
-    public RelayCommand(Action action, Func<bool> canExecuteEvaluator)
+    public RelayCommand(Action action, Func<bool>? canExecuteEvaluator)
     {
         this.action = action;
         this.canExecuteEvaluator = canExecuteEvaluator;
@@ -21,7 +21,7 @@ class RelayCommand : ICommand
     {
     }
 
-    public bool CanExecute(object parameter)
+    public bool CanExecute(object? parameter)
     {
         if (canExecuteEvaluator == null)
             return true;
@@ -29,7 +29,7 @@ class RelayCommand : ICommand
             return canExecuteEvaluator();
     }
 
-    public void Execute(object parameter)
+    public void Execute(object? parameter)
     {
         action();
     }
@@ -42,12 +42,12 @@ class RelayCommand : ICommand
 
 class RelayCommand<T> : ICommand
 {
-    Action<T> action;
-    Func<T, bool> canExecuteEvaluator;
+    readonly Action<T> action;
+    readonly Func<T, bool>? canExecuteEvaluator;
 
-    public event EventHandler CanExecuteChanged;
+    public event EventHandler? CanExecuteChanged;
 
-    public RelayCommand(Action<T> action, Func<T, bool> canExecuteEvaluator)
+    public RelayCommand(Action<T> action, Func<T, bool>? canExecuteEvaluator)
     {
         this.action = action;
         this.canExecuteEvaluator = canExecuteEvaluator;
@@ -58,17 +58,17 @@ class RelayCommand<T> : ICommand
     {
     }
 
-    public bool CanExecute(object parameter)
+    public bool CanExecute(object? parameter)
     {
         if (canExecuteEvaluator == null)
             return true;
         else
-            return canExecuteEvaluator((T)parameter);
+            return canExecuteEvaluator((T)parameter!);
     }
 
-    public void Execute(object parameter)
+    public void Execute(object? parameter)
     {
-        action((T)parameter);
+        action((T)parameter!);
     }
 
     public void NotifyCanExecuteChanged()

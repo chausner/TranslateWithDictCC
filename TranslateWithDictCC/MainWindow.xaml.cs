@@ -21,11 +21,11 @@ namespace TranslateWithDictCC;
 /// </summary>
 public sealed partial class MainWindow : WindowEx
 {
-    public static MainWindow Instance { get; private set; }
+    public static MainWindow Instance { get; private set; } = null!;
 
     public UIElement ApplicationFrame => applicationFrame;
 
-    public MainWindow(string launchArguments)
+    public MainWindow(string? launchArguments)
     {
         this.InitializeComponent();
 
@@ -43,7 +43,7 @@ public sealed partial class MainWindow : WindowEx
         Settings.Instance.PropertyChanged += Settings_PropertyChanged;
     }
 
-    private void Settings_PropertyChanged(object sender, PropertyChangedEventArgs e)
+    private void Settings_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(Settings.AppTheme))
             SetTheme();
@@ -67,20 +67,13 @@ public sealed partial class MainWindow : WindowEx
         {
             AppWindowTitleBar titleBar = appWindow.TitleBar;
 
-            ResourceDictionary dictionary = null;
-
-            switch (Settings.Instance.AppTheme)
+            ResourceDictionary dictionary = Settings.Instance.AppTheme switch
             {
-                case ElementTheme.Default:
-                    dictionary = Application.Current.Resources;
-                    break;
-                case ElementTheme.Light:
-                    dictionary = (ResourceDictionary)Application.Current.Resources.ThemeDictionaries["Light"];
-                    break;
-                case ElementTheme.Dark:
-                    dictionary = (ResourceDictionary)Application.Current.Resources.ThemeDictionaries["Dark"];
-                    break;
-            }
+                ElementTheme.Default => Application.Current.Resources,
+                ElementTheme.Light => (ResourceDictionary)Application.Current.Resources.ThemeDictionaries["Light"],
+                ElementTheme.Dark => (ResourceDictionary)Application.Current.Resources.ThemeDictionaries["Dark"],
+                _ => Application.Current.Resources
+            };
 
             titleBar.BackgroundColor = (Color?)dictionary["TitleBarBackgroundColor"];
             titleBar.ForegroundColor = (Color?)dictionary["TitleBarForegroundColor"];
@@ -96,8 +89,8 @@ public sealed partial class MainWindow : WindowEx
             titleBar.ButtonInactiveForegroundColor = (Color?)dictionary["TitleBarButtonInactiveForegroundColor"];
         }
 
-			string packagePath = Package.Current.InstalledLocation.Path;
-			appWindow.SetIcon(Path.Combine(packagePath, @"Assets\Logo.ico"));
+        string packagePath = Package.Current.InstalledLocation.Path;
+        appWindow.SetIcon(Path.Combine(packagePath, @"Assets\Logo.ico"));
     }
 
     private void SetWindowSizeAndLocation()

@@ -10,7 +10,7 @@ class SubjectInfo
 {
     public static SubjectInfo Instance { get; } = new SubjectInfo();
 
-    JsonDocument subjectInfoJson;
+    JsonDocument? subjectInfoJson;
 
     private SubjectInfo()
     {
@@ -28,14 +28,14 @@ class SubjectInfo
         subjectInfoJson = await JsonDocument.ParseAsync(stream);
     }
 
-    public string GetSubjectDescription(string originLanguageCode, string destinationLanguageCode, string subject)
+    public string? GetSubjectDescription(string originLanguageCode, string destinationLanguageCode, string subject)
     {
         if (!IsLoaded)
             throw new InvalidOperationException("Subjects have not been loaded yet");
 
         JsonElement subjectsOfLanguagePair;
 
-        if (!subjectInfoJson.RootElement.TryGetProperty(originLanguageCode + destinationLanguageCode, out subjectsOfLanguagePair) &&
+        if (!subjectInfoJson!.RootElement.TryGetProperty(originLanguageCode + destinationLanguageCode, out subjectsOfLanguagePair) &&
             !subjectInfoJson.RootElement.TryGetProperty(destinationLanguageCode + originLanguageCode, out subjectsOfLanguagePair))
             return null;
 

@@ -54,7 +54,7 @@ static class ApplicationDataMigration
                 {
                     string tableName = string.Format("Dictionary{0}{1}", dictionary.OriginLanguageCode, dictionary.DestinationLanguageCode);
 
-                    object result = await DatabaseManager.Instance.ExecuteScalar($"SELECT name FROM sqlite_master WHERE type='table' AND name='{tableName}'");
+                    object? result = await DatabaseManager.Instance.ExecuteScalar($"SELECT name FROM sqlite_master WHERE type='table' AND name='{tableName}'");
 
                     if (result == null)
                         await DatabaseManager.Instance.ExecuteNonQuery($"DELETE FROM Dictionaries WHERE ID = {dictionary.ID}");

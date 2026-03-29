@@ -19,7 +19,7 @@ public sealed partial class SearchResultsPage : Page
 
     Settings Settings => Settings.Instance;
 
-    string lastQuery;
+    string? lastQuery;
 
     public SearchResultsPage()
     {
@@ -51,13 +51,13 @@ public sealed partial class SearchResultsPage : Page
         e.Handled = true;
     }
 
-    private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
+    private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(ViewModel.SelectedDirection))
             SetDirectionComboBoxSelectedItem(ViewModel.SelectedDirection);
     }
 
-    private void SetDirectionComboBoxSelectedItem(object selectedItem)
+    private void SetDirectionComboBoxSelectedItem(DirectionViewModel? selectedItem)
     {
         directionComboBox.SelectionChanged -= directionComboBox_SelectionChanged;
 
@@ -94,7 +94,7 @@ public sealed partial class SearchResultsPage : Page
     private void RichTextBlock_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
     {
         RichTextBlock richTextBlock = (RichTextBlock)sender;
-        SearchSuggestionViewModel searchSuggestionViewModel = (SearchSuggestionViewModel)args.NewValue;
+        SearchSuggestionViewModel? searchSuggestionViewModel = args.NewValue as SearchSuggestionViewModel;
 
         richTextBlock.Blocks.Clear();
 
@@ -151,7 +151,7 @@ public sealed partial class SearchResultsPage : Page
     {
         FocusSearchBox();
 
-        SearchContext searchContext = (SearchContext)e.Parameter;
+        SearchContext? searchContext = e.Parameter as SearchContext;
 
         if (searchContext != null)
         {
@@ -283,7 +283,7 @@ public sealed partial class SearchResultsPage : Page
 
             // force ComboBox to apply the new item template
             directionComboBox.SelectionChanged -= directionComboBox_SelectionChanged;
-            object selectedItem = directionComboBox.SelectedItem;
+            object? selectedItem = directionComboBox.SelectedItem;
             directionComboBox.SelectedItem = null;
             directionComboBox.SelectedItem = selectedItem;
             directionComboBox.SelectionChanged += directionComboBox_SelectionChanged;

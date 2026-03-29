@@ -114,7 +114,7 @@ class DatabaseManager
         return await command.ExecuteNonQueryAsync();
     }
 
-    public async Task<object> ExecuteScalar(string commandText)
+    public async Task<object?> ExecuteScalar(string commandText)
     {
         await using DbConnection connection = await OpenConnection();
         await using DbCommand command = connection.CreateCommand();
@@ -217,8 +217,8 @@ class DatabaseManager
                 {
                     command.Parameters[0].Value = entry.Word1;
                     command.Parameters[1].Value = entry.Word2;
-                    command.Parameters[2].Value = (object)entry.WordClasses ?? DBNull.Value;
-                    command.Parameters[3].Value = (object)entry.Subjects ?? DBNull.Value;
+                    command.Parameters[2].Value = (object?)entry.WordClasses ?? DBNull.Value;
+                    command.Parameters[3].Value = (object?)entry.Subjects ?? DBNull.Value;
 
                     command.ExecuteNonQuery();
 
@@ -231,14 +231,7 @@ class DatabaseManager
 
             progress?.Report(new(numberOfEntries, 1.0));
 
-            Version appVersion = GetType().GetTypeInfo().Assembly.GetName().Version;
-
-            Dictionary dictionary = new Dictionary(
-                wordlistReader.OriginLanguageCode,
-                wordlistReader.DestinationLanguageCode,
-                wordlistReader.CreationDate,
-                numberOfEntries,
-                appVersion);
+            Version appVersion = GetType().GetTypeInfo().Assembly.GetName().Version!;
 
             await using (DbCommand command = connection.CreateCommand())
             {
@@ -248,21 +241,35 @@ class DatabaseManager
                     VALUES (@OriginLanguageCode, @DestinationLanguageCode, @CreationDate, @NumberOfEntries, @AppVersionWhenCreated)
                     """;
 
-                command.Parameters.Add(new SqliteParameter("@OriginLanguageCode", dictionary.OriginLanguageCode));
-                command.Parameters.Add(new SqliteParameter("@DestinationLanguageCode", dictionary.DestinationLanguageCode));
-                command.Parameters.Add(new SqliteParameter("@CreationDate", dictionary.CreationDate.UtcTicks));
-                command.Parameters.Add(new SqliteParameter("@NumberOfEntries", dictionary.NumberOfEntries));
-                command.Parameters.Add(new SqliteParameter("@AppVersionWhenCreated", (object)dictionary.AppVersionWhenCreated?.ToString() ?? DBNull.Value));
+                command.Parameters.Add(new SqliteParameter("@OriginLanguageCode", wordlistReader.OriginLanguageCode));
+                command.Parameters.Add(new SqliteParameter("@DestinationLanguageCode", wordlistReader.DestinationLanguageCode));
+                command.Parameters.Add(new SqliteParameter("@CreationDate", wordlistReader.CreationDate.UtcTicks));
+                command.Parameters.Add(new SqliteParameter("@NumberOfEntries", numberOfEntries));
+                command.Parameters.Add(new SqliteParameter("@AppVersionWhenCreated", (object?)appVersion?.ToString() ?? DBNull.Value));
 
                 await command.ExecuteNonQueryAsync();
             }
+
+            int id;
 
             await using (DbCommand command = connection.CreateCommand())
             {
                 command.CommandText = "SELECT last_insert_rowid()";
 
-                dictionary.ID = (int)(long)await command.ExecuteScalarAsync();
+                object? result = await command.ExecuteScalarAsync();
+
+                id = (int)(long)result!;
             }
+
+            Dictionary dictionary = new Dictionary
+            {
+                ID = id,
+                OriginLanguageCode = wordlistReader.OriginLanguageCode,
+                DestinationLanguageCode = wordlistReader.DestinationLanguageCode,
+                CreationDate = wordlistReader.CreationDate,
+                NumberOfEntries = numberOfEntries,
+                AppVersionWhenCreated = appVersion
+            };
 
             return dictionary;
         });
@@ -294,8 +301,8 @@ class DatabaseManager
         {
             string word1 = dataReader.GetString(0);
             string word2 = dataReader.GetString(1);
-            string wordClasses = dataReader.GetValue(2) as string;
-            string subjects;
+            string? wordClasses = dataReader.GetValue(2) as string;
+            string? subjects;
             string[] offsets;
 
             if (!hasSubjectsColumn)
@@ -320,7 +327,7 @@ class DatabaseManager
     {
         TextSpan[] matchSpans = new TextSpan[offsets.Length / 4];
 
-        int[] byteCounts = null;
+        int[]? byteCounts = null;
 
         if (Encoding.UTF8.GetByteCount(word) != word.Length)
         {

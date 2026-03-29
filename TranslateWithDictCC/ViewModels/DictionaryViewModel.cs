@@ -9,8 +9,8 @@ namespace TranslateWithDictCC.ViewModels;
 
 class DictionaryViewModel : ViewModel
 {
-    public string OriginLanguageCode { get; }
-    public string DestinationLanguageCode { get; }
+    public string OriginLanguageCode { get; } = null!;
+    public string DestinationLanguageCode { get; } = null!;
 
     public string OriginLanguage => LanguageCodes.GetLanguageName(OriginLanguageCode);
     public string DestinationLanguage => LanguageCodes.GetLanguageName(DestinationLanguageCode);
@@ -38,7 +38,7 @@ class DictionaryViewModel : ViewModel
         set { SetProperty(ref status, value); }
     }
 
-    string statusText;
+    string statusText = string.Empty;
 
     public string StatusText
     {
@@ -78,8 +78,8 @@ class DictionaryViewModel : ViewModel
         set { SetProperty(ref removeDictionaryButtonVisibility, value); }
     }
 
-    public Dictionary Dictionary { get; set; }
-    public WordlistReader WordlistReader { get; set; }
+    public Dictionary? Dictionary { get; set; }
+    public WordlistReader? WordlistReader { get; set; }
 
     public ICommand AbortImportCommand { get; }
     public ICommand RemoveDictionaryCommand { get; }

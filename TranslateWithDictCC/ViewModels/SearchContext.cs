@@ -1,7 +1,7 @@
 ﻿namespace TranslateWithDictCC.ViewModels;
 
 record SearchContext(
-    string SearchQuery,
+    string? SearchQuery,
     DirectionViewModel SelectedDirection,
     bool DontSearchInBothDirections
 );

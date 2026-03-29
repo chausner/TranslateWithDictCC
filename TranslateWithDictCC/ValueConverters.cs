@@ -7,7 +7,7 @@ namespace TranslateWithDictCC;
 
 class SourceNotEmptyValueConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, string language)
+    public object? Convert(object value, Type targetType, object parameter, string language)
     {
         if (value is IEnumerable enumerable)
             return enumerable.GetEnumerator().MoveNext();
@@ -15,7 +15,7 @@ class SourceNotEmptyValueConverter : IValueConverter
             return null;
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, string language)
+    public object? ConvertBack(object value, Type targetType, object parameter, string language)
     {
         throw new NotSupportedException();
     }
@@ -23,7 +23,7 @@ class SourceNotEmptyValueConverter : IValueConverter
 
 class AppThemeValueConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, string language)
+    public object? Convert(object value, Type targetType, object parameter, string language)
     {
         if (value is ElementTheme appTheme)
             return Enum.GetName(appTheme);
@@ -31,7 +31,7 @@ class AppThemeValueConverter : IValueConverter
             return null;
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, string language)
+    public object? ConvertBack(object value, Type targetType, object parameter, string language)
     {
         if (value is string appTheme)
             return Enum.Parse<ElementTheme>(appTheme);

@@ -10,8 +10,8 @@ namespace TranslateWithDictCC;
 
 static partial class AudioRecordingFetcher
 {
-    static HttpClient httpClient = new HttpClient();
-    static Dictionary<LanguageWordPair, Uri> urlCache = new Dictionary<LanguageWordPair, Uri>();
+    static readonly HttpClient httpClient = new HttpClient();
+    static readonly Dictionary<LanguageWordPair, Uri?> urlCache = new Dictionary<LanguageWordPair, Uri?>();
 
     [GeneratedRegex(@" ?((\{.*?\})|(\[.*?\])|(\<.*?\>))")]
     private static partial Regex AnnotationsRegex();
@@ -23,7 +23,7 @@ static partial class AudioRecordingFetcher
     [GeneratedRegex(@"var c2Arr = new Array\((?:(""([^""]*)""),?)*\);")]
     private static partial Regex Words2Regex();
 
-    public static async Task<Uri> GetAudioRecordingUri(DictionaryEntryViewModel dictionaryEntryViewModel, bool word2)
+    public static async Task<Uri?> GetAudioRecordingUri(DictionaryEntryViewModel dictionaryEntryViewModel, bool word2)
     {
         DirectionViewModel selectedDirection = dictionaryEntryViewModel.SearchContext.SelectedDirection;
 
@@ -36,7 +36,7 @@ static partial class AudioRecordingFetcher
         string originLanguageCode = word2 ? selectedDirection.DestinationLanguageCode : selectedDirection.OriginLanguageCode;
         string destinationLanguageCode = word2 ? selectedDirection.OriginLanguageCode : selectedDirection.DestinationLanguageCode;
 
-        if (urlCache.TryGetValue(new LanguageWordPair(originLanguageCode, word), out Uri audioUri))
+        if (urlCache.TryGetValue(new LanguageWordPair(originLanguageCode, word), out Uri? audioUri))
             return audioUri;
 
         Uri requestUri = GetSearchPageUri(originLanguageCode, destinationLanguageCode, word);
@@ -48,7 +48,7 @@ static partial class AudioRecordingFetcher
         string wordJSLiteral = GetJSLiteralOfWord(word);
         string otherWordJSLiteral = GetJSLiteralOfWord(otherWord);
 
-        DictCCSearchResult dictCCSearchResult = null;
+        DictCCSearchResult? dictCCSearchResult = null;
 
         if (wordJSLiteral != string.Empty || otherWordJSLiteral != string.Empty)
             dictCCSearchResult = dictCCSearchResults.FirstOrDefault(result => result.Word1 == wordJSLiteral && result.Word2 == otherWordJSLiteral);
@@ -138,9 +138,9 @@ static partial class AudioRecordingFetcher
 
     private record DictCCSearchResult
     {
-        public int ID { get; init;  }
-        public string Word1 { get; init; }
-        public string Word2 { get; init; }
+        public required int ID { get; init;  }
+        public required string Word1 { get; init; }
+        public required string Word2 { get; init; }
     }
 
     private record LanguageWordPair(string LanguageCode, string Word);

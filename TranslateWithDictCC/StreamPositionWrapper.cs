@@ -160,11 +160,7 @@ class StreamPositionWrapper : Stream
         {
             if (disposing)
             {
-                if (stream != null)
-                {
-                    stream.Dispose();
-                    stream = null;
-                }
+                stream.Dispose();
             }
 
             disposedValue = true;

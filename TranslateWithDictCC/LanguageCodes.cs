@@ -54,7 +54,7 @@ static class LanguageCodes
 
     public static Uri GetCountryFlagUri(string languageCode)
     {
-        if (countryCodes.TryGetValue(languageCode, out string countryCode))
+        if (countryCodes.TryGetValue(languageCode, out string? countryCode))
             return new Uri("ms-appx:///Assets/Flags/" + countryCode + ".ico");
         else
             return new Uri("ms-appx:///Assets/Flags/_unknown.ico");
@@ -62,7 +62,7 @@ static class LanguageCodes
 
     public static BitmapImage GetCountryFlagImage(string languageCode)
     {
-        if (flagImages.TryGetValue(languageCode, out BitmapImage countryFlagImage))
+        if (flagImages.TryGetValue(languageCode, out BitmapImage? countryFlagImage))
             return countryFlagImage;
         else
         {

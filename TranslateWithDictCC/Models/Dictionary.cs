@@ -4,28 +4,15 @@ namespace TranslateWithDictCC.Models;
 
 class Dictionary
 {
-    public int ID { get; set; }
+    public required int ID { get; set; }
 
-    public string OriginLanguageCode { get; set; }
+    public required string OriginLanguageCode { get; set; }
 
-    public string DestinationLanguageCode { get; set; }
+    public required string DestinationLanguageCode { get; set; }
 
-    public DateTimeOffset CreationDate { get; set; }
+    public required DateTimeOffset CreationDate { get; set; }
 
-    public int NumberOfEntries { get; set; }
+    public required int NumberOfEntries { get; set; }
 
-    public Version AppVersionWhenCreated { get; set; }
-
-    public Dictionary()
-    {
-    }
-
-    public Dictionary(string originLanguageCode, string destinationLanguageCode, DateTimeOffset creationDate, int numberOfEntries, Version appVersionWhenCreated)
-    {
-        OriginLanguageCode = originLanguageCode;
-        DestinationLanguageCode = destinationLanguageCode;
-        CreationDate = creationDate;
-        NumberOfEntries = numberOfEntries;
-        AppVersionWhenCreated = appVersionWhenCreated;
-    }
+    public Version? AppVersionWhenCreated { get; set; }
 }

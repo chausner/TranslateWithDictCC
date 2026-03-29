@@ -27,9 +27,9 @@ public sealed partial class MainPage : Page
 
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
-        SearchContext searchContext = null;
+        SearchContext? searchContext = null;
 
-        string launchArguments = e.Parameter as string;
+        string? launchArguments = e.Parameter as string;
 
         if (!string.IsNullOrEmpty(launchArguments))
         {
@@ -38,7 +38,7 @@ public sealed partial class MainPage : Page
                 string originLanguageCode = launchArguments.Substring(5, 2);
                 string destinationLanguageCode = launchArguments.Substring(7, 2);
 
-                DirectionViewModel directionViewModel =
+                DirectionViewModel? directionViewModel =
                     SearchResultsViewModel.Instance.AvailableDirections.FirstOrDefault(
                         dvm => dvm.OriginLanguageCode == originLanguageCode && dvm.DestinationLanguageCode == destinationLanguageCode);
 
@@ -69,14 +69,14 @@ public sealed partial class MainPage : Page
     private void NavigateToPage(object pageTypeAndParameter, NavigationTransitionInfo transitionInfo)
     {           
         string pageType;
-        object parameter;
+        object? parameter;
 
         if (pageTypeAndParameter is string s)
         {
             pageType = s;
             parameter = null;
         }
-        else if (pageTypeAndParameter is Tuple<string, object> t)
+        else if (pageTypeAndParameter is Tuple<string, object?> t)
         {
             pageType = t.Item1;
             parameter = t.Item2;

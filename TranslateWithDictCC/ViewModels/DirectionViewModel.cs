@@ -23,7 +23,7 @@ class DirectionViewModel
         ReverseSearch = reverseSearch;
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         if (obj is DirectionViewModel other)
             return OriginLanguageCode == other.OriginLanguageCode && DestinationLanguageCode == other.DestinationLanguageCode;
@@ -36,7 +36,7 @@ class DirectionViewModel
         return unchecked(7 * OriginLanguageCode.GetHashCode() + DestinationLanguageCode.GetHashCode());
     }
 
-    public bool EqualsReversed(DirectionViewModel directionViewModel)
+    public bool EqualsReversed(DirectionViewModel? directionViewModel)
     {
         if (directionViewModel == null)
             return false;

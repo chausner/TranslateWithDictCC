@@ -17,14 +17,37 @@ namespace TranslateWithDictCC;
 
 partial class WordlistReader : IDisposable
 {
-    StorageFile wordlistFile;
-    StreamReader streamReader;
-    ZipArchive zipArchive;
+    readonly StorageFile wordlistFile;
+    StreamReader? streamReader;
+    ZipArchive? zipArchive;
     long uncompressedSize;
 
     private bool IsOpen => streamReader != null;
-    public string OriginLanguageCode { get; private set; }
-    public string DestinationLanguageCode { get; private set; }
+
+    public string OriginLanguageCode 
+    { 
+        get
+        {
+            if (!IsOpen)
+                throw new InvalidOperationException("ReadHeader must be called first");
+
+            return field;
+        }
+        private set; 
+    } 
+
+    public string DestinationLanguageCode
+    {
+        get
+        {
+            if (!IsOpen)
+                throw new InvalidOperationException("ReadHeader must be called first");
+
+            return field;
+        }
+        private set;
+    }
+
     public DateTimeOffset CreationDate { get; private set; }
 
     [GeneratedRegex("^# ([A-Z]{2})-([A-Z]{2}) vocabulary database")]
@@ -40,7 +63,7 @@ partial class WordlistReader : IDisposable
 
     private async Task Open()
     {
-        Stream stream = null;
+        Stream? stream = null;
 
         try
         {
@@ -50,7 +73,7 @@ partial class WordlistReader : IDisposable
             {
                 zipArchive = new ZipArchive(stream, ZipArchiveMode.Read, false);
 
-                ZipArchiveEntry wordlistFile = zipArchive.Entries.SingleOrDefault(
+                ZipArchiveEntry? wordlistFile = zipArchive.Entries.SingleOrDefault(
                     entry => Path.GetExtension(entry.FullName).Equals(".txt", StringComparison.OrdinalIgnoreCase));
 
                 if (wordlistFile == null)
@@ -82,7 +105,7 @@ partial class WordlistReader : IDisposable
 
         await Open();
 
-        string line = await streamReader.ReadLineAsync();
+        string line = await streamReader!.ReadLineAsync() ?? string.Empty;
 
         Match match = HeaderRegex().Match(line);
 
@@ -92,7 +115,7 @@ partial class WordlistReader : IDisposable
         OriginLanguageCode = match.Groups[1].Value;
         DestinationLanguageCode = match.Groups[2].Value;
 
-        line = await streamReader.ReadLineAsync();
+        line = await streamReader.ReadLineAsync() ?? string.Empty;
 
         if (line.StartsWith("# Date and time\t") &&
             DateTime.TryParseExact(line[16..], "yyyy-MM-dd HH\\:mm", CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out DateTime creationDate))
@@ -111,7 +134,7 @@ partial class WordlistReader : IDisposable
 
         while (true)
         {
-            string line = await streamReader.ReadLineAsync(cancellationToken);
+            string? line = await streamReader!.ReadLineAsync(cancellationToken);
 
             if (line == null)
                 break;
@@ -155,9 +178,9 @@ partial class WordlistReader : IDisposable
                 return 0.0;
 
             if (zipArchive == null)
-                return (double)streamReader.BaseStream.Position / streamReader.BaseStream.Length;
+                return (double)streamReader!.BaseStream.Position / streamReader.BaseStream.Length;
             else
-                return (double)streamReader.BaseStream.Position / uncompressedSize;
+                return (double)streamReader!.BaseStream.Position / uncompressedSize;
         }
     }
 
