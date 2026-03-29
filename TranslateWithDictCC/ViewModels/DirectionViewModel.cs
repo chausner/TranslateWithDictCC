@@ -1,4 +1,5 @@
 ﻿using Microsoft.UI.Xaml.Media.Imaging;
+using System;
 using TranslateWithDictCC.Models;
 
 namespace TranslateWithDictCC.ViewModels;
@@ -33,7 +34,7 @@ class DirectionViewModel
 
     public override int GetHashCode()
     {
-        return unchecked(7 * OriginLanguageCode.GetHashCode() + DestinationLanguageCode.GetHashCode());
+        return HashCode.Combine(OriginLanguageCode, DestinationLanguageCode);
     }
 
     public bool EqualsReversed(DirectionViewModel? directionViewModel)
