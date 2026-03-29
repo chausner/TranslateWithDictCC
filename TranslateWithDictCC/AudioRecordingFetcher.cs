@@ -74,7 +74,9 @@ static partial class AudioRecordingFetcher
 
     private static Uri GetSearchPageUri(string originLanguageCode, string destinationLanguageCode, string searchQuery)
     {
-        KeyValuePair<string, string>[] urlParameters = { new KeyValuePair<string, string>("s", searchQuery) };
+        KeyValuePair<string, string>[] urlParameters = [
+            new KeyValuePair<string, string>("s", searchQuery)
+        ];
 
         string encodedParameters = new HttpFormUrlEncodedContent(urlParameters).ReadAsStringAsync().AsTask().Result;
 
@@ -83,12 +85,12 @@ static partial class AudioRecordingFetcher
 
     private static Uri GetAudioRecordingUri(int id, string originLanguageCode, string destinationLanguageCode, string recordingLanguageCode)
     {
-        KeyValuePair<string, string>[] urlParameters = {
+        KeyValuePair<string, string>[] urlParameters = [
             new KeyValuePair<string, string>("type", "mp3"),
             new KeyValuePair<string, string>("id", Convert.ToString(id)),
             new KeyValuePair<string, string>("lang", string.Format("{0}_rec_ip", recordingLanguageCode.ToLower())),
             new KeyValuePair<string, string>("lp", originLanguageCode.ToUpper() + destinationLanguageCode.ToUpper())
-        };
+        ];
 
         string encodedParameters = new HttpFormUrlEncodedContent(urlParameters).ReadAsStringAsync().AsTask().Result;
 
@@ -100,26 +102,26 @@ static partial class AudioRecordingFetcher
         Match match = IDsRegex().Match(html);
 
         if (!match.Success)
-            return Array.Empty<DictCCSearchResult>();
+            return [];
 
         int[] ids = match.Groups[1].Captures.Cast<Capture>().Select(capture => Convert.ToInt32(capture.Value)).ToArray();
 
         match = Words1Regex().Match(html);
 
         if (!match.Success)
-            return Array.Empty<DictCCSearchResult>();
+            return [];
 
         string[] words1 = match.Groups[2].Captures.Cast<Capture>().Select(capture => capture.Value).ToArray();
 
         match = Words2Regex().Match(html);
 
         if (!match.Success)
-            return Array.Empty<DictCCSearchResult>();
+            return [];
 
         string[] words2 = match.Groups[2].Captures.Cast<Capture>().Select(capture => capture.Value).ToArray();
 
         if (ids.Length != words1.Length || ids.Length != words2.Length)
-            return Array.Empty<DictCCSearchResult>();
+            return [];
 
         DictCCSearchResult[] results = new DictCCSearchResult[ids.Length];
 

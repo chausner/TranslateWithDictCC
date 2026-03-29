@@ -14,7 +14,7 @@ class SearchResultsViewModel : ViewModel
 {
     public static readonly SearchResultsViewModel Instance = new SearchResultsViewModel();
 
-    DirectionViewModel[] availableDirections = Array.Empty<DirectionViewModel>();
+    DirectionViewModel[] availableDirections = [];
 
     public DirectionViewModel[] AvailableDirections
     {
