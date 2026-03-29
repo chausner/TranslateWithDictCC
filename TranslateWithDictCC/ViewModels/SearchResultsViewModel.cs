@@ -18,32 +18,32 @@ class SearchResultsViewModel : ViewModel
 
     public DirectionViewModel[] AvailableDirections
     {
-        get { return availableDirections; }
-        set { SetProperty(ref availableDirections, value); }
+        get => availableDirections;
+        set => SetProperty(ref availableDirections, value);
     }
 
     DirectionViewModel? selectedDirection = null;
 
     public DirectionViewModel? SelectedDirection
     {
-        get { return selectedDirection; }
-        set { SetProperty(ref selectedDirection, value); }
+        get => selectedDirection;
+        set => SetProperty(ref selectedDirection, value);
     }
 
     IReadOnlyList<DictionaryEntryViewModel> dictionaryEntries = Array.Empty<DictionaryEntryViewModel>();
 
     public IReadOnlyList<DictionaryEntryViewModel> DictionaryEntries
     {
-        get { return dictionaryEntries; }
-        private set { SetProperty(ref dictionaryEntries, value); }
+        get => dictionaryEntries;
+        private set => SetProperty(ref dictionaryEntries, value);
     }
 
     bool isSearchInProgress;
 
     public bool IsSearchInProgress
     {
-        get { return isSearchInProgress; }
-        set { SetProperty(ref isSearchInProgress, value); }
+        get => isSearchInProgress;
+        set => SetProperty(ref isSearchInProgress, value);
     }
 
     public ObservableCollection<SearchSuggestionViewModel> SearchSuggestions { get; }
@@ -52,8 +52,8 @@ class SearchResultsViewModel : ViewModel
 
     public bool IsOutdatedDictionariesInfoBarShown
     {
-        get { return isOutdatedDictionariesInfoBarShown; }
-        set { SetProperty(ref isOutdatedDictionariesInfoBarShown, value); }
+        get => isOutdatedDictionariesInfoBarShown;
+        set => SetProperty(ref isOutdatedDictionariesInfoBarShown, value);
     }
 
     public ICommand SwitchDirectionOfTranslationCommand { get; }

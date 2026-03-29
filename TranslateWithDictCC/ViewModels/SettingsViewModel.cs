@@ -26,28 +26,16 @@ class SettingsViewModel : ViewModel
 
     public Visibility RestartAppTextBlockVisibility
     {
-        get
-        {
-            return restartAppTextBlockVisibility;
-        }
-        private set
-        {
-            SetProperty(ref restartAppTextBlockVisibility, value);
-        }
+        get => restartAppTextBlockVisibility;
+        private set => SetProperty(ref restartAppTextBlockVisibility, value);
     }
 
     Visibility outdatedDictionariesInfoBarVisibility;
 
     public Visibility OutdatedDictionariesInfoBarVisibility
     {
-        get
-        {
-            return outdatedDictionariesInfoBarVisibility;
-        }
-        private set
-        {
-            SetProperty(ref outdatedDictionariesInfoBarVisibility, value);
-        }
+        get => outdatedDictionariesInfoBarVisibility;
+        private set => SetProperty(ref outdatedDictionariesInfoBarVisibility, value);
     }
 
     public ICommand ImportDictionaryCommand { get; }
@@ -181,10 +169,10 @@ class SettingsViewModel : ViewModel
 
         string content = resourceLoader.GetString("Import_Conflict_Body1");
         content += "\r\n\r\n";
-        content += string.Format(resourceLoader.GetString("Import_Conflict_Body2"), 
+        content += string.Format(resourceLoader.GetString("Import_Conflict_Body2"),
             conflictingDictionary.OriginLanguage, conflictingDictionary.DestinationLanguage, dateTimeFormatter.Format(conflictingDictionary.CreationDate));
         content += "\r\n";
-        content += string.Format(resourceLoader.GetString("Import_Conflict_Body3"), 
+        content += string.Format(resourceLoader.GetString("Import_Conflict_Body3"),
             conflictingDictionary.OriginLanguage, conflictingDictionary.DestinationLanguage, dateTimeFormatter.Format(wordlistReader.CreationDate));
 
         ContentDialog contentDialog = new ContentDialog()

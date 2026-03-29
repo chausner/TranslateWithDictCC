@@ -10,8 +10,8 @@ class MainViewModel : ViewModel
 
     public bool ShowNoDictionaryInstalledTeachingTip
     {
-        get { return showNoDictionaryInstalledTeachingTip; }
-        set { SetProperty(ref showNoDictionaryInstalledTeachingTip, value); }
+        get => showNoDictionaryInstalledTeachingTip;
+        set => SetProperty(ref showNoDictionaryInstalledTeachingTip, value);
     }
 
     public bool NoDictionaryInstalledTeachingTipShown { get; set; }

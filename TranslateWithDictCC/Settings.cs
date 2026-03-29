@@ -45,10 +45,7 @@ class Settings : ViewModel
 
     public bool CaseSensitiveSearch
     {
-        get
-        {
-            return caseSensitiveSearch;
-        }
+        get => caseSensitiveSearch;
         set
         {
             if (value != caseSensitiveSearch)
@@ -63,10 +60,7 @@ class Settings : ViewModel
 
     public bool ShowWordClasses
     {
-        get
-        {
-            return showWordClasses;
-        }
+        get => showWordClasses;
         set
         {
             if (value != showWordClasses)
@@ -81,10 +75,7 @@ class Settings : ViewModel
 
     public bool ShowSubjects
     {
-        get
-        {
-            return showSubjects;
-        }
+        get => showSubjects;
         set
         {
             if (value != showSubjects)
@@ -99,10 +90,7 @@ class Settings : ViewModel
 
     public ElementTheme AppTheme
     {
-        get
-        {
-            return appTheme;
-        }
+        get => appTheme;
         set
         {
             if (value != appTheme)
@@ -117,10 +105,7 @@ class Settings : ViewModel
 
     public bool OutdatedDictionariesNoticeRead
     {
-        get
-        {
-            return outdatedDictionariesNoticeRead;
-        }
+        get => outdatedDictionariesNoticeRead;
         set
         {
             if (value != outdatedDictionariesNoticeRead)

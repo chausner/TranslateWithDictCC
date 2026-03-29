@@ -26,56 +26,56 @@ class DictionaryViewModel : ViewModel
 
     public int NumberOfEntries
     {
-        get { return numberOfEntries; }
-        set { SetProperty(ref numberOfEntries, value); }
+        get => numberOfEntries;
+        set => SetProperty(ref numberOfEntries, value);
     }
 
     DictionaryStatus status;
 
     public DictionaryStatus Status
     {
-        get { return status; }
-        set { SetProperty(ref status, value); }
+        get => status;
+        set => SetProperty(ref status, value);
     }
 
     string statusText = string.Empty;
 
     public string StatusText
     {
-        get { return statusText; }
-        set { SetProperty(ref statusText, value); }
+        get => statusText;
+        set => SetProperty(ref statusText, value);
     }
 
     double importProgress;
 
     public double ImportProgress
     {
-        get { return importProgress; }
-        set { SetProperty(ref importProgress, value); }
+        get => importProgress;
+        set => SetProperty(ref importProgress, value);
     }
 
     Visibility progressBarVisibility;
 
     public Visibility ProgressBarVisibility
     {
-        get { return progressBarVisibility; }
-        set { SetProperty(ref progressBarVisibility, value); }
+        get => progressBarVisibility;
+        set => SetProperty(ref progressBarVisibility, value);
     }
 
     Visibility abortImportButtonVisibility;
 
     public Visibility AbortImportButtonVisibility
     {
-        get { return abortImportButtonVisibility; }
-        set { SetProperty(ref abortImportButtonVisibility, value); }
+        get => abortImportButtonVisibility;
+        set => SetProperty(ref abortImportButtonVisibility, value);
     }
 
     Visibility removeDictionaryButtonVisibility;
 
     public Visibility RemoveDictionaryButtonVisibility
     {
-        get { return removeDictionaryButtonVisibility; }
-        set { SetProperty(ref removeDictionaryButtonVisibility, value); }
+        get => removeDictionaryButtonVisibility;
+        set => SetProperty(ref removeDictionaryButtonVisibility, value);
     }
 
     public Dictionary? Dictionary { get; set; }

@@ -22,16 +22,16 @@ partial class DictionaryEntryViewModel : ViewModel
 
     public AudioRecordingState AudioRecordingState1
     {
-        get { return audioRecordingState1; }
-        set { SetProperty(ref audioRecordingState1, value); }
+        get => audioRecordingState1;
+        set => SetProperty(ref audioRecordingState1, value);
     }
 
     AudioRecordingState audioRecordingState2;
 
     public AudioRecordingState AudioRecordingState2
     {
-        get { return audioRecordingState2; }
-        set { SetProperty(ref audioRecordingState2, value); }
+        get => audioRecordingState2;
+        set => SetProperty(ref audioRecordingState2, value);
     }
 
     Block? word1;

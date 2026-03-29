@@ -22,38 +22,20 @@ class StreamPositionWrapper : Stream
 
     public override long Position
     {
-        get
-        {
-            return position;
-        }
-        set
-        {
-            throw new NotSupportedException();
-        }
+        get => position;
+        set => throw new NotSupportedException();
     }
 
     public override int ReadTimeout
     {
-        get
-        {
-            return stream.ReadTimeout;
-        }
-        set
-        {
-            stream.ReadTimeout = value;
-        }
+        get => stream.ReadTimeout;
+        set => stream.ReadTimeout = value;
     }
 
     public override int WriteTimeout
     {
-        get
-        {
-            return stream.WriteTimeout;
-        }
-        set
-        {
-            stream.WriteTimeout = value;
-        }
+        get => stream.WriteTimeout;
+        set => stream.WriteTimeout = value;
     }
 
     public StreamPositionWrapper(Stream stream, long position = 0)
