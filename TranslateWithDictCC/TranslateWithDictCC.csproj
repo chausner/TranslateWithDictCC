@@ -11,6 +11,7 @@
     <AssemblyVersion>2.1.1.0</AssemblyVersion>
     <FileVersion>2.1.1.0</FileVersion>
     <Nullable>enable</Nullable>
+    <NeutralLanguage>en-US</NeutralLanguage>
   </PropertyGroup>
   <ItemGroup>
     <Content Include="Assets\AboutLogo.png" />
