@@ -1,10 +1,11 @@
-﻿using Microsoft.UI.Xaml;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Documents;
 using TranslateWithDictCC.Models;
 
 namespace TranslateWithDictCC.ViewModels;
 
-class SearchSuggestionViewModel : ViewModel
+class SearchSuggestionViewModel : ObservableObject
 {
     public DictionaryEntry DictionaryEntry { get; }
     public SearchContext SearchContext { get; }

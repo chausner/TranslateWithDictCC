@@ -1,4 +1,6 @@
-﻿using Microsoft.UI.Xaml;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Windows.ApplicationModel.Resources;
 using System;
@@ -16,7 +18,7 @@ using Windows.Storage.Pickers;
 
 namespace TranslateWithDictCC.ViewModels;
 
-class SettingsViewModel : ViewModel
+class SettingsViewModel : ObservableObject
 {
     public static readonly SettingsViewModel Instance = new SettingsViewModel();
 

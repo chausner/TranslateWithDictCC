@@ -1,8 +1,9 @@
-﻿using System.Windows.Input;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System.Windows.Input;
 
 namespace TranslateWithDictCC.ViewModels;
 
-class MainViewModel : ViewModel
+class MainViewModel : ObservableObject
 {
     public static readonly MainViewModel Instance = new MainViewModel();
 

@@ -1,4 +1,6 @@
-﻿using Microsoft.UI.Xaml;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
@@ -13,7 +15,7 @@ using TranslateWithDictCC.Models;
 
 namespace TranslateWithDictCC.ViewModels;
 
-partial class DictionaryEntryViewModel : ViewModel
+partial class DictionaryEntryViewModel : ObservableObject
 {
     public DictionaryEntry DictionaryEntry { get; }
     public SearchContext SearchContext { get; }

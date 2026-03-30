@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -10,7 +12,7 @@ using Windows.UI.StartScreen;
 
 namespace TranslateWithDictCC.ViewModels;
 
-class SearchResultsViewModel : ViewModel
+class SearchResultsViewModel : ObservableObject
 {
     public static readonly SearchResultsViewModel Instance = new SearchResultsViewModel();
 

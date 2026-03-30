@@ -1,4 +1,6 @@
-﻿using Microsoft.UI.Xaml;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.Windows.ApplicationModel.Resources;
 using System;
@@ -7,7 +9,7 @@ using TranslateWithDictCC.Models;
 
 namespace TranslateWithDictCC.ViewModels;
 
-class DictionaryViewModel : ViewModel
+class DictionaryViewModel : ObservableObject
 {
     public string OriginLanguageCode { get; } = null!;
     public string DestinationLanguageCode { get; } = null!;

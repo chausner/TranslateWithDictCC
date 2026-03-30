@@ -1,12 +1,12 @@
-﻿using Microsoft.UI.Xaml;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.UI.Xaml;
 using System;
-using TranslateWithDictCC.ViewModels;
 using Windows.Foundation.Collections;
 using Windows.Storage;
 
 namespace TranslateWithDictCC;
 
-class Settings : ViewModel
+class Settings : ObservableObject
 {
     public static readonly Settings Instance = new Settings();
 

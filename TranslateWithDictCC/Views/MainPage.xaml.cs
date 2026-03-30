@@ -1,4 +1,5 @@
-﻿using Microsoft.UI.Input;
+﻿using CommunityToolkit.Mvvm.Input;
+using Microsoft.UI.Input;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
@@ -19,8 +20,8 @@ public sealed partial class MainPage : Page
 
         rootGrid.DataContext = MainViewModel.Instance;
 
-        ViewModel.NavigateToPageCommand = new RelayCommand<object>(o => NavigateToPage(o, new SuppressNavigationTransitionInfo()));
-        ViewModel.GoBackToPageCommand = new RelayCommand<string>(o => GoBackToPage(o, new SuppressNavigationTransitionInfo()));
+        ViewModel.NavigateToPageCommand = new RelayCommand<object>(o => NavigateToPage(o!, new SuppressNavigationTransitionInfo()));
+        ViewModel.GoBackToPageCommand = new RelayCommand<string>(o => GoBackToPage(o!, new SuppressNavigationTransitionInfo()));
 
         PointerPressed += MainPage_PointerPressed;
     }
