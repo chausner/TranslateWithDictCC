@@ -52,7 +52,7 @@ static partial class WordHighlighting
 
     public static Block GenerateRichTextBlock(string word, TextSpan[] matchSpans, bool highlightQuery)
     {
-        TextSpan[] annotationSpans = GetAnnotationSpans(word);
+        IReadOnlyList<TextSpan> annotationSpans = GetAnnotationSpans(word);
 
         Paragraph paragraph = new Paragraph();
 
@@ -86,12 +86,10 @@ static partial class WordHighlighting
         return paragraph;
     }
 
-    private static IReadOnlyList<TextSpan> MergeSpans(TextSpan[] matchSpans, string word)
+    private static IEnumerable<TextSpan> MergeSpans(TextSpan[] matchSpans, string word)
     {
         if (matchSpans.Length == 0)
-            return Array.Empty<TextSpan>();
-
-        List<TextSpan> mergedSpans = new List<TextSpan>(matchSpans.Length);
+            yield break;
 
         TextSpan currentSpan = matchSpans[0];
 
@@ -111,17 +109,15 @@ static partial class WordHighlighting
                 currentSpan.Length = matchSpans[i].Offset + matchSpans[i].Length - currentSpan.Offset;
             else
             {
-                mergedSpans.Add(currentSpan);
+                yield return currentSpan;
                 currentSpan = matchSpans[i];
             }
         }
 
-        mergedSpans.Add(currentSpan);
-
-        return mergedSpans;
+        yield return currentSpan;
     }
 
-    private static void GenerateRun(Paragraph paragraph, string word, int offset, int length, TextSpan[] annotationSpans)
+    private static void GenerateRun(Paragraph paragraph, string word, int offset, int length, IReadOnlyList<TextSpan> annotationSpans)
     {
         IEnumerable<TextSpan> affectedAnnotationSpans =
             annotationSpans
@@ -165,7 +161,7 @@ static partial class WordHighlighting
         paragraph.Inlines.Add(run);
     }
 
-    private static void GenerateQueryHighlight(Paragraph paragraph, string word, TextSpan[] annotationSpans, TextSpan span)
+    private static void GenerateQueryHighlight(Paragraph paragraph, string word, IReadOnlyList<TextSpan> annotationSpans, TextSpan span)
     {
         Rectangle rectangle = new Rectangle() { RadiusX = 4, RadiusY = 4, Fill = queryHighlightBrush };
         TextBlock textBlock = new TextBlock() { Text = word.Substring(span.Offset, span.Length) };
@@ -205,17 +201,19 @@ static partial class WordHighlighting
         textBlock.FontWeight = FontWeights.Medium;
     }
 
-    private static TextSpan[] GetAnnotationSpans(string word)
+    private static IReadOnlyList<TextSpan> GetAnnotationSpans(string word)
     {
-        return AnnotationsRegex().Matches(word)
-            .Cast<Match>()
-            .Select(match => new TextSpan(match.Index, match.Length))
-            .ToArray();
+        List<TextSpan> annotationSpans = [];
+
+        foreach (var match in AnnotationsRegex().EnumerateMatches(word))
+            annotationSpans.Add(new TextSpan(match.Index, match.Length));
+
+        return annotationSpans;
     }
 
     public static string RemoveAnnotations(string word)
     {
-        TextSpan[] annotationSpans = GetAnnotationSpans(word);
+        IReadOnlyList<TextSpan> annotationSpans = GetAnnotationSpans(word);
 
         StringBuilder wordWithoutAnnotations = new StringBuilder(word);
 
