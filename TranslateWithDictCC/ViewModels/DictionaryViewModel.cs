@@ -22,60 +22,46 @@ class DictionaryViewModel : ViewModel
 
     public string CreationDateShort => CreationDate.ToString("dd/MM/yyyy");
 
-    int numberOfEntries;
-
     public int NumberOfEntries
     {
-        get => numberOfEntries;
-        set => SetProperty(ref numberOfEntries, value);
+        get;
+        set => SetProperty(ref field, value);
     }
-
-    DictionaryStatus status;
 
     public DictionaryStatus Status
     {
-        get => status;
-        set => SetProperty(ref status, value);
+        get;
+        set => SetProperty(ref field, value);
     }
-
-    string statusText = string.Empty;
 
     public string StatusText
     {
-        get => statusText;
-        set => SetProperty(ref statusText, value);
-    }
-
-    double importProgress;
+        get;
+        set => SetProperty(ref field, value);
+    } = string.Empty;
 
     public double ImportProgress
     {
-        get => importProgress;
-        set => SetProperty(ref importProgress, value);
+        get;
+        set => SetProperty(ref field, value);
     }
-
-    Visibility progressBarVisibility;
 
     public Visibility ProgressBarVisibility
     {
-        get => progressBarVisibility;
-        set => SetProperty(ref progressBarVisibility, value);
+        get;
+        set => SetProperty(ref field, value);
     }
-
-    Visibility abortImportButtonVisibility;
 
     public Visibility AbortImportButtonVisibility
     {
-        get => abortImportButtonVisibility;
-        set => SetProperty(ref abortImportButtonVisibility, value);
+        get;
+        set => SetProperty(ref field, value);
     }
-
-    Visibility removeDictionaryButtonVisibility;
 
     public Visibility RemoveDictionaryButtonVisibility
     {
-        get => removeDictionaryButtonVisibility;
-        set => SetProperty(ref removeDictionaryButtonVisibility, value);
+        get;
+        set => SetProperty(ref field, value);
     }
 
     public Dictionary? Dictionary { get; set; }

@@ -14,46 +14,36 @@ class SearchResultsViewModel : ViewModel
 {
     public static readonly SearchResultsViewModel Instance = new SearchResultsViewModel();
 
-    DirectionViewModel[] availableDirections = [];
-
     public DirectionViewModel[] AvailableDirections
     {
-        get => availableDirections;
-        set => SetProperty(ref availableDirections, value);
-    }
-
-    DirectionViewModel? selectedDirection = null;
+        get;
+        set => SetProperty(ref field, value);
+    } = [];
 
     public DirectionViewModel? SelectedDirection
     {
-        get => selectedDirection;
-        set => SetProperty(ref selectedDirection, value);
-    }
-
-    IReadOnlyList<DictionaryEntryViewModel> dictionaryEntries = Array.Empty<DictionaryEntryViewModel>();
+        get;
+        set => SetProperty(ref field, value);
+    } = null;
 
     public IReadOnlyList<DictionaryEntryViewModel> DictionaryEntries
     {
-        get => dictionaryEntries;
-        private set => SetProperty(ref dictionaryEntries, value);
-    }
-
-    bool isSearchInProgress;
+        get;
+        private set => SetProperty(ref field, value);
+    } = Array.Empty<DictionaryEntryViewModel>();
 
     public bool IsSearchInProgress
     {
-        get => isSearchInProgress;
-        set => SetProperty(ref isSearchInProgress, value);
+        get;
+        set => SetProperty(ref field, value);
     }
 
     public ObservableCollection<SearchSuggestionViewModel> SearchSuggestions { get; }
 
-    bool isOutdatedDictionariesInfoBarShown;
-
     public bool IsOutdatedDictionariesInfoBarShown
     {
-        get => isOutdatedDictionariesInfoBarShown;
-        set => SetProperty(ref isOutdatedDictionariesInfoBarShown, value);
+        get;
+        set => SetProperty(ref field, value);
     }
 
     public ICommand SwitchDirectionOfTranslationCommand { get; }
@@ -121,7 +111,7 @@ class SearchResultsViewModel : ViewModel
         if (SelectedDirection == null)
             return;
 
-        SelectedDirection = AvailableDirections.First(dvm => dvm.EqualsReversed(selectedDirection));
+        SelectedDirection = AvailableDirections.First(dvm => dvm.EqualsReversed(SelectedDirection));
     }
 
     private bool CanSwitchDirectionOfTranslation()
@@ -136,11 +126,11 @@ class SearchResultsViewModel : ViewModel
 
     private async Task<List<DictionaryEntry>> PerformQueryInner(string searchQuery, bool dontSearchInBothDirections)
     {
-        List<DictionaryEntry> results = await DatabaseManager.Instance.QueryEntries(selectedDirection!.Dictionary, searchQuery, selectedDirection.ReverseSearch);
+        List<DictionaryEntry> results = await DatabaseManager.Instance.QueryEntries(SelectedDirection!.Dictionary, searchQuery, SelectedDirection.ReverseSearch);
 
         if (results.Count == 0 && !dontSearchInBothDirections)
         {
-            results = await DatabaseManager.Instance.QueryEntries(selectedDirection.Dictionary, searchQuery, !selectedDirection.ReverseSearch);
+            results = await DatabaseManager.Instance.QueryEntries(SelectedDirection.Dictionary, searchQuery, !SelectedDirection.ReverseSearch);
 
             if (results.Count != 0)
                 SwitchDirectionOfTranslation();
@@ -148,7 +138,7 @@ class SearchResultsViewModel : ViewModel
 
         await Task.Run(delegate ()
         {
-            results.Sort(new DictionaryEntryComparer(searchQuery, selectedDirection.ReverseSearch));
+            results.Sort(new DictionaryEntryComparer(searchQuery, SelectedDirection.ReverseSearch));
         });
 
         return results;
@@ -179,7 +169,7 @@ class SearchResultsViewModel : ViewModel
                 await searchTask;
             }
 
-            SearchContext searchContext = new SearchContext(searchQuery, selectedDirection!, dontSearchInBothDirections);
+            SearchContext searchContext = new SearchContext(searchQuery, SelectedDirection!, dontSearchInBothDirections);
 
             List<DictionaryEntry> results = searchTask.Result;
 

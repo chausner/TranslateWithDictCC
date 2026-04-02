@@ -18,46 +18,44 @@ partial class DictionaryEntryViewModel : ViewModel
     public DictionaryEntry DictionaryEntry { get; }
     public SearchContext SearchContext { get; }
 
-    AudioRecordingState audioRecordingState1;
-
     public AudioRecordingState AudioRecordingState1
     {
-        get => audioRecordingState1;
-        set => SetProperty(ref audioRecordingState1, value);
+        get;
+        set => SetProperty(ref field, value);
     }
-
-    AudioRecordingState audioRecordingState2;
 
     public AudioRecordingState AudioRecordingState2
     {
-        get => audioRecordingState2;
-        set => SetProperty(ref audioRecordingState2, value);
+        get;
+        set => SetProperty(ref field, value);
     }
 
-    Block? word1;
-    Block? word2;
     List<UIElement>? attributes;
 
     public Block Word1
     {
         get
         {
-            if (word1 == null)
+            if (field == null)
                 Initialize();
 
-            return word1!;
+            return field!;
         }
+
+        private set;
     }
 
     public Block Word2
     {
         get
         {
-            if (word2 == null)
+            if (field == null)
                 Initialize();
 
-            return word2!;
+            return field!;
         }
+
+        private set;
     }
 
     public IReadOnlyList<UIElement> Attributes
@@ -94,8 +92,8 @@ partial class DictionaryEntryViewModel : ViewModel
     private void Initialize()
     {
         bool reverseSearch = SearchContext.SelectedDirection.ReverseSearch;
-        word1 = WordHighlighting.GenerateRichTextBlock(reverseSearch ? DictionaryEntry.Word2 : DictionaryEntry.Word1, DictionaryEntry.MatchSpans!, true);
-        word2 = WordHighlighting.GenerateRichTextBlock(reverseSearch ? DictionaryEntry.Word1 : DictionaryEntry.Word2, DictionaryEntry.MatchSpans!, false);
+        Word1 = WordHighlighting.GenerateRichTextBlock(reverseSearch ? DictionaryEntry.Word2 : DictionaryEntry.Word1, DictionaryEntry.MatchSpans!, true);
+        Word2 = WordHighlighting.GenerateRichTextBlock(reverseSearch ? DictionaryEntry.Word1 : DictionaryEntry.Word2, DictionaryEntry.MatchSpans!, false);
 
         Brush wordClassesBorderBackground = (Brush)Application.Current.Resources["DictionaryEntryWordClassesThemeBrush"];
         double wordClassesFontSize = (double)Application.Current.Resources["wordFontSize"];

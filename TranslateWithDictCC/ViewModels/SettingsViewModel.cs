@@ -22,20 +22,16 @@ class SettingsViewModel : ViewModel
 
     public ObservableCollection<DictionaryViewModel> Dictionaries { get; }
 
-    Visibility restartAppTextBlockVisibility;
-
     public Visibility RestartAppTextBlockVisibility
     {
-        get => restartAppTextBlockVisibility;
-        private set => SetProperty(ref restartAppTextBlockVisibility, value);
+        get;
+        private set => SetProperty(ref field, value);
     }
-
-    Visibility outdatedDictionariesInfoBarVisibility;
 
     public Visibility OutdatedDictionariesInfoBarVisibility
     {
-        get => outdatedDictionariesInfoBarVisibility;
-        private set => SetProperty(ref outdatedDictionariesInfoBarVisibility, value);
+        get;
+        private set => SetProperty(ref field, value);
     }
 
     public ICommand ImportDictionaryCommand { get; }

@@ -6,12 +6,10 @@ class MainViewModel : ViewModel
 {
     public static readonly MainViewModel Instance = new MainViewModel();
 
-    bool showNoDictionaryInstalledTeachingTip;
-
     public bool ShowNoDictionaryInstalledTeachingTip
     {
-        get => showNoDictionaryInstalledTeachingTip;
-        set => SetProperty(ref showNoDictionaryInstalledTeachingTip, value);
+        get;
+        set => SetProperty(ref field, value);
     }
 
     public bool NoDictionaryInstalledTeachingTipShown { get; set; }
