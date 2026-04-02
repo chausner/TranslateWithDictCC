@@ -140,13 +140,15 @@ partial class DictionaryEntryViewModel : ViewModel
 
     public IconElement GetMoreButtonIcon(AudioRecordingState state)
     {
-        return state switch
+        Symbol symbol = state switch
         {
-            AudioRecordingState.Available => new IconSourceElement() { IconSource = new SymbolIconSource() { Symbol = Symbol.More } },
-            AudioRecordingState.Playing => new IconSourceElement() { IconSource = new SymbolIconSource() { Symbol = Symbol.Pause } }, // Symbol.Stop
-            AudioRecordingState.Unavailable => new IconSourceElement() { IconSource = new SymbolIconSource() { Symbol = Symbol.More } },
+            AudioRecordingState.Available => Symbol.More,
+            AudioRecordingState.Playing => Symbol.Pause, // Symbol.Stop
+            AudioRecordingState.Unavailable => Symbol.More,
             _ => throw new ArgumentException()
         };
+
+        return new IconSourceElement() { IconSource = new SymbolIconSource() { Symbol = symbol } };
     }
 
     public Visibility GetWordClassVisibility(string wordClasses)
