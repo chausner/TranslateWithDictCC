@@ -30,6 +30,7 @@ partial class DictionaryEntryViewModel : ViewModel
     }
 
     List<UIElement>? attributes;
+    static readonly List<UIElement> emptyAttributes = [];
 
     public Block Word1
     {
@@ -97,7 +98,7 @@ partial class DictionaryEntryViewModel : ViewModel
         Brush wordClassesBorderBackground = (Brush)Application.Current.Resources["DictionaryEntryWordClassesThemeBrush"];
         double wordClassesFontSize = (double)Application.Current.Resources["wordFontSize"];
 
-        attributes = new List<UIElement>();
+        attributes = emptyAttributes;
 
         void AddAttribute(string text, string? toolTipText = null)
         {
@@ -109,11 +110,11 @@ partial class DictionaryEntryViewModel : ViewModel
                 border.Margin = new Thickness(5, 0, 0, 0);
             border.Child = new TextBlock() { Text = text, FontSize = wordClassesFontSize };
             if (toolTipText != null)
-            {
-                ToolTip toolTip = new ToolTip();
-                toolTip.Content = toolTipText;
-                ToolTipService.SetToolTip(border, toolTip);
-            }
+                ToolTipService.SetToolTip(border, toolTipText);
+
+            if (attributes == emptyAttributes)
+                attributes = new List<UIElement>();
+
             attributes.Add(border);
         };
 
