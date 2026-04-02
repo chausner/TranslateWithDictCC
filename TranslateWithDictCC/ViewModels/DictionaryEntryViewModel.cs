@@ -5,7 +5,6 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.Windows.ApplicationModel.Resources;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -123,13 +122,12 @@ partial class DictionaryEntryViewModel : ViewModel
 
         if (Settings.Instance.ShowSubjects && DictionaryEntry.Subjects != null && SubjectInfo.Instance.IsLoaded)
         {
-            IEnumerable<string> subjectStrings =
-                SubjectsRegex().Matches(DictionaryEntry.Subjects)
-                .Cast<Match>()
-                .Select(match => match.Groups[1].Value);
+            var subjectMatches = SubjectsRegex().EnumerateMatches(DictionaryEntry.Subjects);
 
-            foreach (string subjectString in subjectStrings)
+            foreach (ValueMatch subjectMatch in subjectMatches)
             {
+                string subjectString = DictionaryEntry.Subjects.Substring(subjectMatch.Index + 1, subjectMatch.Length - 2);
+
                 string? description = SubjectInfo.Instance.GetSubjectDescription(SearchContext.SelectedDirection.OriginLanguageCode, SearchContext.SelectedDirection.DestinationLanguageCode, subjectString);
 
                 if (description != null)
