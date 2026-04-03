@@ -65,25 +65,21 @@
                     <ColumnDefinition />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <Border Grid.ColumnSpan="4" Margin="-12,2,-8,2" CornerRadius="4" />
-                <CommandBar Grid.Column="0" Margin="-9,0,-4,0" VerticalAlignment="Center">
-                    <AppBarButton LabelPosition="Collapsed" Width="42" VerticalAlignment="Center" Icon="{x:Bind GetMoreButtonIcon(AudioRecordingState1), Mode=OneWay}" Margin="-4,0,4,0"
-                                  Click="MoreButton1_Click" />
-                </CommandBar>
+                <Border x:Name="RowBackgroundBorder" Grid.ColumnSpan="4" Margin="-12,2,-8,2" CornerRadius="4" />
+                <AppBarButton Grid.Column="0" Width="42" VerticalAlignment="Center" LabelPosition="Collapsed" Icon="{x:Bind GetMoreButtonIcon(AudioRecordingState1), Mode=OneWay}"
+                              Click="MoreButton1_Click" />
 
                 <Grid Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="0,8,8,8">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <RichTextBlock Grid.Column="0" VerticalAlignment="Center" Margin="0,0,8,0" FontSize="{StaticResource wordFontSize}" />
-                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Orientation="Horizontal" />
+                    <RichTextBlock x:Name="Word1RichTextBlock" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,8,0" FontSize="{StaticResource wordFontSize}" />
+                    <StackPanel x:Name="AttributesPanel" Grid.Column="1" VerticalAlignment="Center" Orientation="Horizontal" />
                 </Grid>
-                <RichTextBlock Grid.Column="2" VerticalAlignment="Center" Margin="0,8,0,8" FontSize="{StaticResource wordFontSize}" />
-                <CommandBar Grid.Column="3" Margin="-4,0,-9,0" VerticalAlignment="Center">
-                    <AppBarButton LabelPosition="Collapsed" Width="42" VerticalAlignment="Center" Icon="{x:Bind GetMoreButtonIcon(AudioRecordingState2), Mode=OneWay}" Margin="-4,0,4,0"
-                                  Click="MoreButton2_Click" />
-                </CommandBar>
+                <RichTextBlock x:Name="Word2RichTextBlock" Grid.Column="2" VerticalAlignment="Center" Margin="0,8,0,8" FontSize="{StaticResource wordFontSize}" />
+                <AppBarButton Grid.Column="3" Width="42" VerticalAlignment="Center" LabelPosition="Collapsed" Icon="{x:Bind GetMoreButtonIcon(AudioRecordingState2), Mode=OneWay}"
+                              Click="MoreButton2_Click" />
             </Grid>
         </DataTemplate>        
         <Storyboard x:Name="resultCountAnimation">
@@ -127,7 +123,7 @@
         
         <ListView Grid.Row="2" ItemsSource="{x:Bind ViewModel.DictionaryEntries, Mode=OneWay}" ItemTemplate="{StaticResource DictionaryEntryDataTemplate}"
                   HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" ContainerContentChanging="ListView_ContainerContentChanging"
-                  ShowsScrollingPlaceholders="False" />
+                  SelectionMode="None" ShowsScrollingPlaceholders="False" />
         <ProgressBar Grid.Row="2" IsIndeterminate="{x:Bind ViewModel.IsSearchInProgress, Mode=OneWay}" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="12"
                                  Background="Transparent" />
 

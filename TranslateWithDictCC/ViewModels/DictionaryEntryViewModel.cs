@@ -1,7 +1,5 @@
-﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Documents;
-using Microsoft.UI.Xaml.Media;
 using Microsoft.Windows.ApplicationModel.Resources;
 using System;
 using System.Collections.Generic;
@@ -11,6 +9,8 @@ using System.Windows.Input;
 using TranslateWithDictCC.Models;
 
 namespace TranslateWithDictCC.ViewModels;
+
+sealed record DictionaryEntryAttribute(string Text, string? ToolTipText);
 
 partial class DictionaryEntryViewModel : ViewModel
 {
@@ -29,10 +29,9 @@ partial class DictionaryEntryViewModel : ViewModel
         set => SetProperty(ref field, value);
     }
 
-    List<UIElement>? attributes;
-    static readonly List<UIElement> emptyAttributes = [];
+    List<DictionaryEntryAttribute>? attributes;
 
-    public Block Word1
+    public FormattedWord Word1
     {
         get
         {
@@ -45,7 +44,7 @@ partial class DictionaryEntryViewModel : ViewModel
         private set;
     }
 
-    public Block Word2
+    public FormattedWord Word2
     {
         get
         {
@@ -58,7 +57,7 @@ partial class DictionaryEntryViewModel : ViewModel
         private set;
     }
 
-    public IReadOnlyList<UIElement> Attributes
+    public IReadOnlyList<DictionaryEntryAttribute> Attributes
     {
         get
         {
@@ -92,34 +91,13 @@ partial class DictionaryEntryViewModel : ViewModel
     private void Initialize()
     {
         bool reverseSearch = SearchContext.SelectedDirection.ReverseSearch;
-        Word1 = WordHighlighting.GenerateRichTextBlock(reverseSearch ? DictionaryEntry.Word2 : DictionaryEntry.Word1, DictionaryEntry.MatchSpans!, true);
-        Word2 = WordHighlighting.GenerateRichTextBlock(reverseSearch ? DictionaryEntry.Word1 : DictionaryEntry.Word2, DictionaryEntry.MatchSpans!, false);
+        Word1 = WordHighlighting.FormatWord(reverseSearch ? DictionaryEntry.Word2 : DictionaryEntry.Word1, DictionaryEntry.MatchSpans!, true);
+        Word2 = WordHighlighting.FormatWord(reverseSearch ? DictionaryEntry.Word1 : DictionaryEntry.Word2, DictionaryEntry.MatchSpans!, false);
 
-        Brush wordClassesBorderBackground = (Brush)Application.Current.Resources["DictionaryEntryWordClassesThemeBrush"];
-        double wordClassesFontSize = (double)Application.Current.Resources["wordFontSize"];
-
-        attributes = emptyAttributes;
-
-        void AddAttribute(string text, string? toolTipText = null)
-        {
-            Border border = new Border();
-            border.CornerRadius = new CornerRadius(4);
-            border.Padding = new Thickness(5, 2, 5, 2);
-            border.Background = wordClassesBorderBackground;
-            if (attributes.Count != 0)
-                border.Margin = new Thickness(5, 0, 0, 0);
-            border.Child = new TextBlock() { Text = text, FontSize = wordClassesFontSize };
-            if (toolTipText != null)
-                ToolTipService.SetToolTip(border, toolTipText);
-
-            if (attributes == emptyAttributes)
-                attributes = new List<UIElement>();
-
-            attributes.Add(border);
-        };
+        attributes = [];
 
         if (Settings.Instance.ShowWordClasses && DictionaryEntry.WordClasses != null)
-            AddAttribute(DictionaryEntry.WordClasses);
+            attributes.Add(new DictionaryEntryAttribute(DictionaryEntry.WordClasses, null));
 
         if (Settings.Instance.ShowSubjects && DictionaryEntry.Subjects != null && SubjectInfo.Instance.IsLoaded)
         {
@@ -132,7 +110,7 @@ partial class DictionaryEntryViewModel : ViewModel
                 string? description = SubjectInfo.Instance.GetSubjectDescription(SearchContext.SelectedDirection.OriginLanguageCode, SearchContext.SelectedDirection.DestinationLanguageCode, subjectString);
 
                 if (description != null)
-                    AddAttribute(subjectString, description);
+                    attributes.Add(new DictionaryEntryAttribute(subjectString, description));
             }
         }
     }

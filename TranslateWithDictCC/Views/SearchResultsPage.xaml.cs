@@ -1,11 +1,11 @@
-﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Microsoft.Windows.ApplicationModel.Resources;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using TranslateWithDictCC.ViewModels;
@@ -15,9 +15,21 @@ namespace TranslateWithDictCC.Views;
 
 public sealed partial class SearchResultsPage : Page
 {
+    private sealed class DictionaryEntryTemplateParts
+    {
+        public required Border BackgroundBorder { get; init; }
+        public required RichTextBlock Word1RichTextBlock { get; init; }
+        public required RichTextBlock Word2RichTextBlock { get; init; }
+        public required StackPanel AttributesPanel { get; init; }
+    }
+
     SearchResultsViewModel ViewModel => SearchResultsViewModel.Instance;
 
     Settings Settings => Settings.Instance;
+
+    readonly SolidColorBrush altBackgroundThemeBrush = (SolidColorBrush)Application.Current.Resources["DictionaryEntryAltBackgroundThemeBrush"];
+    readonly Brush wordClassesBorderBackground = (Brush)Application.Current.Resources["DictionaryEntryWordClassesThemeBrush"];
+    readonly double wordClassesFontSize = (double)Application.Current.Resources["wordFontSize"];
 
     string? lastQuery;
 
@@ -96,12 +108,12 @@ public sealed partial class SearchResultsPage : Page
         RichTextBlock richTextBlock = (RichTextBlock)sender;
         SearchSuggestionViewModel? searchSuggestionViewModel = args.NewValue as SearchSuggestionViewModel;
 
-        richTextBlock.Blocks.Clear();
+        WordHighlighting.ClearRichTextBlockContent(richTextBlock);
 
         if (searchSuggestionViewModel == null)
             return;
 
-        richTextBlock.Blocks.Add(searchSuggestionViewModel.Word);
+        WordHighlighting.SetRichTextBlockContent(richTextBlock, searchSuggestionViewModel.Word);
     }
 
     private void directionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -213,55 +225,116 @@ public sealed partial class SearchResultsPage : Page
         }
     }
 
-    readonly SolidColorBrush altBackgroundThemeBrush = (SolidColorBrush)Application.Current.Resources["DictionaryEntryAltBackgroundThemeBrush"];
-
     private void ListView_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
     {
-        void SetRichTextBlockContent(RichTextBlock richTextBlock, Block word)
+        if (args.ItemContainer.ContentTemplateRoot is not Grid templateRoot)
+            return;
+
+        DictionaryEntryTemplateParts templateParts = GetTemplateParts(templateRoot);
+
+        if (args.InRecycleQueue)
         {
-            if (richTextBlock.Blocks.Count == 0)
-                richTextBlock.Blocks.Add(word);
-            else
-            {
-                if (richTextBlock.Blocks[0] == word)
-                {
-                    // clearing Blocks helps working around a bug with RichTextBlock when reusing Block elements
-                    richTextBlock.Blocks.Clear();
-                    return;
-                }
-                
-                richTextBlock.Blocks[0] = word;
-            }
+            WordHighlighting.ClearRichTextBlockContent(templateParts.Word1RichTextBlock);
+            WordHighlighting.ClearRichTextBlockContent(templateParts.Word2RichTextBlock);
+            ClearAttributes(templateParts.AttributesPanel);
+            return;
         }
+
+        args.Handled = true;
 
         DictionaryEntryViewModel viewModel = (DictionaryEntryViewModel)args.Item;
 
-        Grid templateRoot = (Grid)args.ItemContainer.ContentTemplateRoot;
-        Grid grid = (Grid)templateRoot.Children[2];
-        RichTextBlock word1RichTextBlock = (RichTextBlock)grid.Children[0];
-        RichTextBlock word2RichTextBlock = (RichTextBlock)templateRoot.Children[3];
-
-        SetRichTextBlockContent(word1RichTextBlock, viewModel.Word1);
-        SetRichTextBlockContent(word2RichTextBlock, viewModel.Word2);
-
-        StackPanel stackPanel = (StackPanel)grid.Children[1];
-        stackPanel.Children.Clear();
-        foreach (UIElement element in viewModel.Attributes)
+        switch (args.Phase)
         {
-            // it can happen that the UIElement is still part of another (no longer visible) ListView container
-            // in this case, we must remove it first from the old container before we may add it again
-            StackPanel parent = (StackPanel)VisualTreeHelper.GetParent(element);
-            if (parent != null)
-                parent.Children.Remove(element);
-            
-            stackPanel.Children.Add(element);
-        }
+            case 0:
+                if (args.ItemIndex % 2 == 0)
+                    templateParts.BackgroundBorder.ClearValue(Border.BackgroundProperty);
+                else
+                    templateParts.BackgroundBorder.Background = altBackgroundThemeBrush;
 
-        Border border = (Border)templateRoot.Children[0];
-        if (args.ItemIndex % 2 == 0)
-            border.ClearValue(Border.BackgroundProperty);
-        else
-            border.Background = altBackgroundThemeBrush;
+                WordHighlighting.ClearRichTextBlockContent(templateParts.Word1RichTextBlock);
+                WordHighlighting.ClearRichTextBlockContent(templateParts.Word2RichTextBlock);
+                ClearAttributes(templateParts.AttributesPanel);
+
+                args.RegisterUpdateCallback(ListView_ContainerContentChanging);
+                break;
+
+            case 1:
+                WordHighlighting.SetRichTextBlockContent(templateParts.Word1RichTextBlock, viewModel.Word1);
+                args.RegisterUpdateCallback(ListView_ContainerContentChanging);
+                break;
+
+            case 2:
+                WordHighlighting.SetRichTextBlockContent(templateParts.Word2RichTextBlock, viewModel.Word2);
+
+                if (viewModel.Attributes.Count != 0)
+                    args.RegisterUpdateCallback(ListView_ContainerContentChanging);
+                break;
+
+            case 3:
+                SetAttributes(templateParts.AttributesPanel, viewModel.Attributes);
+                break;
+        }
+    }
+
+    private static DictionaryEntryTemplateParts GetTemplateParts(Grid templateRoot)
+    {
+        if (templateRoot.Tag is DictionaryEntryTemplateParts templateParts)
+            return templateParts;
+
+        templateParts = new DictionaryEntryTemplateParts()
+        {
+            BackgroundBorder = (Border)templateRoot.FindName("RowBackgroundBorder"),
+            Word1RichTextBlock = (RichTextBlock)templateRoot.FindName("Word1RichTextBlock"),
+            Word2RichTextBlock = (RichTextBlock)templateRoot.FindName("Word2RichTextBlock"),
+            AttributesPanel = (StackPanel)templateRoot.FindName("AttributesPanel")
+        };
+
+        templateRoot.Tag = templateParts;
+        return templateParts;
+    }
+
+    private static void ClearAttributes(StackPanel attributesPanel)
+    {
+        attributesPanel.Tag = null;
+        attributesPanel.Children.Clear();
+    }
+
+    private void SetAttributes(StackPanel attributesPanel, IReadOnlyList<DictionaryEntryAttribute> attributes)
+    {
+        if (ReferenceEquals(attributesPanel.Tag, attributes))
+            return;
+
+        ClearAttributes(attributesPanel);
+
+        for (int i = 0; i < attributes.Count; i++)
+            attributesPanel.Children.Add(CreateAttributeElement(attributes[i], i != 0));
+
+        attributesPanel.Tag = attributes;
+    }
+
+    private UIElement CreateAttributeElement(DictionaryEntryAttribute attribute, bool hasLeftMargin)
+    {
+        Border border = new Border()
+        {
+            Background = wordClassesBorderBackground,
+            CornerRadius = new CornerRadius(4),
+            Padding = new Thickness(5, 2, 5, 2)
+        };
+
+        if (hasLeftMargin)
+            border.Margin = new Thickness(5, 0, 0, 0);
+
+        border.Child = new TextBlock()
+        {
+            FontSize = wordClassesFontSize,
+            Text = attribute.Text
+        };
+
+        if (attribute.ToolTipText != null)
+            ToolTipService.SetToolTip(border, attribute.ToolTipText);
+
+        return border;
     }
 
     private void hideResultCountButton_Click(object sender, RoutedEventArgs e)
