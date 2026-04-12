@@ -1,5 +1,4 @@
 ﻿using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Documents;
 using TranslateWithDictCC.Models;
 
 namespace TranslateWithDictCC.ViewModels;
@@ -9,7 +8,7 @@ class SearchSuggestionViewModel : ViewModel
     public DictionaryEntry DictionaryEntry { get; }
     public SearchContext SearchContext { get; }
 
-    public Block Word
+    public FormattedWord Word
     {
         get
         {
@@ -39,7 +38,7 @@ class SearchSuggestionViewModel : ViewModel
     private void Initialize()
     {
         bool reverseSearch = SearchContext.SelectedDirection.ReverseSearch;
-        Word = WordHighlighting.GenerateRichTextBlock(reverseSearch ? DictionaryEntry.Word2 : DictionaryEntry.Word1, DictionaryEntry.MatchSpans!, false);
+        Word = WordHighlighting.FormatWord(reverseSearch ? DictionaryEntry.Word2 : DictionaryEntry.Word1, DictionaryEntry.MatchSpans!, false);
     }
 
     public Visibility GetWordClassVisibility(string wordClasses)

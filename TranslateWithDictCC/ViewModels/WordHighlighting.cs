@@ -3,7 +3,6 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Shapes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,11 +13,30 @@ using TranslateWithDictCC.Models;
 
 namespace TranslateWithDictCC.ViewModels;
 
+class FormattedWord
+{
+    public IReadOnlyList<FormattedWordFragment> Fragments { get; }
+
+    public FormattedWord(IReadOnlyList<FormattedWordFragment> fragments)
+    {
+        Fragments = fragments;
+    }
+}
+
+readonly record struct FormattedWordFragment(string Text, FormattedWordFragmentKind Kind);
+
+enum FormattedWordFragmentKind
+{
+    Normal,
+    Annotation,
+    QueryHighlight,
+    QueryHighlightAnnotation
+}
+
 static partial class WordHighlighting
 {
     static SolidColorBrush annotationBrush = null!;
     static SolidColorBrush queryHighlightBrush = null!;
-
 
     [GeneratedRegex(@"(\{.*?\})|(\[.*?\])|(\<.*?\>)")]
     private static partial Regex AnnotationsRegex();
@@ -50,11 +68,10 @@ static partial class WordHighlighting
             SetBrushes();
     }
 
-    public static Block GenerateRichTextBlock(string word, TextSpan[] matchSpans, bool highlightQuery)
+    public static FormattedWord FormatWord(string word, TextSpan[] matchSpans, bool highlightQuery)
     {
         IReadOnlyList<TextSpan> annotationSpans = GetAnnotationSpans(word);
-
-        Paragraph paragraph = new Paragraph();
+        List<FormattedWordFragment> fragments = [];
 
         TextSpan lastSpan = new TextSpan();
 
@@ -69,10 +86,9 @@ static partial class WordHighlighting
                 betweenLength = span.Offset - betweenOffset;
 
                 if (betweenLength != 0)
-                    GenerateRun(paragraph, word, betweenOffset, betweenLength, annotationSpans);
+                    AddTextFragments(fragments, word, betweenOffset, betweenLength, annotationSpans);
 
-                GenerateQueryHighlight(paragraph, word, annotationSpans, span);
-
+                AddQueryHighlightFragment(fragments, word, annotationSpans, span);
                 lastSpan = span;
             }
         }
@@ -81,7 +97,33 @@ static partial class WordHighlighting
         betweenLength = word.Length - betweenOffset;
 
         if (betweenLength != 0)
-            GenerateRun(paragraph, word, betweenOffset, betweenLength, annotationSpans);
+            AddTextFragments(fragments, word, betweenOffset, betweenLength, annotationSpans);
+
+        return new FormattedWord(fragments);
+    }
+
+    public static void SetRichTextBlockContent(RichTextBlock richTextBlock, FormattedWord formattedWord)
+    {
+        if (ReferenceEquals(richTextBlock.Tag, formattedWord))
+            return;
+
+        richTextBlock.Tag = formattedWord;
+        richTextBlock.Blocks.Clear();
+        richTextBlock.Blocks.Add(CreateParagraph(formattedWord));
+    }
+
+    public static void ClearRichTextBlockContent(RichTextBlock richTextBlock)
+    {
+        richTextBlock.Tag = null;
+        richTextBlock.Blocks.Clear();
+    }
+
+    private static Paragraph CreateParagraph(FormattedWord formattedWord)
+    {
+        Paragraph paragraph = new Paragraph();
+
+        foreach (FormattedWordFragment fragment in formattedWord.Fragments)
+            paragraph.Inlines.Add(CreateInline(fragment));
 
         return paragraph;
     }
@@ -117,68 +159,93 @@ static partial class WordHighlighting
         yield return currentSpan;
     }
 
-    private static void GenerateRun(Paragraph paragraph, string word, int offset, int length, IReadOnlyList<TextSpan> annotationSpans)
+    private static Inline CreateInline(FormattedWordFragment fragment)
     {
-        IEnumerable<TextSpan> affectedAnnotationSpans =
-            annotationSpans
-            .Where(span => span.Intersects(new TextSpan(offset, length)))
-            .Select(span => new TextSpan(Math.Max(span.Offset, offset), Math.Min(span.Offset + span.Length, offset + length) - Math.Max(span.Offset, offset)));
-
-        TextSpan lastSpan = new TextSpan(offset, 0);
-
-        int betweenOffset;
-        int betweenLength;
-
-        foreach (TextSpan span in affectedAnnotationSpans)
+        return fragment.Kind switch
         {
-            betweenOffset = lastSpan.Offset + lastSpan.Length;
-            betweenLength = span.Offset - betweenOffset;
-
-            if (betweenLength != 0)
-                AddRun(paragraph, word, betweenOffset, betweenLength, false);
-
-            AddRun(paragraph, word, span.Offset, span.Length, true);
-
-            lastSpan = span;
-        }
-
-        betweenOffset = lastSpan.Offset + lastSpan.Length;
-        betweenLength = offset + length - betweenOffset;
-
-        if (betweenLength != 0)
-            AddRun(paragraph, word, betweenOffset, betweenLength, false);
+            FormattedWordFragmentKind.Normal => CreateRun(fragment.Text, annotation: false),
+            FormattedWordFragmentKind.Annotation => CreateRun(fragment.Text, annotation: true),
+            FormattedWordFragmentKind.QueryHighlight => CreateQueryHighlightInline(fragment.Text, annotation: false),
+            FormattedWordFragmentKind.QueryHighlightAnnotation => CreateQueryHighlightInline(fragment.Text, annotation: true),
+            _ => throw new ArgumentOutOfRangeException()
+        };
     }
 
-    private static void AddRun(Paragraph paragraph, string word, int offset, int length, bool annotation)
+    private static void AddTextFragments(List<FormattedWordFragment> fragments, string word, int offset, int length, IReadOnlyList<TextSpan> annotationSpans)
     {
-        Run run = new Run() { Text = word.Substring(offset, length) };
+        int endOffset = offset + length;
+        int currentOffset = offset;
+
+        foreach (TextSpan annotationSpan in annotationSpans.Where(span => span.Intersects(new TextSpan(offset, length))))
+        {
+            int annotationOffset = Math.Max(annotationSpan.Offset, offset);
+            int annotationLength = Math.Min(annotationSpan.Offset + annotationSpan.Length, endOffset) - annotationOffset;
+
+            if (annotationOffset > currentOffset)
+                AddFragment(fragments, word, currentOffset, annotationOffset - currentOffset, FormattedWordFragmentKind.Normal);
+
+            AddFragment(fragments, word, annotationOffset, annotationLength, FormattedWordFragmentKind.Annotation);
+            currentOffset = annotationOffset + annotationLength;
+        }
+
+        if (currentOffset < endOffset)
+            AddFragment(fragments, word, currentOffset, endOffset - currentOffset, FormattedWordFragmentKind.Normal);
+    }
+
+    private static void AddQueryHighlightFragment(List<FormattedWordFragment> fragments, string word, IReadOnlyList<TextSpan> annotationSpans, TextSpan span)
+    {
+        bool annotation = annotationSpans.Any(annotationSpan => annotationSpan.Contains(span));
+        AddFragment(fragments, word, span.Offset, span.Length, annotation ? FormattedWordFragmentKind.QueryHighlightAnnotation : FormattedWordFragmentKind.QueryHighlight);
+    }
+
+    private static void AddFragment(List<FormattedWordFragment> fragments, string word, int offset, int length, FormattedWordFragmentKind kind)
+    {
+        if (length == 0)
+            return;
+
+        string text = word.Substring(offset, length);
+
+        if (fragments.Count != 0 && fragments[^1].Kind == kind)
+        {
+            FormattedWordFragment lastFragment = fragments[^1];
+            fragments[^1] = new FormattedWordFragment(lastFragment.Text + text, kind);
+        }
+        else
+            fragments.Add(new FormattedWordFragment(text, kind));
+    }
+
+    private static Run CreateRun(string text, bool annotation)
+    {
+        Run run = new Run() { Text = text };
 
         if (annotation)
             ApplyAnnotationStyle(run);
         else
             ApplyQueryHighlightStyle(run);
 
-        paragraph.Inlines.Add(run);
+        return run;
     }
 
-    private static void GenerateQueryHighlight(Paragraph paragraph, string word, IReadOnlyList<TextSpan> annotationSpans, TextSpan span)
+    private static InlineUIContainer CreateQueryHighlightInline(string text, bool annotation)
     {
-        Rectangle rectangle = new Rectangle() { RadiusX = 4, RadiusY = 4, Fill = queryHighlightBrush };
-        TextBlock textBlock = new TextBlock() { Text = word.Substring(span.Offset, span.Length) };
-        textBlock.Margin = new Thickness(4, 0, 4, 0);
+        TextBlock textBlock = new TextBlock() { Text = text };
 
-        if (annotationSpans.Any(annotationSpan => annotationSpan.Contains(span)))
+        if (annotation)
             ApplyAnnotationStyle(textBlock);
         else
             ApplyQueryHighlightStyle(textBlock);
 
-        Grid grid = new Grid();
-        grid.Children.Add(rectangle);
-        grid.Children.Add(textBlock);
-        grid.Margin = new Thickness(0, -4, 0, 0);
-        grid.RenderTransform = new TranslateTransform() { Y = 4 };
+        Border border = new Border()
+        {
+            Background = queryHighlightBrush,
+            CornerRadius = new CornerRadius(4),
+            Padding = new Thickness(4, 0, 4, 0),
+            Child = textBlock,
+            Margin = new Thickness(0, -4, 0, 0),
+            RenderTransform = new TranslateTransform() { Y = 4 }
+        };
 
-        paragraph.Inlines.Add(new InlineUIContainer() { Child = grid });
+        return new InlineUIContainer() { Child = border };
     }
 
     private static void ApplyAnnotationStyle(Run run)
