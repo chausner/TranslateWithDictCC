@@ -1,5 +1,5 @@
 ﻿param(
-    [string]$OutputPath = (Join-Path $PSScriptRoot "TranslateWithDictCC\Assets\Subjects.json")
+    [string]$OutputPath = (Join-Path $PSScriptRoot "..\TranslateWithDictCC\Assets\Subjects.json")
 )
 
 $ErrorActionPreference = "Stop"

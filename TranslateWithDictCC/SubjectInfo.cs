@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Frozen;
 using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -10,7 +11,7 @@ class SubjectInfo
 {
     public static SubjectInfo Instance { get; } = new SubjectInfo();
 
-    JsonDocument? subjectInfoJson;
+    FrozenDictionary<string, JsonElement>? subjects;
 
     private SubjectInfo()
     {
@@ -25,25 +26,32 @@ class SubjectInfo
 
         using Stream stream = await storageFile.OpenStreamForReadAsync();
 
-        subjectInfoJson = await JsonDocument.ParseAsync(stream);
+        JsonDocument subjectsJson = await JsonDocument.ParseAsync(stream);
+
+        subjects = subjectsJson!.RootElement.EnumerateArray().ToFrozenDictionary(jsonElement => jsonElement.GetProperty("EN").GetProperty("subject").GetString()!);
     }
 
-    public string? GetSubjectDescription(string originLanguageCode, string destinationLanguageCode, string subject)
+    public (string LocalizedSubject, string Description)? LookupSubject(string originLanguageCode, string destinationLanguageCode, string subject)
     {
         if (!IsLoaded)
             throw new InvalidOperationException("Subjects have not been loaded yet");
 
-        JsonElement subjectsOfLanguagePair;
-
-        if (!subjectInfoJson!.RootElement.TryGetProperty(originLanguageCode + destinationLanguageCode, out subjectsOfLanguagePair) &&
-            !subjectInfoJson.RootElement.TryGetProperty(destinationLanguageCode + originLanguageCode, out subjectsOfLanguagePair))
+        if (!subjects!.TryGetValue(subject, out JsonElement subjectInfo))
             return null;
 
-        if (!subjectsOfLanguagePair.TryGetProperty(subject, out JsonElement description))
+        if (!subjectInfo.TryGetProperty(originLanguageCode, out JsonElement subjectInOriginLanguage))
             return null;
 
-        return description.GetString();
+        if (!subjectInfo.TryGetProperty(destinationLanguageCode, out JsonElement subjectInDestinationLanguage))
+            return null;
+
+        string localizedSubject = subjectInOriginLanguage.GetProperty("subject").GetString()!;
+        string originDescription = subjectInOriginLanguage.GetProperty("description").GetString()!;
+        string destinationDescription = subjectInDestinationLanguage.GetProperty("description").GetString()!;
+        string description = originDescription + " / " + destinationDescription;
+
+        return (localizedSubject, description);
     }
 
-    public bool IsLoaded => subjectInfoJson != null;
+    public bool IsLoaded => subjects != null;
 }
