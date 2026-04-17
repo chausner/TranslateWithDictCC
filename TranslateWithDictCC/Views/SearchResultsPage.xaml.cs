@@ -7,6 +7,7 @@ using Microsoft.Windows.ApplicationModel.Resources;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
 using TranslateWithDictCC.ViewModels;
 using Windows.System;
@@ -139,6 +140,11 @@ public sealed partial class SearchResultsPage : Page
     {
         if (!directionComboBox.IsDropDownOpen)
             directionComboBox.Tag = directionComboBox.ActualWidth;
+    }
+
+    private void subjectTokenView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        ViewModel.UpdateSubjectFilter(subjectTokenView.SelectedItems.OfType<SubjectViewModel>());
     }
 
     private void PerformQuery(bool dontSearchInBothDirections = false)

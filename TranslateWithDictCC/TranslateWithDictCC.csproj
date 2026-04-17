@@ -45,6 +45,7 @@
     <Content Include="Licences\GoSquared Flag Icon Set.txt" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Labs.WinUI.Controls.TokenView" Version="0.1.251217-build.2433" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.2.251219" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.5" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.260317003" />

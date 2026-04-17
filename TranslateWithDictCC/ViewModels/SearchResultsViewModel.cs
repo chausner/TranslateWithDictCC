@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Microsoft.UI.Xaml.Data;
 using TranslateWithDictCC.Models;
 using Windows.UI.StartScreen;
 
@@ -15,8 +14,9 @@ class SearchResultsViewModel : ViewModel
 {
     public static readonly SearchResultsViewModel Instance = new SearchResultsViewModel();
 
-    SearchContext searchContext;
-    List<DictionaryEntry> results;
+    SearchContext? searchContext;
+    List<DictionaryEntry> results = [];
+    readonly HashSet<string> activeSubjectFilters = new HashSet<string>(StringComparer.Ordinal);
 
     public DirectionViewModel[] AvailableDirections
     {
@@ -52,8 +52,8 @@ class SearchResultsViewModel : ViewModel
 
     public ObservableCollection<SubjectViewModel> Subjects { get; }
 
-	public ICommand SwitchDirectionOfTranslationCommand { get; }
-	public ICommand GoToOptionsCommand { get; }
+    public ICommand SwitchDirectionOfTranslationCommand { get; }
+    public ICommand GoToOptionsCommand { get; }
 
     readonly SemaphoreSlim querySemaphore = new SemaphoreSlim(1);
 
@@ -179,6 +179,7 @@ class SearchResultsViewModel : ViewModel
             searchContext = new SearchContext(searchQuery, SelectedDirection!, dontSearchInBothDirections);
 
             results = searchTask.Result;
+            activeSubjectFilters.Clear();
 
             DictionaryEntries = new LazyCollection<DictionaryEntry, DictionaryEntryViewModel>(
                 results, entry => new DictionaryEntryViewModel(entry, searchContext));
@@ -196,9 +197,7 @@ class SearchResultsViewModel : ViewModel
             {
                 string? description = SubjectInfo.Instance.GetSubjectDescription(SelectedDirection!.OriginLanguageCode, SelectedDirection.DestinationLanguageCode, grouping.Key);
 
-                SubjectViewModel viewModel = new SubjectViewModel(grouping.Count(), grouping.Key, description);
-                viewModel.PropertyChanged += SubjectViewModel_PropertyChanged;
-                Subjects.Add(viewModel);
+                Subjects.Add(new SubjectViewModel(grouping.Count(), grouping.Key, description));
             }
         }
         finally
@@ -209,34 +208,30 @@ class SearchResultsViewModel : ViewModel
         }
     }
 
-    private void SubjectViewModel_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    public void UpdateSubjectFilter(IEnumerable<SubjectViewModel> selectedSubjects)
     {
-        if (e.PropertyName == nameof(SubjectViewModel.IsFilterActive))
-        {
-            UpdateSubjectFilter();
-        }            
+        activeSubjectFilters.Clear();
+
+        foreach (SubjectViewModel subject in selectedSubjects)
+            activeSubjectFilters.Add(subject.Subject);
+
+        ApplySubjectFilter();
     }
 
-    private void UpdateSubjectFilter()
+    private void ApplySubjectFilter()
     {
         if (querySemaphore.Wait(0))
         {
             try
             {
-                if (results != null)
+                if (searchContext != null)
                 {
                     List<DictionaryEntry> filteredResults;
 
-                    if (Subjects.All(subjects => !subjects.IsFilterActive))
+                    if (activeSubjectFilters.Count == 0)
                         filteredResults = results;
                     else
                     {
-                        string[] activeSubjectFilters =
-                            Subjects
-                            .Where(subject => subject.IsFilterActive)
-                            .Select(subject => subject.Subject)
-                            .ToArray();
-
                         bool MatchesFilter(DictionaryEntry entry)
                         {
                             if (string.IsNullOrEmpty(entry.Subjects))

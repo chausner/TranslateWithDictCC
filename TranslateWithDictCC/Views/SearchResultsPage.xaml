@@ -2,6 +2,7 @@
     x:Class="TranslateWithDictCC.Views.SearchResultsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:CommunityToolkit.WinUI.Controls"
     xmlns:local="using:TranslateWithDictCC"
     xmlns:viewmodels="using:TranslateWithDictCC.ViewModels"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -122,23 +123,17 @@
             </InfoBar.ActionButton>
         </InfoBar>
 
-        <ItemsView Grid.Row="2" Margin="8,0,8,8" ItemsSource="{x:Bind ViewModel.Subjects}">
-            <ItemsView.ItemTemplate>
+        <controls:TokenView Name="subjectTokenView" Grid.Row="2" Margin="8,0,8,8" IsWrapped="True"
+                            ItemsSource="{x:Bind ViewModel.Subjects}" SelectionMode="Multiple" SelectionChanged="subjectTokenView_SelectionChanged">
+            <controls:TokenView.ItemTemplate>
                 <DataTemplate x:DataType="viewmodels:SubjectViewModel">
-                    <ItemContainer>
-                        <ToggleButton IsChecked="{x:Bind IsFilterActive, Mode=TwoWay}" ToolTipService.ToolTip="{x:Bind Description}">
-                            <StackPanel Orientation="Horizontal">
-                                <InfoBadge Value="{x:Bind Count}" Margin="0,0,8,0" Foreground="White" Background="Gray" />
-                                <TextBlock Text="{x:Bind Subject}" />
-                            </StackPanel>
-                        </ToggleButton>
-                    </ItemContainer>
+                    <StackPanel Orientation="Horizontal" ToolTipService.ToolTip="{x:Bind Description}">
+                        <InfoBadge Value="{x:Bind Count}" Margin="0,0,8,0" Foreground="White" Background="Gray" />
+                        <TextBlock Text="{x:Bind Subject}" />
+                    </StackPanel>
                 </DataTemplate>
-            </ItemsView.ItemTemplate>
-            <ItemsView.Layout>
-                <StackLayout Orientation="Horizontal" Spacing="8" />
-            </ItemsView.Layout>
-        </ItemsView>
+            </controls:TokenView.ItemTemplate>
+        </controls:TokenView>
 
         <ListView Grid.Row="3" ItemsSource="{x:Bind ViewModel.DictionaryEntries, Mode=OneWay}" ItemTemplate="{StaticResource DictionaryEntryDataTemplate}"
                   HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" ContainerContentChanging="ListView_ContainerContentChanging"
