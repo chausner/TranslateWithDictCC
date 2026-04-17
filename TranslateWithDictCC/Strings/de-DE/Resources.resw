@@ -849,9 +849,6 @@
   <data name="SettingsPage_AcquireDictionariesTextBlock.Text" xml:space="preserve">
     <value>Folgen Sie dem Link, um Wörterbücher von dict.cc herunterzuladen. Klicken Sie anschließend auf "Wörterbuch importieren" und wählen Sie die heruntergeladenen Dateien aus, um sie zu importieren.</value>
   </data>
-  <data name="SettingsPage_AppThemeComboBox.Header" xml:space="preserve">
-    <value>App-Theme</value>
-  </data>
   <data name="SettingsPage_AppThemeDarkComboBoxItem.Content" xml:space="preserve">
     <value>Dunkel</value>
   </data>
@@ -891,17 +888,11 @@
   <data name="SettingsPage_ViewTextBlock.Text" xml:space="preserve">
     <value>Ansicht</value>
   </data>
-  <data name="SettingsPage_WordClassesToggleSwitch.Header" xml:space="preserve">
-    <value>Wortarten</value>
-  </data>
   <data name="SettingsPage_WordClassesToggleSwitch.OffContent" xml:space="preserve">
     <value>Nicht anzeigen</value>
   </data>
   <data name="SettingsPage_WordClassesToggleSwitch.OnContent" xml:space="preserve">
     <value>Anzeigen</value>
-  </data>
-  <data name="SettingsPage_SubjectsToggleSwitch.Header" xml:space="preserve">
-    <value>Fachgebiete</value>
   </data>
   <data name="SettingsPage_SubjectsToggleSwitch.OffContent" xml:space="preserve">
     <value>Nicht anzeigen</value>
@@ -920,5 +911,23 @@
   </data>
   <data name="SettingsPage_OutdatedDictionariesInfoBar.Message" xml:space="preserve">
     <value>Einige Ihrer Wörterbücher wurden mit einer früheren Version dieser App importiert. Neuere Funktionen der App sind für diese Wörterbücher möglicherweise erst verfügbar, wenn sie erneut importiert werden.</value>
+  </data>
+  <data name="SettingsPage_WordClassesSettingsCard.Header" xml:space="preserve">
+    <value>Wortarten</value>
+  </data>
+  <data name="SettingsPage_WordClassesSettingsCard.Description" xml:space="preserve">
+    <value>Zeigt Wortarten an, wie etwa Nomen, Verb oder Adjektiv.</value>
+  </data>
+  <data name="SettingsPage_SubjectsSettingsCard.Header" xml:space="preserve">
+    <value>Fachgebiete</value>
+  </data>
+  <data name="SettingsPage_SubjectsSettingsCard.Description" xml:space="preserve">
+    <value>Zeigt Fachgebiete von Wörtern an, wie etwa Botanik, Philosophie oder Touristik.</value>
+  </data>
+  <data name="SettingsPage_AppThemeSettingsCard.Header" xml:space="preserve">
+    <value>App-Theme</value>
+  </data>
+  <data name="SettingsPage_AppThemeSettingsCard.Description" xml:space="preserve">
+    <value>Wechseln Sie zwischen hellem und dunklem Farbschema.</value>
   </data>
 </root>

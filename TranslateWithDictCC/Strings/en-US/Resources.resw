@@ -849,9 +849,6 @@
   <data name="SettingsPage_AcquireDictionariesTextBlock.Text" xml:space="preserve">
     <value>Follow the link below to acquire dictionaries from dict.cc. Then, click on "Import dictionary" and select the downloaded files to start the import process.</value>
   </data>
-  <data name="SettingsPage_AppThemeComboBox.Header" xml:space="preserve">
-    <value>App theme</value>
-  </data>
   <data name="SettingsPage_AppThemeDarkComboBoxItem.Content" xml:space="preserve">
     <value>Dark</value>
   </data>
@@ -891,17 +888,11 @@
   <data name="SettingsPage_ViewTextBlock.Text" xml:space="preserve">
     <value>View</value>
   </data>
-  <data name="SettingsPage_WordClassesToggleSwitch.Header" xml:space="preserve">
-    <value>Word classes</value>
-  </data>
   <data name="SettingsPage_WordClassesToggleSwitch.OffContent" xml:space="preserve">
     <value>Hide</value>
   </data>
   <data name="SettingsPage_WordClassesToggleSwitch.OnContent" xml:space="preserve">
     <value>Show</value>
-  </data>
-  <data name="SettingsPage_SubjectsToggleSwitch.Header" xml:space="preserve">
-    <value>Subjects</value>
   </data>
   <data name="SettingsPage_SubjectsToggleSwitch.OffContent" xml:space="preserve">
     <value>Hide</value>
@@ -920,5 +911,23 @@
   </data>
   <data name="SettingsPage_OutdatedDictionariesInfoBar.Message" xml:space="preserve">
     <value>Some of your dictionaries were imported with a previous version of this app. Newer app features may not be available for these dictionaries until they are reimported.</value>
+  </data>
+  <data name="SettingsPage_WordClassesSettingsCard.Header" xml:space="preserve">
+    <value>Word classes</value>
+  </data>
+  <data name="SettingsPage_WordClassesSettingsCard.Description" xml:space="preserve">
+    <value>Show the word class of words, such as noun, verb, or adjective.</value>
+  </data>
+  <data name="SettingsPage_SubjectsSettingsCard.Header" xml:space="preserve">
+    <value>Subjects areas</value>
+  </data>
+  <data name="SettingsPage_SubjectsSettingsCard.Description" xml:space="preserve">
+    <value>Show the subject area of words, such as botany, philosophy, or travel.</value>
+  </data>
+  <data name="SettingsPage_AppThemeSettingsCard.Header" xml:space="preserve">
+    <value>App theme</value>
+  </data>
+  <data name="SettingsPage_AppThemeSettingsCard.Description" xml:space="preserve">
+    <value>Switch between light and dark app colors.</value>
   </data>
 </root>
