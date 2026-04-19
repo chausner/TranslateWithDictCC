@@ -198,7 +198,7 @@ class SearchResultsViewModel : ViewModel
                 var subject = SubjectInfo.Instance.LookupSubject(SelectedDirection!.OriginLanguageCode, SelectedDirection.DestinationLanguageCode, grouping.Key);
 
                 if (subject != null)
-                    Subjects.Add(new SubjectViewModel(grouping.Count(), subject.Value.LocalizedSubject, subject.Value.Description));
+                    Subjects.Add(new SubjectViewModel(grouping.Count(), grouping.Key, subject.Value.LocalizedSubject, subject.Value.Description));
             }
         }
         finally
@@ -214,7 +214,7 @@ class SearchResultsViewModel : ViewModel
         activeSubjectFilters.Clear();
 
         foreach (SubjectViewModel subject in selectedSubjects)
-            activeSubjectFilters.Add(subject.Subject);
+            activeSubjectFilters.Add(subject.CanonicalSubject);
 
         ApplySubjectFilter();
     }
