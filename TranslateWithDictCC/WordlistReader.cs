@@ -17,38 +17,27 @@ namespace TranslateWithDictCC;
 
 partial class WordlistReader : IDisposable
 {
+    private record WordlistHeader(string OriginLanguageCode, string DestinationLanguageCode, DateTimeOffset CreationDate);
+
     readonly StorageFile wordlistFile;
     StreamReader? streamReader;
     ZipArchive? zipArchive;
     long uncompressedSize;
+    WordlistHeader? wordlistHeader;
 
     private bool IsOpen => streamReader != null;
 
-    public string OriginLanguageCode 
-    { 
-        get
-        {
-            if (!IsOpen)
-                throw new InvalidOperationException("ReadHeader must be called first");
+    public string OriginLanguageCode => 
+        wordlistHeader?.OriginLanguageCode ??
+        throw new InvalidOperationException($"{nameof(ReadHeader)} must be called first");
 
-            return field;
-        }
-        private set; 
-    } 
+    public string DestinationLanguageCode =>
+        wordlistHeader?.DestinationLanguageCode ??
+        throw new InvalidOperationException($"{nameof(ReadHeader)} must be called first");
 
-    public string DestinationLanguageCode
-    {
-        get
-        {
-            if (!IsOpen)
-                throw new InvalidOperationException("ReadHeader must be called first");
-
-            return field;
-        }
-        private set;
-    }
-
-    public DateTimeOffset CreationDate { get; private set; }
+    public DateTimeOffset CreationDate =>
+        wordlistHeader?.CreationDate ??
+        throw new InvalidOperationException($"{nameof(ReadHeader)} must be called first");
 
     [GeneratedRegex("^# ([A-Z]{2})-([A-Z]{2}) vocabulary database")]
     private static partial Regex HeaderRegex();
@@ -101,7 +90,7 @@ partial class WordlistReader : IDisposable
     public async Task ReadHeader()
     {
         if (IsOpen)
-            throw new InvalidOperationException("ReadHeader may only be called once");
+            throw new InvalidOperationException($"{nameof(ReadHeader)} may only be called once");
 
         await Open();
 
@@ -112,25 +101,29 @@ partial class WordlistReader : IDisposable
         if (!match.Success)
             throw new InvalidDataException("File is not recognized as a dict.cc wordlist file.");
 
-        OriginLanguageCode = match.Groups[1].Value;
-        DestinationLanguageCode = match.Groups[2].Value;
+        string originLanguageCode = match.Groups[1].Value;
+        string destinationLanguageCode = match.Groups[2].Value;
 
         line = await streamReader.ReadLineAsync() ?? string.Empty;
 
+        DateTimeOffset creationDate;
+
         if (line.StartsWith("# Date and time\t") &&
-            DateTime.TryParseExact(line[16..], "yyyy-MM-dd HH\\:mm", CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out DateTime creationDate))
+            DateTime.TryParseExact(line[16..], "yyyy-MM-dd HH\\:mm", CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out DateTime creationDateDateTime))
         {
-            TimeSpan offset = TimeZoneInfo.FindSystemTimeZoneById("W. Europe Standard Time").GetUtcOffset(creationDate);
-            CreationDate = new DateTimeOffset(creationDate, offset);
+            TimeSpan offset = TimeZoneInfo.FindSystemTimeZoneById("W. Europe Standard Time").GetUtcOffset(creationDateDateTime);
+            creationDate = new DateTimeOffset(creationDateDateTime, offset);
         }
         else
-            CreationDate = DateTimeOffset.Now;
+            creationDate = DateTimeOffset.Now;
+
+        wordlistHeader = new WordlistHeader(originLanguageCode, destinationLanguageCode, creationDate);
     }
 
     public async IAsyncEnumerable<DictionaryEntry> ReadEntries([EnumeratorCancellation] CancellationToken cancellationToken)
     {
         if (!IsOpen)
-            throw new InvalidOperationException("ReadHeader must be called first");
+            throw new InvalidOperationException($"{nameof(ReadHeader)} must be called first");
 
         while (true)
         {
