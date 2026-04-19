@@ -146,8 +146,7 @@ class SearchResultsViewModel : ViewModel
 
     public async Task PerformQuery(string searchQuery, bool dontSearchInBothDirections = false)
     {
-        if (searchSuggestionCancellationTokenSource != null)
-            searchSuggestionCancellationTokenSource.Cancel();
+        searchSuggestionCancellationTokenSource?.Cancel();
 
         try
         {
@@ -213,8 +212,7 @@ class SearchResultsViewModel : ViewModel
 
     public Task UpdateSearchSuggestions(string partialSearchQuery)
     {
-        if (searchSuggestionCancellationTokenSource != null)
-            searchSuggestionCancellationTokenSource.Cancel();
+        searchSuggestionCancellationTokenSource?.Cancel();
 
         searchSuggestionCancellationTokenSource = new CancellationTokenSource();
 

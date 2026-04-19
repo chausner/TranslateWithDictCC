@@ -192,16 +192,10 @@ partial class WordlistReader : IDisposable
         {
             if (disposing)
             {
-                if (streamReader != null)
-                {
-                    streamReader.Dispose();
-                    streamReader = null;                        
-                }
-                if (zipArchive != null)
-                {
-                    zipArchive.Dispose();
-                    zipArchive = null;
-                }
+                streamReader?.Dispose();
+                streamReader = null;
+                zipArchive?.Dispose();
+                zipArchive = null;
             }
 
             disposedValue = true;
