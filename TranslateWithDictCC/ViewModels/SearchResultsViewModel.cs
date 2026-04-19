@@ -195,9 +195,10 @@ class SearchResultsViewModel : ViewModel
 
             foreach (var grouping in subjects)
             {
-                string? description = SubjectInfo.Instance.GetSubjectDescription(SelectedDirection!.OriginLanguageCode, SelectedDirection.DestinationLanguageCode, grouping.Key);
+                var subject = SubjectInfo.Instance.LookupSubject(SelectedDirection!.OriginLanguageCode, SelectedDirection.DestinationLanguageCode, grouping.Key);
 
-                Subjects.Add(new SubjectViewModel(grouping.Count(), grouping.Key, description));
+                if (subject != null)
+                    Subjects.Add(new SubjectViewModel(grouping.Count(), subject.Value.LocalizedSubject, subject.Value.Description));
             }
         }
         finally

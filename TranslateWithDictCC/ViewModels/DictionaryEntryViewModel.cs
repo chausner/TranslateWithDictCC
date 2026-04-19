@@ -105,10 +105,10 @@ partial class DictionaryEntryViewModel : ViewModel
             {
                 string subjectString = DictionaryEntry.Subjects.Substring(subjectMatch.Index + 1, subjectMatch.Length - 2);
 
-                string? description = SubjectInfo.Instance.GetSubjectDescription(SearchContext.SelectedDirection.OriginLanguageCode, SearchContext.SelectedDirection.DestinationLanguageCode, subjectString);
+                var subject = SubjectInfo.Instance.LookupSubject(SearchContext.SelectedDirection.OriginLanguageCode, SearchContext.SelectedDirection.DestinationLanguageCode, subjectString);
 
-                if (description != null)
-                    attributes.Add(new DictionaryEntryAttribute(subjectString, description));
+                if (subject != null)
+                    attributes.Add(new DictionaryEntryAttribute(subject.Value.LocalizedSubject, subject.Value.Description));
             }
         }
     }
