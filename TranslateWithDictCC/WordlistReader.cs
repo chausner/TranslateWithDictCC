@@ -127,7 +127,7 @@ partial class WordlistReader : IDisposable
 
         while (true)
         {
-            string? line = await streamReader!.ReadLineAsync(cancellationToken);
+            string? line = await streamReader!.ReadLineAsync(cancellationToken).ConfigureAwait(false);
 
             if (line == null)
                 break;
