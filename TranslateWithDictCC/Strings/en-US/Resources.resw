@@ -138,14 +138,14 @@
   <data name="AboutPage_PrivacyStatementLink.NavigateUri" xml:space="preserve">
     <value>http://www.dict.cc/?s=about:&amp;amp;l=e</value>
   </data>
-  <data name="AboutPage_SetFocusOnSearchBarShortcutTextBlock.Text" xml:space="preserve">
-    <value>Ctrl + E</value>
+  <data name="AboutPage_SetFocusOnSearchBarShortcutView.Text" xml:space="preserve">
+    <value>Ctrl+E</value>
   </data>
   <data name="AboutPage_SetFocusOnSearchBarTextBlock.Text" xml:space="preserve">
     <value>Set focus on search bar</value>
   </data>
-  <data name="AboutPage_SwitchDirectionOfTranslationShortcutTextBlock.Text" xml:space="preserve">
-    <value>Ctrl + S</value>
+  <data name="AboutPage_SwitchDirectionOfTranslationShortcutView.Text" xml:space="preserve">
+    <value>Ctrl+S</value>
   </data>
   <data name="AboutPage_SwitchDirectionOfTranslationTextBlock.Text" xml:space="preserve">
     <value>Switch direction of translation</value>

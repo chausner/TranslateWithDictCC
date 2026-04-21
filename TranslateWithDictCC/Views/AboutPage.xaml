@@ -2,6 +2,7 @@
     x:Class="TranslateWithDictCC.Views.AboutPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:TranslateWithDictCC.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"    
@@ -34,10 +35,10 @@
                     <RowDefinition />
                     <RowDefinition />
                 </Grid.RowDefinitions>
-                <TextBlock x:Uid="AboutPage_SetFocusOnSearchBarShortcutTextBlock" Grid.Row="0" Grid.Column="0" Text="Ctrl + E" Margin="0,0,48,8" />
-                <TextBlock x:Uid="AboutPage_SetFocusOnSearchBarTextBlock" Grid.Row="0" Grid.Column="1" Text="Set focus on search bar" Margin="0,0,0,8" />
-                <TextBlock x:Uid="AboutPage_SwitchDirectionOfTranslationShortcutTextBlock" Grid.Row="1" Grid.Column="0" Text="Ctrl + S" Margin="0,0,48,0" />
-                <TextBlock x:Uid="AboutPage_SwitchDirectionOfTranslationTextBlock" Grid.Row="1" Grid.Column="1" Text="Switch direction of translation" />
+                <controls:ShortcutView x:Uid="AboutPage_SetFocusOnSearchBarShortcutView" Grid.Row="0" Grid.Column="0" Text="Ctrl+E" Margin="0,0,48,8" />
+                <TextBlock x:Uid="AboutPage_SetFocusOnSearchBarTextBlock" Grid.Row="0" Grid.Column="1" Text="Set focus on search bar" Margin="0,0,0,8" VerticalAlignment="Center" />
+                <controls:ShortcutView x:Uid="AboutPage_SwitchDirectionOfTranslationShortcutView" Grid.Row="1" Grid.Column="0" Text="Ctrl+S" Margin="0,0,48,0" />
+                <TextBlock x:Uid="AboutPage_SwitchDirectionOfTranslationTextBlock" Grid.Row="1" Grid.Column="1" Text="Switch direction of translation" VerticalAlignment="Center" />
             </Grid>
 
             <TextBlock x:Uid="AboutPage_LicensesTextBlock" Style="{StaticResource TitleTextBlockStyle}" Text="Licenses" Margin="0,0,0,16" />
