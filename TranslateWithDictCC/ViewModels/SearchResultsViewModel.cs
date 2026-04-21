@@ -182,12 +182,12 @@ class SearchResultsViewModel : ViewModel
 
             searchContext = new SearchContext(searchQuery, SelectedDirection!, dontSearchInBothDirections);
 
-            results = searchTask.Result;
+            results = searchTask.Result.Results;
             activeSubjectFilters.Clear();
 
             DictionaryEntries = await Task.Run(delegate ()
             {
-                return searchTask.Result.Results.Select(entry => new DictionaryEntryViewModel(entry, searchContext)).ToList();
+                return results.Select(entry => new DictionaryEntryViewModel(entry, searchContext)).ToList();
             });
 
             Subjects.Clear();
@@ -255,8 +255,7 @@ class SearchResultsViewModel : ViewModel
                             .ToList();
                     }
 
-                    DictionaryEntries = new LazyCollection<DictionaryEntry, DictionaryEntryViewModel>(
-                        filteredResults, entry => new DictionaryEntryViewModel(entry, searchContext));
+                    DictionaryEntries = filteredResults.Select(entry => new DictionaryEntryViewModel(entry, searchContext)).ToList();
                 }
             }
             finally
@@ -264,7 +263,6 @@ class SearchResultsViewModel : ViewModel
                 querySemaphore.Release();
             }
         }
-
     }
 
     private async Task UpdateSearchSuggestionsInner(string partialSearchQuery, CancellationToken cancellationToken)

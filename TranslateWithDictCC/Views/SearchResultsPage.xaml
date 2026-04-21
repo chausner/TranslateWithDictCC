@@ -123,7 +123,7 @@
             </InfoBar.ActionButton>
         </InfoBar>
 
-        <controls:TokenView Name="subjectTokenView" Grid.Row="2" Margin="8,0,8,8" IsWrapped="True"
+        <controls:TokenView Name="subjectTokenView" Grid.Row="2" Margin="8,0,8,8"
                             ItemsSource="{x:Bind ViewModel.Subjects}" SelectionMode="Multiple" SelectionChanged="subjectTokenView_SelectionChanged">
             <controls:TokenView.ItemTemplate>
                 <DataTemplate x:DataType="viewmodels:SubjectViewModel">
