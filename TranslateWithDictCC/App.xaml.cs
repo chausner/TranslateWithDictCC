@@ -2,6 +2,7 @@
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using System;
+using System.Threading.Tasks;
 using TranslateWithDictCC.ViewModels;
 using WinRT.Interop;
 
@@ -26,7 +27,7 @@ sealed partial class App : Application
         await SettingsViewModel.Instance.Load();
         await SearchResultsViewModel.Instance.Load();
 
-        _ = SubjectInfo.Instance.LoadAsync();
+        _ = Task.Run(() => SubjectInfo.Instance.LoadAsync());
 
         if (!Resources.ContainsKey("settings"))
             Resources.Add("settings", Settings.Instance);

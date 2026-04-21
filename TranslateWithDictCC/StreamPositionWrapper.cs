@@ -83,14 +83,14 @@ class StreamPositionWrapper : Stream
 
     public override async Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
     {
-        int bytesRead = await stream.ReadAsync(buffer, offset, count, cancellationToken);
+        int bytesRead = await stream.ReadAsync(buffer, offset, count, cancellationToken).ConfigureAwait(false);
         position += bytesRead;
         return bytesRead;
     }
 
     public override async ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
     {
-        int bytesRead = await stream.ReadAsync(buffer, cancellationToken);
+        int bytesRead = await stream.ReadAsync(buffer, cancellationToken).ConfigureAwait(false);
         position += bytesRead;
         return bytesRead;
     }
@@ -118,13 +118,13 @@ class StreamPositionWrapper : Stream
 
     public override async Task WriteAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
     {
-        await stream.WriteAsync(buffer, offset, count, cancellationToken);
+        await stream.WriteAsync(buffer, offset, count, cancellationToken).ConfigureAwait(false);
         position += count;
     }
 
     public override async ValueTask WriteAsync(ReadOnlyMemory<byte> buffer, CancellationToken cancellationToken = default)
     {
-        await stream.WriteAsync(buffer, cancellationToken);
+        await stream.WriteAsync(buffer, cancellationToken).ConfigureAwait(false);
         position += buffer.Length;
     }
 

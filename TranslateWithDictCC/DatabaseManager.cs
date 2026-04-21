@@ -33,7 +33,7 @@ class DatabaseManager
 
         initialized = true;
 
-        await ExecuteNonQuery("PRAGMA journal_mode=WAL");
+        await ExecuteNonQuery("PRAGMA journal_mode=WAL").ConfigureAwait(false);
 
         await ExecuteNonQuery(
             """
@@ -45,7 +45,7 @@ class DatabaseManager
                 NumberOfEntries BIGINT NOT NULL,
                 AppVersionWhenCreated VARCHAR(255)
             )
-            """);
+            """).ConfigureAwait(false);
     }
 
     public async Task<DbConnection> OpenConnection()
@@ -59,19 +59,19 @@ class DatabaseManager
 
         connection.ConnectionString = builder.ToString();
 
-        await connection.OpenAsync();
+        await connection.OpenAsync().ConfigureAwait(false);
 
         return connection;
     }
 
     public async Task OpenTransactedConnection(Func<DbConnection, Task> action)
     {
-        await using DbConnection connection = await OpenConnection();
+        await using DbConnection connection = await OpenConnection().ConfigureAwait(false);
         await using DbTransaction transaction = connection.BeginTransaction();
 
         try
         {
-            await action(connection);
+            await action(connection).ConfigureAwait(false);
 
             transaction.Commit();
         }
@@ -84,14 +84,14 @@ class DatabaseManager
 
     public async Task<T> OpenTransactedConnection<T>(Func<DbConnection, Task<T>> action)
     {
-        await using DbConnection connection = await OpenConnection();
+        await using DbConnection connection = await OpenConnection().ConfigureAwait(false);
         await using DbTransaction transaction = connection.BeginTransaction();
 
         T result;
 
         try
         {
-            result = await action(connection);
+            result = await action(connection).ConfigureAwait(false);
 
             transaction.Commit();
         }
@@ -106,22 +106,22 @@ class DatabaseManager
 
     public async Task<int> ExecuteNonQuery(string commandText)
     {
-        await using DbConnection connection = await OpenConnection();
+        await using DbConnection connection = await OpenConnection().ConfigureAwait(false);
         await using DbCommand command = connection.CreateCommand();
 
         command.CommandText = commandText;
 
-        return await command.ExecuteNonQueryAsync();
+        return await command.ExecuteNonQueryAsync().ConfigureAwait(false);
     }
 
     public async Task<object?> ExecuteScalar(string commandText)
     {
-        await using DbConnection connection = await OpenConnection();
+        await using DbConnection connection = await OpenConnection().ConfigureAwait(false);
         await using DbCommand command = connection.CreateCommand();
 
         command.CommandText = commandText;
 
-        return await command.ExecuteScalarAsync();
+        return await command.ExecuteScalarAsync().ConfigureAwait(false);
     }
 
     public Task<List<T>> ExecuteReader<T>(string commandText, Func<DbDataReader, T> dataReaderFunc)
@@ -131,16 +131,16 @@ class DatabaseManager
 
     public async Task<List<T>> ExecuteReader<T>(Action<DbCommand> commandFunc, Func<DbDataReader, T> dataReaderFunc)
     {
-        await using DbConnection connection = await OpenConnection();
+        await using DbConnection connection = await OpenConnection().ConfigureAwait(false);
         await using DbCommand command = connection.CreateCommand();
 
         commandFunc(command);
 
-        await using DbDataReader dataReader = await command.ExecuteReaderAsync();
+        await using DbDataReader dataReader = await command.ExecuteReaderAsync().ConfigureAwait(false);
 
         List<T> results = [];
 
-        while (await dataReader.ReadAsync())
+        while (await dataReader.ReadAsync().ConfigureAwait(false))
         {
             T result = dataReaderFunc(dataReader);
             results.Add(result);
@@ -162,7 +162,7 @@ class DatabaseManager
                 NumberOfEntries = dataReader.GetInt32(4),
                 AppVersionWhenCreated = dataReader.IsDBNull(5) ? null : Version.Parse(dataReader.GetString(5))
             };
-        });
+        }).ConfigureAwait(false);
     }
 
     private static string GetDictionaryTableName(string originLanguageCode, string destinationLanguageCode)
@@ -191,7 +191,7 @@ class DatabaseManager
                     )
                     """;
 
-                await command.ExecuteNonQueryAsync();
+                await command.ExecuteNonQueryAsync().ConfigureAwait(false);
             }
 
             int numberOfEntries = 0;
@@ -209,11 +209,11 @@ class DatabaseManager
                 command.Parameters.Add(new SqliteParameter("@WordClasses", SqliteType.Text, 64));
                 command.Parameters.Add(new SqliteParameter("@Subjects", SqliteType.Text, 128));
 
-                await command.PrepareAsync();
+                await command.PrepareAsync().ConfigureAwait(false);
 
                 IAsyncEnumerable<DictionaryEntry> entries = wordlistReader.ReadEntries(cancellationToken);
 
-                await foreach (DictionaryEntry entry in entries)
+                await foreach (DictionaryEntry entry in entries.ConfigureAwait(false))
                 {
                     command.Parameters[0].Value = entry.Word1;
                     command.Parameters[1].Value = entry.Word2;
@@ -247,7 +247,7 @@ class DatabaseManager
                 command.Parameters.Add(new SqliteParameter("@NumberOfEntries", numberOfEntries));
                 command.Parameters.Add(new SqliteParameter("@AppVersionWhenCreated", (object?)appVersion?.ToString() ?? DBNull.Value));
 
-                await command.ExecuteNonQueryAsync();
+                await command.ExecuteNonQueryAsync().ConfigureAwait(false);
             }
 
             int id;
@@ -256,7 +256,7 @@ class DatabaseManager
             {
                 command.CommandText = "SELECT last_insert_rowid()";
 
-                object? result = await command.ExecuteScalarAsync();
+                object? result = await command.ExecuteScalarAsync().ConfigureAwait(false);
 
                 id = (int)(long)result!;
             }
@@ -272,7 +272,7 @@ class DatabaseManager
             };
 
             return dictionary;
-        });
+        }).ConfigureAwait(false);
     }
 
     public Task<List<DictionaryEntry>> QueryEntries(Dictionary dictionary, string searchQuery, bool reverseSearch)
@@ -320,7 +320,7 @@ class DatabaseManager
             TextSpan[] matchSpans = GetMatchSpans(reverseSearch ? word2 : word1, offsets);
 
             return new DictionaryEntry { Word1 = word1, Word2 = word2, WordClasses = wordClasses, Subjects = subjects, MatchSpans = matchSpans };
-        });
+        }).ConfigureAwait(false);
     }
 
     private static TextSpan[] GetMatchSpans(string word, string[] offsets)
@@ -360,7 +360,7 @@ class DatabaseManager
     {
         Version lastUpdateRequiringReimport = new Version("2.1.0");
 
-        List<Dictionary> dictionaries = await GetDictionaries();
+        List<Dictionary> dictionaries = await GetDictionaries().ConfigureAwait(false);
 
         return dictionaries.Any(dictionary => dictionary.AppVersionWhenCreated == null || dictionary.AppVersionWhenCreated < lastUpdateRequiringReimport);
     }
@@ -369,7 +369,7 @@ class DatabaseManager
     {
         string tableName = GetDictionaryTableName(dictionary.OriginLanguageCode, dictionary.DestinationLanguageCode);
 
-        await ExecuteNonQuery($"INSERT INTO {tableName}({tableName}) VALUES('optimize');");
+        await ExecuteNonQuery($"INSERT INTO {tableName}({tableName}) VALUES('optimize');").ConfigureAwait(false);
     }
 
     public async Task DeleteDictionary(Dictionary dictionary)
@@ -380,7 +380,7 @@ class DatabaseManager
             {
                 command.CommandText = $"DELETE FROM Dictionaries WHERE ID = {dictionary.ID}";
 
-                await command.ExecuteNonQueryAsync();
+                await command.ExecuteNonQueryAsync().ConfigureAwait(false);
             }
 
             await using (DbCommand command = connection.CreateCommand())
@@ -389,9 +389,9 @@ class DatabaseManager
 
                 command.CommandText = $"DROP TABLE {tableName}";
 
-                await command.ExecuteNonQueryAsync();
+                await command.ExecuteNonQueryAsync().ConfigureAwait(false);
             }
-        });
+        }).ConfigureAwait(false);
     }        
 }
 

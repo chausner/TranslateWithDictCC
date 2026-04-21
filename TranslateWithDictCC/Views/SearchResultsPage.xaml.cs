@@ -240,6 +240,7 @@ public sealed partial class SearchResultsPage : Page
 
         if (args.InRecycleQueue)
         {
+            templateRoot.DataContext = null;
             WordHighlighting.ClearRichTextBlockContent(templateParts.Word1RichTextBlock);
             WordHighlighting.ClearRichTextBlockContent(templateParts.Word2RichTextBlock);
             ClearAttributes(templateParts.AttributesPanel);
@@ -258,6 +259,7 @@ public sealed partial class SearchResultsPage : Page
                 else
                     templateParts.BackgroundBorder.Background = altBackgroundThemeBrush;
 
+                templateRoot.DataContext = viewModel;
                 WordHighlighting.ClearRichTextBlockContent(templateParts.Word1RichTextBlock);
                 WordHighlighting.ClearRichTextBlockContent(templateParts.Word2RichTextBlock);
                 ClearAttributes(templateParts.AttributesPanel);
