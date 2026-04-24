@@ -1,4 +1,6 @@
 # Translate with dict.cc
+<img src="TranslateWithDictCC/Assets/AboutLogo.png" align="right" width="10%">
+
 Windows app to search and manage [dict.cc](https://www.dict.cc/) offline dictionaries
 
 [![](https://img.shields.io/badge/Microsoft%20Store-Translate%20with%20dict.cc-blue)](https://www.microsoft.com/store/apps/9NBLGGH4SGKM)
