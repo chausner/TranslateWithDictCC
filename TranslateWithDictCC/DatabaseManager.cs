@@ -327,11 +327,12 @@ class DatabaseManager
     {
         TextSpan[] matchSpans = new TextSpan[offsets.Length / 4];
 
-        int[]? byteCounts = null;
+        scoped Span<int> byteCounts = [];
 
         if (Encoding.UTF8.GetByteCount(word) != word.Length)
         {
-            byteCounts = new int[word.Length + 1];
+            byteCounts = stackalloc int[word.Length + 1];
+            byteCounts[0] = 0;
 
             for (int i = 0; i < word.Length; i++)
                 byteCounts[i + 1] = byteCounts[i] + Encoding.UTF8.GetByteCount(word, i, 1);
@@ -342,10 +343,10 @@ class DatabaseManager
             int offset = Convert.ToInt32(offsets[4 * i + 2]);
             int length = Convert.ToInt32(offsets[4 * i + 3]);
 
-            if (byteCounts != null)
+            if (!byteCounts.IsEmpty)
             {
-                int adjustedOffset = Array.BinarySearch(byteCounts, offset);
-                int adjustedLength = Array.BinarySearch(byteCounts, offset + length) - adjustedOffset;
+                int adjustedOffset = byteCounts.BinarySearch(offset);
+                int adjustedLength = byteCounts.BinarySearch(offset + length) - adjustedOffset;
                 offset = adjustedOffset;
                 length = adjustedLength;
             }
