@@ -8,14 +8,14 @@ namespace TranslateWithDictCC;
 
 partial class DictionaryEntryComparer : Comparer<DictionaryEntry>
 {
-    readonly string searchQuery;
+    readonly string[] searchTokens;
     readonly bool reverseSearch;
 
     readonly Dictionary<string, MatchInfo> matchInfos = [];
 
     public DictionaryEntryComparer(string searchQuery, bool reverseSearch)
     {
-        this.searchQuery = searchQuery;
+        searchTokens = SearchTokensRegex().Matches(searchQuery).Select(m => m.Value).ToArray();
         this.reverseSearch = reverseSearch;
     }
 
@@ -28,28 +28,17 @@ partial class DictionaryEntryComparer : Comparer<DictionaryEntry>
         if (y is null)
             return 1;
 
-        string searchResultX, searchResultY;
-
-        if (!reverseSearch)
-        {
-            searchResultX = x.Word1;
-            searchResultY = y.Word1;
-        }
-        else
-        {
-            searchResultX = x.Word2;
-            searchResultY = y.Word2;
-        }
+        var (searchResultX, searchResultY) = !reverseSearch ? (x.Word1, y.Word1) : (x.Word2, y.Word2);
 
         if (!matchInfos.TryGetValue(searchResultX, out MatchInfo? matchInfoX))
         {
-            matchInfoX = new MatchInfo(searchQuery, searchResultX, x.MatchSpans!);
+            matchInfoX = new MatchInfo(searchTokens, searchResultX, x.MatchSpans!);
             matchInfos.Add(searchResultX, matchInfoX);
         }
 
         if (!matchInfos.TryGetValue(searchResultY, out MatchInfo? matchInfoY))
         {
-            matchInfoY = new MatchInfo(searchQuery, searchResultY, y.MatchSpans!);
+            matchInfoY = new MatchInfo(searchTokens, searchResultY, y.MatchSpans!);
             matchInfos.Add(searchResultY, matchInfoY);
         }
 
@@ -90,6 +79,10 @@ partial class DictionaryEntryComparer : Comparer<DictionaryEntry>
             return string.Compare(searchResultX, searchResultY, StringComparison.Ordinal);
         }
     }
+
+    // Matches Unicode61 tokenizer of SQLite
+    [GeneratedRegex(@"[\p{L}\p{N}\p{Co}]+")]
+    private static partial Regex SearchTokensRegex();
 }
 
 internal partial class MatchInfo
@@ -100,10 +93,8 @@ internal partial class MatchInfo
     public int AdditionalWordCount { get; }
     public bool IsMatchInAnnotation { get; }
 
-    public MatchInfo(string searchQuery, string searchResult, TextSpan[] matchSpans)
+    public MatchInfo(string[] searchTokens, string searchResult, TextSpan[] matchSpans)
     {
-        string[] searchTokens = SearchTokensRegex().Matches(searchQuery).Select(m => m.Value).ToArray();
-
         IsCaseSensitiveMatch = matchSpans.Length == searchTokens.Length &&
             matchSpans
             .Zip(searchTokens, (span, token) => searchResult.AsSpan(span.Offset, span.Length).Equals(token, StringComparison.InvariantCulture))
@@ -155,10 +146,6 @@ internal partial class MatchInfo
             }
         }
     }
-
-    // Matches Unicode61 tokenizer of SQLite
-    [GeneratedRegex(@"[\p{L}\p{N}\p{Co}]+")]
-    private static partial Regex SearchTokensRegex();
 
     [GeneratedRegex(@"(\{.*?\})|(\[.*?\])|(\<.*?\>)", RegexOptions.ExplicitCapture)]
     private static partial Regex AnnotationsRegex();
