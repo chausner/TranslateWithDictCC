@@ -1,8 +1,8 @@
 ﻿using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Windows.ApplicationModel.Resources;
+using Microsoft.Windows.Storage.Pickers;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -11,8 +11,6 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using TranslateWithDictCC.Models;
 using Windows.Globalization.DateTimeFormatting;
-using Windows.Storage;
-using Windows.Storage.Pickers;
 
 namespace TranslateWithDictCC.ViewModels;
 
@@ -96,22 +94,22 @@ class SettingsViewModel : ViewModel
 
     private async void RunImportDictionaryCommand()
     {
-        FileOpenPicker fileOpenPicker = new FileOpenPicker();
+        FileOpenPicker fileOpenPicker = new FileOpenPicker(MainWindow.Instance.AppWindow.Id);
 
         fileOpenPicker.FileTypeFilter.Add(".txt");
         fileOpenPicker.FileTypeFilter.Add(".zip");
 
-        IntPtr hwnd = WinRT.Interop.WindowNative.GetWindowHandle(MainWindow.Instance);
-        WinRT.Interop.InitializeWithWindow.Initialize(fileOpenPicker, hwnd);
+        string[] paths = 
+            (await fileOpenPicker.PickMultipleFilesAsync())
+            .Select(pickFileResult => pickFileResult.Path)
+            .ToArray();
 
-        IReadOnlyList<StorageFile>? wordlistFiles = await fileOpenPicker.PickMultipleFilesAsync();
-
-        if (wordlistFiles == null)
+        if (paths.Length == 0)
             return;
 
-        foreach (StorageFile wordlistFile in wordlistFiles)
+        foreach (string path in paths)
         {
-            WordlistReader wordlistReader = new WordlistReader(wordlistFile);
+            WordlistReader wordlistReader = new WordlistReader(path);
 
             try
             {
@@ -124,7 +122,7 @@ class SettingsViewModel : ViewModel
                 ContentDialog contentDialog = new ContentDialog()
                 {
                     Title = resourceLoader.GetString("Import_Header_Error_Title"),
-                    Content = string.Format(resourceLoader.GetString("Import_Header_Error_Body"), wordlistFile.Name),
+                    Content = string.Format(resourceLoader.GetString("Import_Header_Error_Body"), path),
                     CloseButtonText = "OK",
                     XamlRoot = MainWindow.Instance.Content.XamlRoot
                 };
