@@ -15,7 +15,7 @@ partial class DictionaryEntryComparer : Comparer<DictionaryEntry>
 
     public DictionaryEntryComparer(string searchQuery, bool reverseSearch)
     {
-        searchTokens = SearchTokensRegex().Matches(searchQuery).Select(m => m.Value).ToArray();
+        searchTokens = MatchInfo.SplitSearchQueryIntoTokens(searchQuery);
         this.reverseSearch = reverseSearch;
     }
 
@@ -79,10 +79,6 @@ partial class DictionaryEntryComparer : Comparer<DictionaryEntry>
             return string.Compare(searchResultX, searchResultY, StringComparison.Ordinal);
         }
     }
-
-    // Matches Unicode61 tokenizer of SQLite
-    [GeneratedRegex(@"[\p{L}\p{N}\p{Co}]+")]
-    private static partial Regex SearchTokensRegex();
 }
 
 internal partial class MatchInfo
@@ -146,6 +142,15 @@ internal partial class MatchInfo
             }
         }
     }
+
+    public static string[] SplitSearchQueryIntoTokens(string searchQuery)
+    {
+        return SearchTokensRegex().Matches(searchQuery).Select(m => m.Value).ToArray();
+    }
+
+    // Matches Unicode61 tokenizer of SQLite
+    [GeneratedRegex(@"[\p{L}\p{N}\p{Co}]+")]
+    private static partial Regex SearchTokensRegex();
 
     [GeneratedRegex(@"(\{.*?\})|(\[.*?\])|(\<.*?\>)", RegexOptions.ExplicitCapture)]
     private static partial Regex AnnotationsRegex();

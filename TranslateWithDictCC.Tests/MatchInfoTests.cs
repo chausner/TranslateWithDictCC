@@ -15,10 +15,11 @@ public class MatchInfoTests
     public void IsCaseSensitiveMatchTest(string searchQuery, string searchResult, bool isCaseSensitiveMatch)
     {
         // Arrange
-        TextSpan[] matchSpans = GetMatchSpansForQueryTokens(searchQuery, searchResult);
+        string[] searchTokens = MatchInfo.SplitSearchQueryIntoTokens(searchQuery);
+        TextSpan[] matchSpans = GetMatchSpans(searchResult, searchTokens);
 
         // Act
-        MatchInfo matchInfo = new MatchInfo(searchQuery, searchResult, matchSpans);
+        MatchInfo matchInfo = new MatchInfo(searchTokens, searchResult, matchSpans);
 
         // Assert
         Assert.Equal(isCaseSensitiveMatch, matchInfo.IsCaseSensitiveMatch);
@@ -34,10 +35,11 @@ public class MatchInfoTests
     public void AnnotationLengthTest(string searchQuery, string searchResult, int annotationLength)
     {
         // Arrange
-        TextSpan[] matchSpans = GetMatchSpansForQueryTokens(searchQuery, searchResult);
+        string[] searchTokens = MatchInfo.SplitSearchQueryIntoTokens(searchQuery);
+        TextSpan[] matchSpans = GetMatchSpans(searchResult, searchTokens);
 
         // Act
-        MatchInfo matchInfo = new MatchInfo(searchQuery, searchResult, matchSpans);
+        MatchInfo matchInfo = new MatchInfo(searchTokens, searchResult, matchSpans);
 
         // Assert
         Assert.Equal(annotationLength, matchInfo.AnnotationLength);
@@ -50,10 +52,11 @@ public class MatchInfoTests
     public void IsMatchInAnnotationTest(string searchQuery, string searchResult, string[] matches, bool isMatchInAnnotation)
     {
         // Arrange
+        string[] searchTokens = MatchInfo.SplitSearchQueryIntoTokens(searchQuery);
         TextSpan[] matchSpans = GetMatchSpans(searchResult, matches);
 
         // Act
-        MatchInfo matchInfo = new MatchInfo(searchQuery, searchResult, matchSpans);
+        MatchInfo matchInfo = new MatchInfo(searchTokens, searchResult, matchSpans);
 
         // Assert
         Assert.Equal(isMatchInAnnotation, matchInfo.IsMatchInAnnotation);
@@ -69,10 +72,11 @@ public class MatchInfoTests
     public void AdditionalWordsLengthTest(string searchQuery, string searchResult, string[] matches, int additionalWordsLength)
     {
         // Arrange
+        string[] searchTokens = MatchInfo.SplitSearchQueryIntoTokens(searchQuery);
         TextSpan[] matchSpans = GetMatchSpans(searchResult, matches);
 
         // Act
-        MatchInfo matchInfo = new MatchInfo(searchQuery, searchResult, matchSpans);
+        MatchInfo matchInfo = new MatchInfo(searchTokens, searchResult, matchSpans);
 
         // Assert
         Assert.Equal(additionalWordsLength, matchInfo.AdditionalWordsLength);
@@ -89,19 +93,14 @@ public class MatchInfoTests
     public void AdditionalWordCountTest(string searchQuery, string searchResult, string[] matches, int additionalWordCount)
     {
         // Arrange
+        string[] searchTokens = MatchInfo.SplitSearchQueryIntoTokens(searchQuery);
         TextSpan[] matchSpans = GetMatchSpans(searchResult, matches);
 
         // Act
-        MatchInfo matchInfo = new MatchInfo(searchQuery, searchResult, matchSpans);
+        MatchInfo matchInfo = new MatchInfo(searchTokens, searchResult, matchSpans);
 
         // Assert
         Assert.Equal(additionalWordCount, matchInfo.AdditionalWordCount);
-    }
-
-    private static TextSpan[] GetMatchSpansForQueryTokens(string searchQuery, string searchResult)
-    {
-        string[] queryTokens = searchQuery.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-        return GetMatchSpans(searchResult, queryTokens);
     }
 
     private static TextSpan[] GetMatchSpans(string searchResult, string[] matches)
