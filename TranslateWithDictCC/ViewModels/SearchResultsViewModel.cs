@@ -174,7 +174,10 @@ class SearchResultsViewModel : ViewModel
             }
 
             if (searchTask.Result.DirectionSwitched)
-                SelectedDirection = AvailableDirections.First(dvm => dvm.EqualsReversed(selectedDirection));
+            {
+                selectedDirection = AvailableDirections.First(dvm => dvm.EqualsReversed(selectedDirection));
+                SelectedDirection = selectedDirection;
+            }
 
             SearchContext searchContext = new SearchContext(searchQuery, selectedDirection, dontSearchInBothDirections);
 
