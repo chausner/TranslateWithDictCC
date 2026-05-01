@@ -275,12 +275,7 @@ class DatabaseManager
         }).ConfigureAwait(false);
     }
 
-    public Task<List<DictionaryEntry>> QueryEntries(Dictionary dictionary, string searchQuery, bool reverseSearch)
-    {
-        return QueryEntries(dictionary, searchQuery, reverseSearch, -1);
-    }
-
-    public async Task<List<DictionaryEntry>> QueryEntries(Dictionary dictionary, string searchQuery, bool reverseSearch, int maxResults)
+    public async Task<List<DictionaryEntry>> QueryEntries(Dictionary dictionary, string searchQuery, bool reverseSearch, int maxResults = -1)
     {
         string tableName = GetDictionaryTableName(dictionary.OriginLanguageCode, dictionary.DestinationLanguageCode);
         string column = reverseSearch ? "Word2" : "Word1";
