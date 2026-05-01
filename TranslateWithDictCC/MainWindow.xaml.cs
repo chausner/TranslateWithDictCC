@@ -1,14 +1,11 @@
-﻿using Microsoft.UI;
-using Microsoft.UI.Windowing;
+﻿using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.ApplicationModel.Resources;
-using System;
 using System.ComponentModel;
 using System.IO;
 using TranslateWithDictCC.Views;
 using Windows.ApplicationModel;
 using Windows.UI;
-using WinRT.Interop;
 using WinUIEx;
 
 namespace TranslateWithDictCC;
@@ -52,14 +49,10 @@ public sealed partial class MainWindow : WindowEx
 
     private void SetTitleBarColorsAndIcon()
     {
-        IntPtr hWnd = WindowNative.GetWindowHandle(this);
-        Microsoft.UI.WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
-        AppWindow appWindow = AppWindow.GetFromWindowId(windowId);
-
         // Title bar customization is not supported on Windows 10
         if (AppWindowTitleBar.IsCustomizationSupported())
         {
-            AppWindowTitleBar titleBar = appWindow.TitleBar;
+            AppWindowTitleBar titleBar = AppWindow.TitleBar;
 
             ResourceDictionary dictionary = Settings.Instance.AppTheme switch
             {
@@ -84,7 +77,7 @@ public sealed partial class MainWindow : WindowEx
         }
 
         string packagePath = Package.Current.InstalledLocation.Path;
-        appWindow.SetIcon(Path.Combine(packagePath, @"Assets\Logo.ico"));
+        AppWindow.SetIcon(Path.Combine(packagePath, @"Assets\Logo.ico"));
     }
 
     private void SetWindowSizeAndLocation()

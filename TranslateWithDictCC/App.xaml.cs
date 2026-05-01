@@ -1,10 +1,8 @@
-﻿using Microsoft.UI;
-using Microsoft.UI.Windowing;
+﻿using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using System;
 using System.Threading.Tasks;
 using TranslateWithDictCC.ViewModels;
-using WinRT.Interop;
 
 namespace TranslateWithDictCC;
 
@@ -37,13 +35,8 @@ sealed partial class App : Application
 
         MainWindow window = new MainWindow(launchArguments);
 
-        IntPtr hWnd = WindowNative.GetWindowHandle(window);
-        WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
-        AppWindow appWindow = AppWindow.GetFromWindowId(windowId);
-
         window.Activate();
-
-        appWindow.Closing += AppWindow_Closing;
+        window.AppWindow.Closing += AppWindow_Closing;
     }
 
     private void AppWindow_Closing(AppWindow sender, AppWindowClosingEventArgs args)
