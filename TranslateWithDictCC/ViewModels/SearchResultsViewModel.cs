@@ -124,21 +124,21 @@ class SearchResultsViewModel : ViewModel
         MainViewModel.Instance.NavigateToPageCommand.Execute(Tuple.Create<string, object?>("SettingsPage", null));
     }
 
-    private async Task<(List<DictionaryEntry> Results, bool DirectionSwitched)> PerformQueryInner(string searchQuery, bool dontSearchInBothDirections)
+    private async Task<(List<DictionaryEntry> Results, bool DirectionSwitched)> PerformQueryInner(string searchQuery, DirectionViewModel selectedDirection, bool dontSearchInBothDirections)
     {
         bool directionSwitched = false;
 
-        List<DictionaryEntry> results = await DatabaseManager.Instance.QueryEntries(SelectedDirection!.Dictionary, searchQuery, SelectedDirection.ReverseSearch);
+        List<DictionaryEntry> results = await DatabaseManager.Instance.QueryEntries(selectedDirection.Dictionary, searchQuery, selectedDirection.ReverseSearch);
 
         if (results.Count == 0 && !dontSearchInBothDirections)
         {
-            results = await DatabaseManager.Instance.QueryEntries(SelectedDirection.Dictionary, searchQuery, !SelectedDirection.ReverseSearch);
+            results = await DatabaseManager.Instance.QueryEntries(selectedDirection.Dictionary, searchQuery, !selectedDirection.ReverseSearch);
 
             if (results.Count != 0)
                 directionSwitched = true;
         }
 
-        results.Sort(new DictionaryEntryComparer(searchQuery, SelectedDirection.ReverseSearch ^ directionSwitched));
+        results.Sort(new DictionaryEntryComparer(searchQuery, selectedDirection.ReverseSearch ^ directionSwitched));
 
         return (results, directionSwitched);
     }
@@ -146,6 +146,9 @@ class SearchResultsViewModel : ViewModel
     public async Task PerformQuery(string searchQuery, bool dontSearchInBothDirections = false)
     {
         searchSuggestionCancellationTokenSource?.Cancel();
+
+        // capture the current value of SelectedDirection since it may change while the query is running
+        DirectionViewModel selectedDirection = SelectedDirection!;
 
         try
         {
@@ -157,7 +160,7 @@ class SearchResultsViewModel : ViewModel
 
             Task<(List<DictionaryEntry> Results, bool DirectionSwitched)> searchTask = Task.Run(async delegate ()
             {
-                return await PerformQueryInner(searchQuery, dontSearchInBothDirections);
+                return await PerformQueryInner(searchQuery, selectedDirection, dontSearchInBothDirections);
             });
 
             Task animationDelayTask = Task.Delay(250);
@@ -171,9 +174,9 @@ class SearchResultsViewModel : ViewModel
             }
 
             if (searchTask.Result.DirectionSwitched)
-                SwitchDirectionOfTranslation();
+                SelectedDirection = AvailableDirections.First(dvm => dvm.EqualsReversed(selectedDirection));
 
-            SearchContext searchContext = new SearchContext(searchQuery, SelectedDirection!, dontSearchInBothDirections);
+            SearchContext searchContext = new SearchContext(searchQuery, selectedDirection, dontSearchInBothDirections);
 
             DictionaryEntries = await Task.Run(delegate ()
             {
