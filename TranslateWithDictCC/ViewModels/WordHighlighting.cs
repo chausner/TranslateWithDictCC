@@ -33,24 +33,28 @@ enum FormattedWordFragmentKind
     QueryHighlightAnnotation
 }
 
-static partial class WordHighlighting
+partial class WordHighlighting
 {
-    static SolidColorBrush annotationBrush = null!;
-    static SolidColorBrush queryHighlightBrush = null!;
+    readonly Settings settings;
+
+    SolidColorBrush annotationBrush = null!;
+    SolidColorBrush queryHighlightBrush = null!;
 
     [GeneratedRegex(@"(\{.*?\})|(\[.*?\])|(\<.*?\>)")]
     private static partial Regex AnnotationsRegex();
 
-    static WordHighlighting()
+    public WordHighlighting(Settings settings)
     {
+        this.settings = settings;
+
         SetBrushes();
 
-        Settings.Instance.PropertyChanged += Settings_PropertyChanged;
+        settings.PropertyChanged += Settings_PropertyChanged;
     }
 
-    private static void SetBrushes()
+    private void SetBrushes()
     {
-        ResourceDictionary dictionary = Settings.Instance.AppTheme switch
+        ResourceDictionary dictionary = settings.AppTheme switch
         {
             ElementTheme.Default => Application.Current.Resources,
             ElementTheme.Light => (ResourceDictionary)Application.Current.Resources.ThemeDictionaries["Light"],
@@ -62,13 +66,13 @@ static partial class WordHighlighting
         queryHighlightBrush = (SolidColorBrush)dictionary["DictionaryEntryQueryHighlightThemeBrush"];
     }
 
-    private static void Settings_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    private void Settings_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(Settings.AppTheme))
             SetBrushes();
     }
 
-    public static FormattedWord FormatWord(string word, TextSpan[] matchSpans, bool highlightQuery)
+    public FormattedWord FormatWord(string word, TextSpan[] matchSpans, bool highlightQuery)
     {
         IReadOnlyList<TextSpan> annotationSpans = GetAnnotationSpans(word);
         List<FormattedWordFragment> fragments = [];
@@ -102,7 +106,7 @@ static partial class WordHighlighting
         return new FormattedWord(fragments);
     }
 
-    public static void SetRichTextBlockContent(RichTextBlock richTextBlock, FormattedWord formattedWord)
+    public void SetRichTextBlockContent(RichTextBlock richTextBlock, FormattedWord formattedWord)
     {
         if (ReferenceEquals(richTextBlock.Tag, formattedWord))
             return;
@@ -118,7 +122,7 @@ static partial class WordHighlighting
         richTextBlock.Blocks.Clear();
     }
 
-    private static Paragraph CreateParagraph(FormattedWord formattedWord)
+    private Paragraph CreateParagraph(FormattedWord formattedWord)
     {
         Paragraph paragraph = new Paragraph();
 
@@ -159,7 +163,7 @@ static partial class WordHighlighting
         yield return currentSpan;
     }
 
-    private static Inline CreateInline(FormattedWordFragment fragment)
+    private Inline CreateInline(FormattedWordFragment fragment)
     {
         return fragment.Kind switch
         {
@@ -214,7 +218,7 @@ static partial class WordHighlighting
             fragments.Add(new FormattedWordFragment(text, kind));
     }
 
-    private static Run CreateRun(string text, bool annotation)
+    private Run CreateRun(string text, bool annotation)
     {
         Run run = new Run() { Text = text };
 
@@ -226,7 +230,7 @@ static partial class WordHighlighting
         return run;
     }
 
-    private static InlineUIContainer CreateQueryHighlightInline(string text, bool annotation)
+    private InlineUIContainer CreateQueryHighlightInline(string text, bool annotation)
     {
         TextBlock textBlock = new TextBlock() { Text = text };
 
@@ -248,12 +252,12 @@ static partial class WordHighlighting
         return new InlineUIContainer() { Child = border };
     }
 
-    private static void ApplyAnnotationStyle(Run run)
+    private void ApplyAnnotationStyle(Run run)
     {
         run.Foreground = annotationBrush;
     }
 
-    private static void ApplyAnnotationStyle(TextBlock textBlock)
+    private void ApplyAnnotationStyle(TextBlock textBlock)
     {
         textBlock.Foreground = annotationBrush;
     }

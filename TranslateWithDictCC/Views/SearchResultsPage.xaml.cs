@@ -1,4 +1,5 @@
-﻿using Microsoft.UI.Xaml;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
@@ -8,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
+using TranslateWithDictCC.Services;
 using TranslateWithDictCC.ViewModels;
 using Windows.System;
 
@@ -23,9 +25,11 @@ public sealed partial class SearchResultsPage : Page
         public required StackPanel AttributesPanel { get; init; }
     }
 
-    SearchResultsViewModel ViewModel => SearchResultsViewModel.Instance;
-
-    Settings Settings => Settings.Instance;
+    SearchResultsViewModel ViewModel { get; }
+    readonly MainViewModel mainViewModel;
+    readonly DialogService dialogService;
+    readonly WordHighlighting wordHighlighting;
+    readonly NavigationService navigationService;
 
     readonly SolidColorBrush altBackgroundThemeBrush = (SolidColorBrush)Application.Current.Resources["DictionaryEntryAltBackgroundThemeBrush"];
     readonly Brush wordClassesBorderBackground = (Brush)Application.Current.Resources["DictionaryEntryWordClassesThemeBrush"];
@@ -36,6 +40,12 @@ public sealed partial class SearchResultsPage : Page
     public SearchResultsPage()
     {
         InitializeComponent();
+
+        ViewModel = ((App)App.Current).Host.Services.GetRequiredService<SearchResultsViewModel>();
+        mainViewModel = ((App)App.Current).Host.Services.GetRequiredService<MainViewModel>();
+        dialogService = ((App)App.Current).Host.Services.GetRequiredService<DialogService>();
+        wordHighlighting = ((App)App.Current).Host.Services.GetRequiredService<WordHighlighting>();
+        navigationService = ((App)App.Current).Host.Services.GetRequiredService<NavigationService>();
 
         ViewModel.PropertyChanged += ViewModel_PropertyChanged;
 
@@ -113,7 +123,7 @@ public sealed partial class SearchResultsPage : Page
         if (searchSuggestionViewModel == null)
             return;
 
-        WordHighlighting.SetRichTextBlockContent(richTextBlock, searchSuggestionViewModel.Word);
+        wordHighlighting.SetRichTextBlockContent(richTextBlock, searchSuggestionViewModel.Word);
     }
 
     private void directionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -148,8 +158,7 @@ public sealed partial class SearchResultsPage : Page
 
         SearchContext searchContext = new SearchContext(searchBox.Text, ViewModel.SelectedDirection, dontSearchInBothDirections);
 
-        // explicit type parameters required here
-        MainViewModel.Instance.NavigateToPageCommand.Execute(Tuple.Create<string, object>("SearchResultsPage", searchContext));
+        navigationService.NavigateToSearchResultsPage(searchContext);
     }
 
     private void searchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
@@ -187,11 +196,10 @@ public sealed partial class SearchResultsPage : Page
                 {
                     Title = resourceLoader.GetString("Error_Performing_Query_Title"),
                     Content = resourceLoader.GetString("Error_Performing_Query_Body"),
-                    CloseButtonText = "OK",
-                    XamlRoot = MainWindow.Instance.Content.XamlRoot
+                    CloseButtonText = "OK"
                 };
 
-                await contentDialog.ShowAsync();
+                await dialogService.ShowDialogAsync(contentDialog);
             }
 
             if (ViewModel.DictionaryEntries != null)
@@ -210,10 +218,10 @@ public sealed partial class SearchResultsPage : Page
             }
         }
 
-        if (!MainViewModel.Instance.NoDictionaryInstalledTeachingTipShown && ViewModel.AvailableDirections.Length == 0)
+        if (!mainViewModel.NoDictionaryInstalledTeachingTipShown && ViewModel.AvailableDirections.Length == 0)
         {
-            MainViewModel.Instance.ShowNoDictionaryInstalledTeachingTip = true;
-            MainViewModel.Instance.NoDictionaryInstalledTeachingTipShown = true;
+            mainViewModel.ShowNoDictionaryInstalledTeachingTip = true;
+            mainViewModel.NoDictionaryInstalledTeachingTipShown = true;
         }
     }
 
@@ -221,7 +229,7 @@ public sealed partial class SearchResultsPage : Page
     {
         if (e.SourcePageType != typeof(SearchResultsPage))
         {
-            MainViewModel.Instance.ShowNoDictionaryInstalledTeachingTip = false;
+            mainViewModel.ShowNoDictionaryInstalledTeachingTip = false;
         }
     }
 
@@ -262,12 +270,12 @@ public sealed partial class SearchResultsPage : Page
                 break;
 
             case 1:
-                WordHighlighting.SetRichTextBlockContent(templateParts.Word1RichTextBlock, viewModel.Word1);
+                wordHighlighting.SetRichTextBlockContent(templateParts.Word1RichTextBlock, viewModel.Word1);
                 args.RegisterUpdateCallback(ListView_ContainerContentChanging);
                 break;
 
             case 2:
-                WordHighlighting.SetRichTextBlockContent(templateParts.Word2RichTextBlock, viewModel.Word2);
+                wordHighlighting.SetRichTextBlockContent(templateParts.Word2RichTextBlock, viewModel.Word2);
 
                 if (viewModel.Attributes.Count != 0)
                     args.RegisterUpdateCallback(ListView_ContainerContentChanging);

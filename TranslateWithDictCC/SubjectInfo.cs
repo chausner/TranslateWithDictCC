@@ -9,13 +9,7 @@ namespace TranslateWithDictCC;
 
 class SubjectInfo
 {
-    public static SubjectInfo Instance { get; } = new SubjectInfo();
-
     FrozenDictionary<string, JsonElement>? subjects;
-
-    private SubjectInfo()
-    {
-    }
 
     public async Task LoadAsync()
     {

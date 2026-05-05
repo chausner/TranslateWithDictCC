@@ -1,5 +1,5 @@
-﻿using Microsoft.UI.Xaml;
-using System;
+﻿using System;
+using Microsoft.UI.Xaml;
 using TranslateWithDictCC.ViewModels;
 using Windows.Foundation.Collections;
 using Windows.Storage;
@@ -8,8 +8,6 @@ namespace TranslateWithDictCC;
 
 class Settings : ViewModel
 {
-    public static readonly Settings Instance = new Settings();
-
     ApplicationDataCompositeValue? selectedDirection;
 
     public void GetSelectedDirection(out string? originLanguageCode, out string? destinationLanguageCode)
@@ -117,7 +115,7 @@ class Settings : ViewModel
         }
     }
 
-    private Settings()
+   public Settings()
     {
         IPropertySet settingsValues = ApplicationData.Current.LocalSettings.Values;
 

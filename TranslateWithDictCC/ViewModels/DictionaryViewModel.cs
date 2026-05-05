@@ -9,6 +9,8 @@ namespace TranslateWithDictCC.ViewModels;
 
 class DictionaryViewModel : ViewModel
 {
+    readonly SettingsViewModel settingsViewModel;
+
     public string OriginLanguageCode { get; } = null!;
     public string DestinationLanguageCode { get; } = null!;
 
@@ -70,15 +72,17 @@ class DictionaryViewModel : ViewModel
     public ICommand AbortImportCommand { get; }
     public ICommand RemoveDictionaryCommand { get; }
 
-    private DictionaryViewModel()
+    private DictionaryViewModel(SettingsViewModel settingsViewModel)
     {
+        this.settingsViewModel = settingsViewModel;
+
         PropertyChanged += (sender, e) => { UpdateStatusText(); };
 
         AbortImportCommand = new RelayCommand(RunAbortImportCommand);
         RemoveDictionaryCommand = new RelayCommand(RunRemoveDictionaryCommand);
     }
 
-    public DictionaryViewModel(Dictionary dictionary) : this()
+    public DictionaryViewModel(Dictionary dictionary, SettingsViewModel settingsViewModel) : this(settingsViewModel)
     {
         Dictionary = dictionary;
         OriginLanguageCode = dictionary.OriginLanguageCode;
@@ -90,7 +94,7 @@ class DictionaryViewModel : ViewModel
         UpdateStatusText();
     }
 
-    public DictionaryViewModel(WordlistReader wordlistReader) : this()
+    public DictionaryViewModel(WordlistReader wordlistReader, SettingsViewModel settingsViewModel) : this(settingsViewModel)
     {
         WordlistReader = wordlistReader;
         OriginLanguageCode = wordlistReader.OriginLanguageCode;
@@ -131,12 +135,12 @@ class DictionaryViewModel : ViewModel
 
     private void RunAbortImportCommand()
     {
-        SettingsViewModel.Instance.AbortImport(this);
+        settingsViewModel.AbortImport(this);
     }
 
     private async void RunRemoveDictionaryCommand()
     {
-        await SettingsViewModel.Instance.RemoveDictionary(this);
+        await settingsViewModel.RemoveDictionary(this);
     }
 }
 

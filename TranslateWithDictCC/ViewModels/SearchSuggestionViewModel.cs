@@ -5,6 +5,8 @@ namespace TranslateWithDictCC.ViewModels;
 
 class SearchSuggestionViewModel : ViewModel
 {
+    readonly WordHighlighting wordHighlighting;
+
     public DictionaryEntry DictionaryEntry { get; }
     public SearchContext SearchContext { get; }
 
@@ -29,16 +31,17 @@ class SearchSuggestionViewModel : ViewModel
         }
     }
 
-    public SearchSuggestionViewModel(DictionaryEntry entry, SearchContext searchContext)
+    public SearchSuggestionViewModel(DictionaryEntry entry, SearchContext searchContext, WordHighlighting wordHighlighting)
     {
         DictionaryEntry = entry;
         SearchContext = searchContext;
+        this.wordHighlighting = wordHighlighting;
     }
 
     private void Initialize()
     {
         bool reverseSearch = SearchContext.SelectedDirection.ReverseSearch;
-        Word = WordHighlighting.FormatWord(reverseSearch ? DictionaryEntry.Word2 : DictionaryEntry.Word1, DictionaryEntry.MatchSpans!, false);
+        Word = wordHighlighting.FormatWord(reverseSearch ? DictionaryEntry.Word2 : DictionaryEntry.Word1, DictionaryEntry.MatchSpans!, false);
     }
 
     public Visibility GetWordClassVisibility(string wordClasses)

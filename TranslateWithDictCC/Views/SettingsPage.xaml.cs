@@ -1,16 +1,19 @@
-﻿using Microsoft.UI.Xaml.Controls;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.UI.Xaml.Controls;
 using TranslateWithDictCC.ViewModels;
 
 namespace TranslateWithDictCC.Views;
 
 public sealed partial class SettingsPage : Page
 {
-    SettingsViewModel ViewModel => SettingsViewModel.Instance;
+    SettingsViewModel ViewModel { get; }
 
     public SettingsPage()
     {
         InitializeComponent();
 
-        DataContext = SettingsViewModel.Instance;
+        ViewModel = ((App)App.Current).Host.Services.GetRequiredService<SettingsViewModel>();
+
+        DataContext = ViewModel;
     }
 }

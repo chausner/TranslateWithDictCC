@@ -1,9 +1,9 @@
-﻿using Microsoft.UI.Input;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.UI.Input;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
-using System;
 using System.Linq;
 using TranslateWithDictCC.ViewModels;
 
@@ -11,16 +11,15 @@ namespace TranslateWithDictCC.Views;
 
 public sealed partial class MainPage : Page
 {
-    MainViewModel ViewModel => MainViewModel.Instance;
+    MainViewModel ViewModel { get; }
 
     public MainPage()
     {
         InitializeComponent();
 
-        rootGrid.DataContext = MainViewModel.Instance;
+        ViewModel = ((App)App.Current).Host.Services.GetRequiredService<MainViewModel>();
 
-        ViewModel.NavigateToPageCommand = new RelayCommand<object>(o => NavigateToPage(o, new SuppressNavigationTransitionInfo()));
-        ViewModel.GoBackToPageCommand = new RelayCommand<string>(o => GoBackToPage(o, new SuppressNavigationTransitionInfo()));
+        rootGrid.DataContext = ViewModel;
 
         PointerPressed += MainPage_PointerPressed;
     }
@@ -38,8 +37,10 @@ public sealed partial class MainPage : Page
                 string originLanguageCode = launchArguments.Substring(5, 2);
                 string destinationLanguageCode = launchArguments.Substring(7, 2);
 
+                SearchResultsViewModel searchResultsViewModel = ((App)App.Current).Host.Services.GetRequiredService<SearchResultsViewModel>();
+
                 DirectionViewModel? directionViewModel =
-                    SearchResultsViewModel.Instance.AvailableDirections.FirstOrDefault(
+                    searchResultsViewModel.AvailableDirections.FirstOrDefault(
                         dvm => dvm.OriginLanguageCode == originLanguageCode && dvm.DestinationLanguageCode == destinationLanguageCode);
 
                 if (directionViewModel != null)
@@ -47,49 +48,12 @@ public sealed partial class MainPage : Page
             }
         }
 
-        contentFrame.Navigate(typeof(SearchResultsPage), searchContext);
+        NavigateToPage<SearchResultsPage>(searchContext);
     }
 
-    private void GoBackToPage(string pageType, NavigationTransitionInfo transitionInfo)
+    public void NavigateToPage<TPage>(object? parameter = null)
     {
-        GoBackToPage(typeof(SearchResultsPage), transitionInfo);
-    }
-
-    private void GoBackToPage(Type pageType, NavigationTransitionInfo transitionInfo)
-    {
-        while (contentFrame.SourcePageType != pageType)
-        {
-            if (contentFrame.CanGoBack)
-                contentFrame.GoBack(transitionInfo);
-            else
-                contentFrame.Navigate(pageType, null, transitionInfo);
-        }
-    }
-
-    private void NavigateToPage(object pageTypeAndParameter, NavigationTransitionInfo transitionInfo)
-    {           
-        string pageType;
-        object? parameter;
-
-        if (pageTypeAndParameter is string s)
-        {
-            pageType = s;
-            parameter = null;
-        }
-        else if (pageTypeAndParameter is Tuple<string, object?> t)
-        {
-            pageType = t.Item1;
-            parameter = t.Item2;
-        }
-        else
-            throw new ArgumentException();
-
-        if (pageType == "SearchResultsPage")
-            contentFrame.Navigate(typeof(SearchResultsPage), parameter, transitionInfo);
-        else if (pageType == "SettingsPage")
-            contentFrame.NavigateIfNeeded(typeof(SettingsPage), parameter, transitionInfo);
-        else if (pageType == "AboutPage")
-            contentFrame.NavigateIfNeeded(typeof(AboutPage), parameter, transitionInfo);
+        contentFrame.Navigate(typeof(TPage), parameter, new SuppressNavigationTransitionInfo());
     }
 
     private void MainPage_PointerPressed(object sender, PointerRoutedEventArgs e)
@@ -126,11 +90,11 @@ public sealed partial class MainPage : Page
         navigationView.IsPaneOpen = false;
 
         if (args.InvokedItemContainer == searchHamburgerMenuItem)
-            NavigateToPage("SearchResultsPage", new SuppressNavigationTransitionInfo());
+            NavigateToPage<SearchResultsPage>();
         else if (args.InvokedItemContainer == optionsHamburgerMenuItem)
-            NavigateToPage("SettingsPage", new SuppressNavigationTransitionInfo());
+            NavigateToPage<SettingsPage>();
         else if (args.InvokedItemContainer == aboutHamburgerMenuItem)
-            NavigateToPage("AboutPage", new SuppressNavigationTransitionInfo());
+            NavigateToPage<AboutPage>();
     }
 
     private void navigationView_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)

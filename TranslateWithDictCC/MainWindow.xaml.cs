@@ -1,5 +1,6 @@
 ﻿using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.Windows.ApplicationModel.Resources;
 using System.ComponentModel;
 using System.IO;
@@ -12,13 +13,17 @@ namespace TranslateWithDictCC;
 
 public sealed partial class MainWindow : WindowEx
 {
+    readonly Settings settings;
+
     public static MainWindow Instance { get; private set; } = null!;
 
-    public UIElement ApplicationFrame => applicationFrame;
+    public Frame ApplicationFrame => applicationFrame;
 
-    public MainWindow(string? launchArguments)
+    internal MainWindow(Settings settings, string? launchArguments)
     {
         InitializeComponent();
+
+        this.settings = settings;
 
         Instance = this;
 
@@ -31,7 +36,7 @@ public sealed partial class MainWindow : WindowEx
 
         applicationFrame.Navigate(typeof(MainPage), launchArguments);
 
-        Settings.Instance.PropertyChanged += Settings_PropertyChanged;
+        settings.PropertyChanged += Settings_PropertyChanged;
     }
 
     private void Settings_PropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -42,7 +47,7 @@ public sealed partial class MainWindow : WindowEx
 
     private void SetTheme()
     {
-        applicationFrame.RequestedTheme = Settings.Instance.AppTheme;
+        applicationFrame.RequestedTheme = settings.AppTheme;
 
         SetTitleBarColorsAndIcon();
     }
@@ -54,7 +59,7 @@ public sealed partial class MainWindow : WindowEx
         {
             AppWindowTitleBar titleBar = AppWindow.TitleBar;
 
-            ResourceDictionary dictionary = Settings.Instance.AppTheme switch
+            ResourceDictionary dictionary = settings.AppTheme switch
             {
                 ElementTheme.Default => Application.Current.Resources,
                 ElementTheme.Light => (ResourceDictionary)Application.Current.Resources.ThemeDictionaries["Light"],

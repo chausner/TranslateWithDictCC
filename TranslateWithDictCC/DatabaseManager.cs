@@ -2,14 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using TranslateWithDictCC.Models;
-using Windows.Storage;
 
 namespace TranslateWithDictCC;
 
@@ -17,11 +15,9 @@ class DatabaseManager
 {
     public string DatabasePath { get; }
 
-    public static readonly DatabaseManager Instance = new DatabaseManager(Path.Combine(ApplicationData.Current.LocalFolder.Path, "dictionaries.db"));
-
     bool initialized = false;
 
-    private DatabaseManager(string databasePath)
+    public DatabaseManager(string databasePath)
     {
         DatabasePath = databasePath;
     }

@@ -1,11 +1,7 @@
-﻿using System.Windows.Input;
-
-namespace TranslateWithDictCC.ViewModels;
+﻿namespace TranslateWithDictCC.ViewModels;
 
 class MainViewModel : ViewModel
 {
-    public static readonly MainViewModel Instance = new MainViewModel();
-
     public bool ShowNoDictionaryInstalledTeachingTip
     {
         get;
@@ -13,11 +9,4 @@ class MainViewModel : ViewModel
     }
 
     public bool NoDictionaryInstalledTeachingTipShown { get; set; }
-
-    public ICommand NavigateToPageCommand { get; set; } = null!;
-    public ICommand GoBackToPageCommand { get; set; } = null!;
-
-    private MainViewModel()
-    {
-    }
 }
