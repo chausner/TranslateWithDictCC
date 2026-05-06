@@ -97,8 +97,7 @@ class SearchResultsViewModel : ViewModel
             dvm.OriginLanguageCode == originLanguageCode &&
             dvm.DestinationLanguageCode == destinationLanguageCode);
 
-        if (SelectedDirection == null)
-            SelectedDirection = AvailableDirections.FirstOrDefault();
+        SelectedDirection ??= AvailableDirections.FirstOrDefault();
     }
 
     public void SaveSettings()
@@ -357,8 +356,7 @@ class SearchResultsViewModel : ViewModel
         if (previouslySelected != null)
             SelectedDirection = AvailableDirections.FirstOrDefault(dvm => dvm.Equals(previouslySelected));
 
-        if (SelectedDirection == null)
-            SelectedDirection = AvailableDirections.FirstOrDefault();
+        SelectedDirection ??= AvailableDirections.FirstOrDefault();
 
         await UpdateJumpList();
     }
