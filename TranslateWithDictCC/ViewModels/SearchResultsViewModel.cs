@@ -51,6 +51,7 @@ class SearchResultsViewModel : ViewModel
 
     readonly SemaphoreSlim querySemaphore = new SemaphoreSlim(1);
 
+    CancellationTokenSource? searchQueryCancellationTokenSource;
     CancellationTokenSource? searchSuggestionCancellationTokenSource;
 
     private SearchResultsViewModel()
@@ -123,15 +124,15 @@ class SearchResultsViewModel : ViewModel
         MainViewModel.Instance.NavigateToPageCommand.Execute(Tuple.Create<string, object?>("SettingsPage", null));
     }
 
-    private async Task<(List<DictionaryEntry> Results, bool DirectionSwitched)> PerformQueryInner(string searchQuery, DirectionViewModel selectedDirection, bool dontSearchInBothDirections)
+    private async Task<(List<DictionaryEntry> Results, bool DirectionSwitched)> PerformQueryInner(string searchQuery, DirectionViewModel selectedDirection, bool dontSearchInBothDirections, CancellationToken cancellationToken)
     {
         bool directionSwitched = false;
 
-        List<DictionaryEntry> results = await DatabaseManager.Instance.QueryEntries(selectedDirection.Dictionary, searchQuery, selectedDirection.ReverseSearch);
+        List<DictionaryEntry> results = await DatabaseManager.Instance.QueryEntries(selectedDirection.Dictionary, searchQuery, selectedDirection.ReverseSearch, cancellationToken: cancellationToken);
 
         if (results.Count == 0 && !dontSearchInBothDirections)
         {
-            results = await DatabaseManager.Instance.QueryEntries(selectedDirection.Dictionary, searchQuery, !selectedDirection.ReverseSearch);
+            results = await DatabaseManager.Instance.QueryEntries(selectedDirection.Dictionary, searchQuery, !selectedDirection.ReverseSearch, cancellationToken: cancellationToken);
 
             if (results.Count != 0)
                 directionSwitched = true;
@@ -145,13 +146,21 @@ class SearchResultsViewModel : ViewModel
     public async Task PerformQuery(string searchQuery, bool dontSearchInBothDirections = false)
     {
         searchSuggestionCancellationTokenSource?.Cancel();
+        searchQueryCancellationTokenSource?.Cancel();
+
+        CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+        searchQueryCancellationTokenSource = cancellationTokenSource;
+        CancellationToken cancellationToken = cancellationTokenSource.Token;
 
         // capture the current value of SelectedDirection since it may change while the query is running
         DirectionViewModel selectedDirection = SelectedDirection!;
 
+        bool querySemaphoreEntered = false;
+
         try
         {
-            await querySemaphore.WaitAsync();
+            await querySemaphore.WaitAsync(cancellationToken);
+            querySemaphoreEntered = true;
 
             // it may happen that the AutoSuggestBox does not hide search suggestions automatically after
             // performing a query. For these cases, clear the suggestions manually
@@ -159,8 +168,8 @@ class SearchResultsViewModel : ViewModel
 
             Task<(List<DictionaryEntry> Results, bool DirectionSwitched)> searchTask = Task.Run(async delegate ()
             {
-                return await PerformQueryInner(searchQuery, selectedDirection, dontSearchInBothDirections);
-            });
+                return await PerformQueryInner(searchQuery, selectedDirection, dontSearchInBothDirections, cancellationToken);
+            }, cancellationToken);
 
             Task animationDelayTask = Task.Delay(250);
 
@@ -169,10 +178,13 @@ class SearchResultsViewModel : ViewModel
             if (finishedTask == animationDelayTask)
             {
                 IsSearchInProgress = true;
-                await searchTask;
             }
 
-            if (searchTask.Result.DirectionSwitched)
+            (List<DictionaryEntry> Results, bool DirectionSwitched) searchResult = await searchTask;
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            if (searchResult.DirectionSwitched)
             {
                 selectedDirection = AvailableDirections.First(dvm => dvm.EqualsReversed(selectedDirection));
                 SelectedDirection = selectedDirection;
@@ -182,14 +194,19 @@ class SearchResultsViewModel : ViewModel
 
             DictionaryEntries = await Task.Run(delegate ()
             {
-                return searchTask.Result.Results.Select(entry => new DictionaryEntryViewModel(entry, searchContext)).ToList();
-            });
+                return searchResult.Results.Select(entry => new DictionaryEntryViewModel(entry, searchContext)).ToList();
+            }, cancellationToken);
         }
         finally
         {
-            IsSearchInProgress = false;
+            if (ReferenceEquals(searchQueryCancellationTokenSource, cancellationTokenSource))
+            {
+                IsSearchInProgress = false;
+                searchQueryCancellationTokenSource = null;
+            }
 
-            querySemaphore.Release();
+            if (querySemaphoreEntered)
+                querySemaphore.Release();
         }
     }
 
@@ -197,10 +214,12 @@ class SearchResultsViewModel : ViewModel
     {
         IList<SearchSuggestionViewModel>? suggestions;
         bool reverseSearch;
+        bool querySemaphoreEntered = false;
 
         try
         {
             await querySemaphore.WaitAsync(cancellationToken);
+            querySemaphoreEntered = true;
 
             (suggestions, reverseSearch) = await GetSearchSuggestions(partialSearchQuery, cancellationToken);
         }
@@ -211,7 +230,8 @@ class SearchResultsViewModel : ViewModel
         }
         finally
         {
-            querySemaphore.Release();
+            if (querySemaphoreEntered)
+                querySemaphore.Release();
         }
 
         if (suggestions != null)
@@ -306,14 +326,14 @@ class SearchResultsViewModel : ViewModel
 
         bool reverseSearch = SelectedDirection!.ReverseSearch;
 
-        List<DictionaryEntry> results = await DatabaseManager.Instance.QueryEntries(SelectedDirection.Dictionary, searchQuery, reverseSearch, maxResults + 1);
+        List<DictionaryEntry> results = await DatabaseManager.Instance.QueryEntries(SelectedDirection.Dictionary, searchQuery, reverseSearch, maxResults + 1, cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
 
         if (results.Count == 0)
         {
             reverseSearch = !reverseSearch;
-            results = await DatabaseManager.Instance.QueryEntries(SelectedDirection.Dictionary, searchQuery, reverseSearch, maxResults + 1);
+            results = await DatabaseManager.Instance.QueryEntries(SelectedDirection.Dictionary, searchQuery, reverseSearch, maxResults + 1, cancellationToken);
         }
 
         if (results.Count == 0 || results.Count > maxResults)

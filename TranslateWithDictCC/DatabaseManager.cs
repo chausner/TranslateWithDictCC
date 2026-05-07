@@ -124,23 +124,23 @@ class DatabaseManager
         return await command.ExecuteScalarAsync().ConfigureAwait(false);
     }
 
-    public Task<List<T>> ExecuteReader<T>(string commandText, Func<DbDataReader, T> dataReaderFunc)
+    public Task<List<T>> ExecuteReader<T>(string commandText, Func<DbDataReader, T> dataReaderFunc, CancellationToken cancellationToken = default)
     {
-        return ExecuteReader(command => { command.CommandText = commandText; }, dataReaderFunc);
+        return ExecuteReader(command => { command.CommandText = commandText; }, dataReaderFunc, cancellationToken);
     }
 
-    public async Task<List<T>> ExecuteReader<T>(Action<DbCommand> commandFunc, Func<DbDataReader, T> dataReaderFunc)
+    public async Task<List<T>> ExecuteReader<T>(Action<DbCommand> commandFunc, Func<DbDataReader, T> dataReaderFunc, CancellationToken cancellationToken = default)
     {
         await using DbConnection connection = await OpenConnection().ConfigureAwait(false);
         await using DbCommand command = connection.CreateCommand();
 
         commandFunc(command);
 
-        await using DbDataReader dataReader = await command.ExecuteReaderAsync().ConfigureAwait(false);
+        await using DbDataReader dataReader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
 
         List<T> results = [];
 
-        while (await dataReader.ReadAsync().ConfigureAwait(false))
+        while (await dataReader.ReadAsync(cancellationToken).ConfigureAwait(false))
         {
             T result = dataReaderFunc(dataReader);
             results.Add(result);
@@ -275,7 +275,7 @@ class DatabaseManager
         }).ConfigureAwait(false);
     }
 
-    public async Task<List<DictionaryEntry>> QueryEntries(Dictionary dictionary, string searchQuery, bool reverseSearch, int maxResults = -1)
+    public async Task<List<DictionaryEntry>> QueryEntries(Dictionary dictionary, string searchQuery, bool reverseSearch, int maxResults = -1, CancellationToken cancellationToken = default)
     {
         string tableName = GetDictionaryTableName(dictionary.OriginLanguageCode, dictionary.DestinationLanguageCode);
         string column = reverseSearch ? "Word2" : "Word1";
@@ -315,7 +315,7 @@ class DatabaseManager
             TextSpan[] matchSpans = GetMatchSpans(reverseSearch ? word2 : word1, offsets);
 
             return new DictionaryEntry { Word1 = word1, Word2 = word2, WordClasses = wordClasses, Subjects = subjects, MatchSpans = matchSpans };
-        }).ConfigureAwait(false);
+        }, cancellationToken).ConfigureAwait(false);
     }
 
     private static TextSpan[] GetMatchSpans(string word, string[] offsets)

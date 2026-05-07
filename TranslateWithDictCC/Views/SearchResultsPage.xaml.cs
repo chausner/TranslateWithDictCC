@@ -181,6 +181,10 @@ public sealed partial class SearchResultsPage : Page
             {
                 await ViewModel.PerformQuery(searchContext.SearchQuery, searchContext.DontSearchInBothDirections);
             }
+            catch (OperationCanceledException)
+            {
+                return;
+            }
             catch
             {
                 ContentDialog contentDialog = new ContentDialog()
