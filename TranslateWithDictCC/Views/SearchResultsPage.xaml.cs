@@ -253,9 +253,9 @@ public sealed partial class SearchResultsPage : Page
         {
             case 0:
                 if (args.ItemIndex % 2 == 0)
-                    templateParts.BackgroundBorder.ClearValue(Border.BackgroundProperty);
-                else
                     templateParts.BackgroundBorder.Background = altBackgroundThemeBrush;
+                else
+                    templateParts.BackgroundBorder.ClearValue(Border.BackgroundProperty);
 
                 templateRoot.DataContext = viewModel;
                 WordHighlighting.ClearRichTextBlockContent(templateParts.Word1RichTextBlock);
