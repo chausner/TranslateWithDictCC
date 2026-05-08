@@ -113,17 +113,18 @@ partial class DictionaryEntryViewModel : ViewModel
         }
     }
 
-    public IconElement GetMoreButtonIcon(AudioRecordingState state)
+    static readonly SymbolIconSource moreSymbolIcon = new SymbolIconSource() { Symbol = Symbol.More };
+    static readonly SymbolIconSource pauseSymbolIcon = new SymbolIconSource() { Symbol = Symbol.Pause };
+
+    public SymbolIconSource GetMoreButtonIcon(AudioRecordingState state)
     {
-        Symbol symbol = state switch
+        return state switch
         {
-            AudioRecordingState.Available => Symbol.More,
-            AudioRecordingState.Playing => Symbol.Pause, // Symbol.Stop
-            AudioRecordingState.Unavailable => Symbol.More,
+            AudioRecordingState.Available => moreSymbolIcon,
+            AudioRecordingState.Playing => pauseSymbolIcon,
+            AudioRecordingState.Unavailable => moreSymbolIcon,
             _ => throw new ArgumentException()
         };
-
-        return new IconSourceElement() { IconSource = new SymbolIconSource() { Symbol = symbol } };
     }
 
     public Visibility GetWordClassVisibility(string wordClasses)

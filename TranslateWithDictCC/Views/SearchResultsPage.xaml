@@ -66,8 +66,12 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <Border Name="RowBackgroundBorder" Grid.ColumnSpan="4" Margin="-12,2,-8,2" CornerRadius="4" />
-                <AppBarButton Grid.Column="0" Width="42" VerticalAlignment="Center" LabelPosition="Collapsed" Icon="{x:Bind GetMoreButtonIcon(AudioRecordingState1), Mode=OneWay}"
-                              Click="MoreButton1_Click" />
+                <AppBarButton Grid.Column="0" Width="42" VerticalAlignment="Center" LabelPosition="Collapsed"
+                              Click="MoreButton1_Click">
+                    <AppBarButton.Icon>
+                        <IconSourceElement IconSource="{x:Bind GetMoreButtonIcon(AudioRecordingState1), Mode=OneWay}" />
+                    </AppBarButton.Icon>
+                </AppBarButton>
 
                 <Grid Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="0,8,8,8">
                     <Grid.ColumnDefinitions>
@@ -78,8 +82,12 @@
                     <StackPanel Name="AttributesPanel" Grid.Column="1" VerticalAlignment="Center" Orientation="Horizontal" />
                 </Grid>
                 <RichTextBlock Name="Word2RichTextBlock" Grid.Column="2" VerticalAlignment="Center" Margin="0,8,0,8" FontSize="{StaticResource wordFontSize}" />
-                <AppBarButton Grid.Column="3" Width="42" VerticalAlignment="Center" LabelPosition="Collapsed" Icon="{x:Bind GetMoreButtonIcon(AudioRecordingState2), Mode=OneWay}"
-                              Click="MoreButton2_Click" />
+                <AppBarButton Grid.Column="3" Width="42" VerticalAlignment="Center" LabelPosition="Collapsed"
+                              Click="MoreButton2_Click">
+                    <AppBarButton.Icon>
+                        <IconSourceElement IconSource="{x:Bind GetMoreButtonIcon(AudioRecordingState2), Mode=OneWay}" />
+                    </AppBarButton.Icon>
+                </AppBarButton>
             </Grid>
         </DataTemplate>        
         <Storyboard x:Name="resultCountAnimation">
