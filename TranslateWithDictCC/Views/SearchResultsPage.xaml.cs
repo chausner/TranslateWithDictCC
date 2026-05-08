@@ -380,7 +380,7 @@ public sealed partial class SearchResultsPage : Page
         }
         else
             if (viewModel.PlayStopAudioRecording1Command.CanExecute(null))
-            viewModel.PlayStopAudioRecording1Command.Execute(null);
+                viewModel.PlayStopAudioRecording1Command.Execute(null);
     }
 
     private void MoreButton2_Click(object sender, RoutedEventArgs e)
