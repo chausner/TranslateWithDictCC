@@ -9,7 +9,7 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <ScrollViewer>
         <StackPanel Margin="24,16">
-            <TextBlock x:Uid="AboutPage_TitleTextBlock" Style="{StaticResource SubheaderTextBlockStyle}" Text="About" Margin="0,0,0,16" />
+            <TextBlock x:Uid="AboutPage_TitleTextBlock" Style="{StaticResource TitleTextBlockStyle}" Text="About" Margin="0,0,0,32" />
             <Grid Margin="0,0,0,8">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -25,7 +25,7 @@
             <HyperlinkButton x:Uid="AboutPage_PrivacyStatementLink" Content="Privacy Statement" NavigateUri="http://www.dict.cc/?s=about:&amp;l=e" Margin="-12,8,0,16" />
             <Button x:Uid="AboutPage_GiveFeedbackButton" Content="Give feedback" Margin="0,0,0,32" Command="{x:Bind ViewModel.GiveFeedbackCommand}" />
 
-            <TextBlock x:Uid="AboutPage_KeyboardShortcutsTextBlock" Style="{StaticResource TitleTextBlockStyle}" Text="Keyboard shortcuts" Margin="0,0,0,16" />
+            <TextBlock x:Uid="AboutPage_KeyboardShortcutsTextBlock" Style="{StaticResource BodyStrongTextBlockStyle}" Text="Keyboard shortcuts" Margin="0,0,0,16" />
             <Grid HorizontalAlignment="Left" Margin="0,0,0,32">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
@@ -41,7 +41,7 @@
                 <TextBlock x:Uid="AboutPage_SwitchDirectionOfTranslationTextBlock" Grid.Row="1" Grid.Column="1" Text="Switch direction of translation" VerticalAlignment="Center" />
             </Grid>
 
-            <TextBlock x:Uid="AboutPage_LicensesTextBlock" Style="{StaticResource TitleTextBlockStyle}" Text="Licenses" Margin="0,0,0,16" />
+            <TextBlock x:Uid="AboutPage_LicensesTextBlock" Style="{StaticResource BodyStrongTextBlockStyle}" Text="Licenses" Margin="0,0,0,16" />
             <TextBlock>GoSquared Flag Icon Set</TextBlock>
             <TextBlock>Copyright (c) 2015 Go Squared Ltd. http://www.gosquared.com/</TextBlock>
             <HyperlinkButton x:Uid="AboutPage_MITLicenceLink" Content="MIT Licence" NavigateUri="https://github.com/gosquared/flags/blob/master/LICENSE.txt" Margin="-12,8,0,0" />
