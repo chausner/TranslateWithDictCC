@@ -4,6 +4,7 @@ using Microsoft.Windows.ApplicationModel.Resources;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using TranslateWithDictCC.Services;
 using TranslateWithDictCC.ViewModels;
 using Windows.Media.Playback;
 using Windows.Networking.Connectivity;
@@ -12,7 +13,8 @@ namespace TranslateWithDictCC;
 
 class AudioPlayer
 {
-    public static AudioPlayer Instance { get; } = new AudioPlayer();
+    readonly AudioRecordingFetcher audioRecordingFetcher;
+    readonly DialogService dialogService;
 
     bool currentlyPlayingAudioRecordingWord2;
 
@@ -22,8 +24,11 @@ class AudioPlayer
 
     public DictionaryEntryViewModel? CurrentlyPlayingAudioRecording { get; private set; }
 
-    private AudioPlayer()
+    public AudioPlayer(AudioRecordingFetcher audioRecordingFetcher, DialogService dialogService)
     {
+        this.audioRecordingFetcher = audioRecordingFetcher;
+        this.dialogService = dialogService;
+
         mediaPlayer.AudioCategory = MediaPlayerAudioCategory.Speech;
         mediaPlayer.MediaOpened += MediaPlayer_MediaOpened;
         mediaPlayer.MediaEnded += MediaPlayer_MediaEnded;
@@ -44,11 +49,10 @@ class AudioPlayer
             {
                 Title = resourceLoader.GetString("No_Internet_Access_Title"),
                 Content = resourceLoader.GetString("No_Internet_Access_Body"),
-                CloseButtonText = "OK",
-                XamlRoot = MainWindow.Instance.Content.XamlRoot
+                CloseButtonText = "OK"
             };
 
-            await contentDialog.ShowAsync();
+            await dialogService.ShowDialogAsync(contentDialog);
             return;
         }
 
@@ -63,7 +67,7 @@ class AudioPlayer
                 CurrentlyPlayingAudioRecording = null;
             }
 
-            Uri? audioUri = await AudioRecordingFetcher.GetAudioRecordingUri(dictionaryEntryViewModel, word2);
+            Uri? audioUri = await audioRecordingFetcher.GetAudioRecordingUri(dictionaryEntryViewModel, word2);
 
             if (audioUri != null)
             {
@@ -83,11 +87,10 @@ class AudioPlayer
             {
                 Title = resourceLoader.GetString("Error_Retrieving_Audio_Recording_Title"),
                 Content = resourceLoader.GetString("Error_Retrieving_Audio_Recording_Body"),
-                CloseButtonText = "OK",
-                XamlRoot = MainWindow.Instance.Content.XamlRoot
+                CloseButtonText = "OK"
             };
 
-            await contentDialog.ShowAsync();
+            await dialogService.ShowDialogAsync(contentDialog);
         }
         finally
         {

@@ -10,13 +10,15 @@ partial class DictionaryEntryComparer : Comparer<DictionaryEntry>
 {
     readonly string[] searchTokens;
     readonly bool reverseSearch;
+    readonly bool caseSensitiveSearch;
 
     readonly Dictionary<string, MatchInfo> matchInfos = [];
 
-    public DictionaryEntryComparer(string searchQuery, bool reverseSearch)
+    public DictionaryEntryComparer(string searchQuery, bool reverseSearch, bool caseSensitiveSearch)
     {
         searchTokens = MatchInfo.SplitSearchQueryIntoTokens(searchQuery);
         this.reverseSearch = reverseSearch;
+        this.caseSensitiveSearch = caseSensitiveSearch;
     }
 
     public override int Compare(DictionaryEntry? x, DictionaryEntry? y)
@@ -52,7 +54,7 @@ partial class DictionaryEntryComparer : Comparer<DictionaryEntry>
 
         if (!matchInfoX.IsMatchInAnnotation)
         {
-            if (Settings.Instance.CaseSensitiveSearch)
+            if (caseSensitiveSearch)
                 if (matchInfoX.IsCaseSensitiveMatch != matchInfoY.IsCaseSensitiveMatch)
                     return -matchInfoX.IsCaseSensitiveMatch.CompareTo(matchInfoY.IsCaseSensitiveMatch);
 
@@ -69,7 +71,7 @@ partial class DictionaryEntryComparer : Comparer<DictionaryEntry>
         }
         else
         {
-            if (Settings.Instance.CaseSensitiveSearch)
+            if (caseSensitiveSearch)
                 if (matchInfoX.IsCaseSensitiveMatch != matchInfoY.IsCaseSensitiveMatch)
                     return -matchInfoX.IsCaseSensitiveMatch.CompareTo(matchInfoY.IsCaseSensitiveMatch);
 

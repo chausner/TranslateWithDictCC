@@ -8,8 +8,6 @@ namespace TranslateWithDictCC;
 
 class Settings : ObservableObject
 {
-    public static readonly Settings Instance = new Settings();
-
     ApplicationDataCompositeValue? selectedDirection;
 
     public void GetSelectedDirection(out string? originLanguageCode, out string? destinationLanguageCode)
@@ -117,7 +115,7 @@ class Settings : ObservableObject
         }
     }
 
-    private Settings()
+   public Settings()
     {
         IPropertySet settingsValues = ApplicationData.Current.LocalSettings.Values;
 

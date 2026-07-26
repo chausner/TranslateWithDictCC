@@ -9,11 +9,20 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using TranslateWithDictCC.Models;
+using TranslateWithDictCC.Services;
 
 namespace TranslateWithDictCC.ViewModels;
 
 partial class DictionaryEntryViewModel : ObservableObject
 {
+    readonly SearchResultsViewModel searchResultsViewModel;
+    readonly Settings settings;
+    readonly SubjectInfo subjectInfo;
+    readonly AudioPlayer audioPlayer;
+    readonly WordHighlighting wordHighlighting;
+    readonly NavigationService navigationService;
+    readonly DialogService dialogService;
+
     public DictionaryEntry DictionaryEntry { get; }
     public SearchContext SearchContext { get; }
 
@@ -68,10 +77,26 @@ partial class DictionaryEntryViewModel : ObservableObject
     [GeneratedRegex(@"\[([^\[\]]+)\]")]
     private static partial Regex SubjectsRegex();
 
-    public DictionaryEntryViewModel(DictionaryEntry entry, SearchContext searchContext)
+    public DictionaryEntryViewModel(
+        DictionaryEntry entry,
+        SearchContext searchContext,
+        SearchResultsViewModel searchResultsViewModel,
+        Settings settings,
+        SubjectInfo subjectInfo,
+        AudioPlayer audioPlayer,
+        WordHighlighting wordHighlighting,
+        NavigationService navigationService,
+        DialogService dialogService)
     {
         DictionaryEntry = entry;
         SearchContext = searchContext;
+        this.searchResultsViewModel = searchResultsViewModel;
+        this.settings = settings;
+        this.subjectInfo = subjectInfo;
+        this.audioPlayer = audioPlayer;
+        this.wordHighlighting = wordHighlighting;
+        this.navigationService = navigationService;
+        this.dialogService = dialogService;
         AudioRecordingState1 = AudioRecordingState.Available;
         AudioRecordingState2 = AudioRecordingState.Available;
         PlayStopAudioRecording1Command = new RelayCommand(() => { PlayStopAudioRecording(false); });
@@ -83,15 +108,15 @@ partial class DictionaryEntryViewModel : ObservableObject
     private void Initialize()
     {
         bool reverseSearch = SearchContext.SelectedDirection.ReverseSearch;
-        Word1 = WordHighlighting.FormatWord(reverseSearch ? DictionaryEntry.Word2 : DictionaryEntry.Word1, DictionaryEntry.MatchSpans!, true);
-        Word2 = WordHighlighting.FormatWord(reverseSearch ? DictionaryEntry.Word1 : DictionaryEntry.Word2, DictionaryEntry.MatchSpans!, false);
+        Word1 = wordHighlighting.FormatWord(reverseSearch ? DictionaryEntry.Word2 : DictionaryEntry.Word1, DictionaryEntry.MatchSpans!, true);
+        Word2 = wordHighlighting.FormatWord(reverseSearch ? DictionaryEntry.Word1 : DictionaryEntry.Word2, DictionaryEntry.MatchSpans!, false);
 
         attributes = [];
 
-        if (Settings.Instance.ShowWordClasses && DictionaryEntry.WordClasses != null)
+        if (settings.ShowWordClasses && DictionaryEntry.WordClasses != null)
             attributes.Add(new DictionaryEntryAttribute(DictionaryEntry.WordClasses, null));
 
-        if (Settings.Instance.ShowSubjects && DictionaryEntry.Subjects != null && SubjectInfo.Instance.IsLoaded)
+        if (settings.ShowSubjects && DictionaryEntry.Subjects != null && subjectInfo.IsLoaded)
         {
             var subjectMatches = SubjectsRegex().EnumerateMatches(DictionaryEntry.Subjects);
 
@@ -99,7 +124,7 @@ partial class DictionaryEntryViewModel : ObservableObject
             {
                 string subjectString = DictionaryEntry.Subjects.Substring(subjectMatch.Index + 1, subjectMatch.Length - 2);
 
-                var subject = SubjectInfo.Instance.LookupSubject(SearchContext.SelectedDirection.OriginLanguageCode, SearchContext.SelectedDirection.DestinationLanguageCode, subjectString);
+                var subject = subjectInfo.LookupSubject(SearchContext.SelectedDirection.OriginLanguageCode, SearchContext.SelectedDirection.DestinationLanguageCode, subjectString);
 
                 if (subject != null)
                     attributes.Add(new DictionaryEntryAttribute(subject.Value.LocalizedSubject, subject.Value.Description));
@@ -134,11 +159,11 @@ partial class DictionaryEntryViewModel : ObservableObject
         switch (word2 ? AudioRecordingState2 : AudioRecordingState1)
         {
             case AudioRecordingState.Available:
-                await AudioPlayer.Instance.PlayAudioRecording(this, word2);
+                await audioPlayer.PlayAudioRecording(this, word2);
                 break;
             case AudioRecordingState.Playing:
-                if (AudioPlayer.Instance.CurrentlyPlayingAudioRecording == this)
-                    AudioPlayer.Instance.Pause();
+                if (audioPlayer.CurrentlyPlayingAudioRecording == this)
+                    audioPlayer.Pause();
                 if (word2)
                     AudioRecordingState2 = AudioRecordingState.Available;
                 else
@@ -158,11 +183,10 @@ partial class DictionaryEntryViewModel : ObservableObject
         {
             Title = resourceLoader.GetString("Audio_Recording_Not_Available_Title"),
             Content = resourceLoader.GetString("Audio_Recording_Not_Available_Body"),
-            CloseButtonText = "OK",
-            XamlRoot = MainWindow.Instance.Content.XamlRoot
+            CloseButtonText = "OK"
         };
 
-        await contentDialog.ShowAsync();
+        await dialogService.ShowDialogAsync(contentDialog);
     }
 
     private void Search(bool word2)
@@ -172,12 +196,11 @@ partial class DictionaryEntryViewModel : ObservableObject
         string searchTerm = WordHighlighting.RemoveAnnotations(word);
 
         if (word2)
-            SearchResultsViewModel.Instance.SwitchDirectionOfTranslationCommand.Execute(null);
+            searchResultsViewModel.SwitchDirectionOfTranslationCommand.Execute(null);
 
-        SearchContext searchContext = new SearchContext(searchTerm, SearchResultsViewModel.Instance.SelectedDirection!, true);
+        SearchContext searchContext = new SearchContext(searchTerm, searchResultsViewModel.SelectedDirection!, true);
 
-        // explicit type parameters required here
-        MainViewModel.Instance.NavigateToPageCommand.Execute(Tuple.Create<string, object>("SearchResultsPage", searchContext));
+        navigationService.NavigateToSearchResultsPage(searchContext);
     }
 }
 

@@ -8,13 +8,20 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using TranslateWithDictCC.Models;
+using TranslateWithDictCC.Services;
 using Windows.UI.StartScreen;
 
 namespace TranslateWithDictCC.ViewModels;
 
 partial class SearchResultsViewModel : ObservableObject
 {
-    public static readonly SearchResultsViewModel Instance = new SearchResultsViewModel();
+    readonly DatabaseManager databaseManager;
+    readonly Settings settings;
+    readonly SubjectInfo subjectInfo;
+    readonly AudioPlayer audioPlayer;
+    readonly WordHighlighting wordHighlighting;
+    readonly NavigationService navigationService;
+    readonly DialogService dialogService;
 
     [ObservableProperty]
     public partial DirectionViewModel[] AvailableDirections { get; set; } = [];
@@ -41,14 +48,30 @@ partial class SearchResultsViewModel : ObservableObject
     CancellationTokenSource? searchQueryCancellationTokenSource;
     CancellationTokenSource? searchSuggestionCancellationTokenSource;
 
-    private SearchResultsViewModel()
+    public SearchResultsViewModel(
+        DatabaseManager databaseManager,
+        SettingsViewModel settingsViewModel,
+        Settings settings,
+        SubjectInfo subjectInfo,
+        AudioPlayer audioPlayer,
+        WordHighlighting wordHighlighting,
+        NavigationService navigationService,
+        DialogService dialogService)
     {
+        this.databaseManager = databaseManager;
+        this.settings = settings;
+        this.subjectInfo = subjectInfo;
+        this.audioPlayer = audioPlayer;
+        this.wordHighlighting = wordHighlighting;
+        this.navigationService = navigationService;
+        this.dialogService = dialogService;
+
         SearchSuggestions = new ObservableCollection<SearchSuggestionViewModel>();
 
         SwitchDirectionOfTranslationCommand = new RelayCommand(SwitchDirectionOfTranslation, CanSwitchDirectionOfTranslation);
         GoToOptionsCommand = new RelayCommand(GoToOptions);
 
-        SettingsViewModel.Instance.DictionariesChanged += SettingsViewModel_DictionariesChanged;
+        settingsViewModel.DictionariesChanged += SettingsViewModel_DictionariesChanged;
     }
 
     private async void SettingsViewModel_DictionariesChanged(object? sender, EventArgs e)
@@ -62,24 +85,25 @@ partial class SearchResultsViewModel : ObservableObject
 
         LoadSettings();
 
-        bool hasOutdatedDictionaries = await DatabaseManager.Instance.HasOutdatedDictionaries();
+        bool hasOutdatedDictionaries = await databaseManager.HasOutdatedDictionaries();
 
-        if (!Settings.Instance.OutdatedDictionariesNoticeRead)
+        if (!settings.OutdatedDictionariesNoticeRead)
         {
             IsOutdatedDictionariesInfoBarShown = hasOutdatedDictionaries;
-            Settings.Instance.OutdatedDictionariesNoticeRead = hasOutdatedDictionaries;
+            settings.OutdatedDictionariesNoticeRead = hasOutdatedDictionaries;
         }
         else
         {
             IsOutdatedDictionariesInfoBarShown = false;
+
             if (!hasOutdatedDictionaries)
-                Settings.Instance.OutdatedDictionariesNoticeRead = false;
+                settings.OutdatedDictionariesNoticeRead = false;
         }
     }
 
     public void LoadSettings()
     {
-        Settings.Instance.GetSelectedDirection(out string? originLanguageCode, out string? destinationLanguageCode);
+        settings.GetSelectedDirection(out string? originLanguageCode, out string? destinationLanguageCode);
 
         SelectedDirection = AvailableDirections.FirstOrDefault(dvm =>
             dvm.OriginLanguageCode == originLanguageCode &&
@@ -90,7 +114,7 @@ partial class SearchResultsViewModel : ObservableObject
 
     public void SaveSettings()
     {
-        Settings.Instance.SetSelectedDirection(SelectedDirection?.OriginLanguageCode, SelectedDirection?.DestinationLanguageCode);
+        settings.SetSelectedDirection(SelectedDirection?.OriginLanguageCode, SelectedDirection?.DestinationLanguageCode);
     }
 
     private void SwitchDirectionOfTranslation()
@@ -108,24 +132,24 @@ partial class SearchResultsViewModel : ObservableObject
 
     private void GoToOptions()
     {
-        MainViewModel.Instance.NavigateToPageCommand.Execute(Tuple.Create<string, object?>("SettingsPage", null));
+        navigationService.NavigateToSettingsPage();
     }
 
     private async Task<(List<DictionaryEntry> Results, bool DirectionSwitched)> PerformQueryInner(string searchQuery, DirectionViewModel selectedDirection, bool dontSearchInBothDirections, CancellationToken cancellationToken)
     {
         bool directionSwitched = false;
 
-        List<DictionaryEntry> results = await DatabaseManager.Instance.QueryEntries(selectedDirection.Dictionary, searchQuery, selectedDirection.ReverseSearch, cancellationToken: cancellationToken);
+        List<DictionaryEntry> results = await databaseManager.QueryEntries(selectedDirection.Dictionary, searchQuery, selectedDirection.ReverseSearch, cancellationToken: cancellationToken);
 
         if (results.Count == 0 && !dontSearchInBothDirections)
         {
-            results = await DatabaseManager.Instance.QueryEntries(selectedDirection.Dictionary, searchQuery, !selectedDirection.ReverseSearch, cancellationToken: cancellationToken);
+            results = await databaseManager.QueryEntries(selectedDirection.Dictionary, searchQuery, !selectedDirection.ReverseSearch, cancellationToken: cancellationToken);
 
             if (results.Count != 0)
                 directionSwitched = true;
         }
 
-        results.Sort(new DictionaryEntryComparer(searchQuery, selectedDirection.ReverseSearch ^ directionSwitched));
+        results.Sort(new DictionaryEntryComparer(searchQuery, selectedDirection.ReverseSearch ^ directionSwitched, settings.CaseSensitiveSearch));
 
         return (results, directionSwitched);
     }
@@ -181,7 +205,18 @@ partial class SearchResultsViewModel : ObservableObject
 
             DictionaryEntries = await Task.Run(delegate ()
             {
-                return searchResult.Results.Select(entry => new DictionaryEntryViewModel(entry, searchContext)).ToList();
+                return searchResult.Results
+                    .Select(entry => new DictionaryEntryViewModel(
+                        entry,
+                        searchContext,
+                        this,
+                        settings,
+                        subjectInfo,
+                        audioPlayer,
+                        wordHighlighting,
+                        navigationService,
+                        dialogService))
+                    .ToList();
             }, cancellationToken);
         }
         finally
@@ -238,7 +273,7 @@ partial class SearchResultsViewModel : ObservableObject
 
     private void UpdateSearchSuggestions(IList<SearchSuggestionViewModel> suggestions, bool reverseSearch)
     {
-        SearchSuggestionViewModelComparer comparer = new SearchSuggestionViewModelComparer(reverseSearch, Settings.Instance.ShowWordClasses);
+        SearchSuggestionViewModelComparer comparer = new SearchSuggestionViewModelComparer(reverseSearch, settings.ShowWordClasses);
 
         for (int i = 0; i < SearchSuggestions.Count; i++)
             if (!suggestions.Contains(SearchSuggestions[i], comparer))
@@ -313,14 +348,14 @@ partial class SearchResultsViewModel : ObservableObject
 
         bool reverseSearch = SelectedDirection!.ReverseSearch;
 
-        List<DictionaryEntry> results = await DatabaseManager.Instance.QueryEntries(SelectedDirection.Dictionary, searchQuery, reverseSearch, maxResults + 1, cancellationToken);
+        List<DictionaryEntry> results = await databaseManager.QueryEntries(SelectedDirection.Dictionary, searchQuery, reverseSearch, maxResults + 1, cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
 
         if (results.Count == 0)
         {
             reverseSearch = !reverseSearch;
-            results = await DatabaseManager.Instance.QueryEntries(SelectedDirection.Dictionary, searchQuery, reverseSearch, maxResults + 1, cancellationToken);
+            results = await databaseManager.QueryEntries(SelectedDirection.Dictionary, searchQuery, reverseSearch, maxResults + 1, cancellationToken);
         }
 
         if (results.Count == 0 || results.Count > maxResults)
@@ -330,14 +365,14 @@ partial class SearchResultsViewModel : ObservableObject
 
         SearchSuggestionViewModel[] suggestions = await Task.Run(delegate ()
         {
-            results.Sort(new DictionaryEntryComparer(searchQuery, reverseSearch));
+            results.Sort(new DictionaryEntryComparer(searchQuery, reverseSearch, settings.CaseSensitiveSearch));
 
             SearchContext searchContext = new SearchContext(searchQuery, new DirectionViewModel(SelectedDirection.Dictionary, reverseSearch), false);
 
             IEnumerable<SearchSuggestionViewModel> suggestions =
                 results
                 .DistinctBy(entry => reverseSearch ? entry.Word2 : entry.Word1)
-                .Select(entry => new SearchSuggestionViewModel(entry, searchContext))
+                .Select(entry => new SearchSuggestionViewModel(entry, searchContext, wordHighlighting))
                 .Take(maxSuggestionsShown);
 
             return suggestions.ToArray();
@@ -353,7 +388,7 @@ partial class SearchResultsViewModel : ObservableObject
         SelectedDirection = null;
 
         AvailableDirections =
-            (await DatabaseManager.Instance.GetDictionaries())
+            (await databaseManager.GetDictionaries())
             .SelectMany(dict => new[] { new DirectionViewModel(dict, false), new DirectionViewModel(dict, true) })
             .OrderBy(dvm => dvm.OriginLanguage)
             .ToArray();
