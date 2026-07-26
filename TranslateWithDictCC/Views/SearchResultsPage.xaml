@@ -18,7 +18,7 @@
             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         </Style>
         <DataTemplate x:Key="DirectionComboBoxItemTemplate" x:DataType="viewmodels:DirectionViewModel">
-            <Grid HorizontalAlignment="Stretch">
+            <Grid HorizontalAlignment="Stretch" ColumnSpacing="6">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="1*" />
@@ -26,15 +26,15 @@
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <Image Grid.Column="0" Source="{x:Bind OriginLanguageImage}" Height="21" Margin="0,0,6,0" />
+                <Image Grid.Column="0" Source="{x:Bind OriginLanguageImage}" Height="21" />
                 <TextBlock Grid.Column="1" Text="{x:Bind OriginLanguage}" TextAlignment="Left" />
-                <TextBlock Grid.Column="2" Text="→" Margin="6,0,6,0" />
+                <TextBlock Grid.Column="2" Text="→" />
                 <TextBlock Grid.Column="3" Text="{x:Bind DestinationLanguage}" TextAlignment="Right" />
-                <Image Grid.Column="4" Source="{x:Bind DestinationLanguageImage}" Height="21" Margin="6,0,0,0" />
+                <Image Grid.Column="4" Source="{x:Bind DestinationLanguageImage}" Height="21" />
             </Grid>
         </DataTemplate>
         <DataTemplate x:Key="DirectionComboBoxItemTemplateCompact" x:DataType="viewmodels:DirectionViewModel">
-            <Grid HorizontalAlignment="Stretch">
+            <Grid HorizontalAlignment="Stretch" ColumnSpacing="6">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="1*" />
@@ -42,11 +42,11 @@
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <Image Grid.Column="0" Source="{x:Bind OriginLanguageImage}" Width="21" Height="21" Margin="0,0,6,0" />
+                <Image Grid.Column="0" Source="{x:Bind OriginLanguageImage}" Width="21" Height="21" />
                 <TextBlock Grid.Column="1" Text="{x:Bind OriginLanguageCode}" TextAlignment="Left" />
-                <TextBlock Grid.Column="2" Text="→" Margin="6,0,6,0" />
+                <TextBlock Grid.Column="2" Text="→" />
                 <TextBlock Grid.Column="3" Text="{x:Bind DestinationLanguageCode}" TextAlignment="Right" />
-                <Image Grid.Column="4" Source="{x:Bind DestinationLanguageImage}" Width="21" Height="21" Margin="6,0,0,0" />
+                <Image Grid.Column="4" Source="{x:Bind DestinationLanguageImage}" Width="21" Height="21" />
             </Grid>
         </DataTemplate>
         <MenuFlyout x:Key="MoreButton1Flyout">
@@ -73,12 +73,12 @@
                     </AppBarButton.Icon>
                 </AppBarButton>
 
-                <Grid Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="0,8,8,8">
+                <Grid Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="0,8,8,8" ColumnSpacing="8">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <RichTextBlock Name="Word1RichTextBlock" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,8,0" FontSize="{StaticResource wordFontSize}" />
+                    <RichTextBlock Name="Word1RichTextBlock" Grid.Column="0" VerticalAlignment="Center" FontSize="{StaticResource wordFontSize}" />
                     <StackPanel Name="AttributesPanel" Grid.Column="1" VerticalAlignment="Center" Orientation="Horizontal" />
                 </Grid>
                 <RichTextBlock Name="Word2RichTextBlock" Grid.Column="2" VerticalAlignment="Center" Margin="0,8,0,8" FontSize="{StaticResource wordFontSize}" />
@@ -100,18 +100,18 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0" Padding="8" Height="48">
+        <Grid Grid.Row="0" Padding="8" Height="48" ColumnSpacing="8">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <AutoSuggestBox x:Uid="MainPage_SearchBox" Name="searchBox" Grid.Column="0" VerticalAlignment="Stretch" Margin="0,0,8,0"
+            <AutoSuggestBox x:Uid="MainPage_SearchBox" Name="searchBox" Grid.Column="0" VerticalAlignment="Stretch"
                                     ItemTemplate="{StaticResource SearchSuggestionDataTemplate}" ItemContainerStyle="{StaticResource SearchSuggestionItemContainerStyle}"
                                     TextMemberPath="WordText" ItemsSource="{x:Bind ViewModel.SearchSuggestions}"
                                     PlaceholderText="Enter search terms..." QueryIcon="Find" QuerySubmitted="searchBox_QuerySubmitted" TextChanged="searchBox_TextChanged"
                                     Loaded="searchBox_Loaded" IsEnabled="{x:Bind ViewModel.AvailableDirections, Converter={StaticResource sourceNotEmptyValueConverter}, Mode=OneWay}" />
-            <ComboBox x:Uid="MainPage_DirectionComboBox" Name="directionComboBox" Grid.Column="1" VerticalAlignment="Stretch" Margin="0,0,8,0" HorizontalAlignment="Stretch"
+            <ComboBox x:Uid="MainPage_DirectionComboBox" Name="directionComboBox" Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
                               PlaceholderText="No dictionary installed" ItemTemplate="{StaticResource DirectionComboBoxItemTemplate}" SelectionChanged="directionComboBox_SelectionChanged" 
                               ItemsSource="{x:Bind ViewModel.AvailableDirections, Mode=OneWay}"
                               IsEnabled="{x:Bind ViewModel.AvailableDirections, Converter={StaticResource sourceNotEmptyValueConverter}, Mode=OneWay}"
@@ -139,9 +139,9 @@
             <Border.RenderTransform>
                 <TranslateTransform Y="100" />
             </Border.RenderTransform>
-            <StackPanel Orientation="Horizontal">
+            <StackPanel Orientation="Horizontal" Spacing="4">
                 <TextBlock Name="statusTextBlock" Style="{StaticResource CaptionTextBlockStyle}" />
-                <Button Name="hideResultCountButton" Style="{StaticResource FlatButtonStyle}" Background="Transparent" FontSize="12" Padding="0" Margin="4,0,0,0"
+                <Button Name="hideResultCountButton" Style="{StaticResource FlatButtonStyle}" Background="Transparent" FontSize="12" Padding="0"
                         FontFamily="Segoe MDL2 Assets" Content="&#xE711;" Click="hideResultCountButton_Click" />
             </StackPanel>
         </Border>
