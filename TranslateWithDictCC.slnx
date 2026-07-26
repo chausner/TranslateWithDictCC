@@ -7,6 +7,11 @@
   <Project Path="TranslateWithDictCC (Package)/TranslateWithDictCC (Package).wapproj" Type="c7167f0d-bc9f-4e6e-afe1-012c56b48db5">
     <Deploy />
   </Project>
+  <Project Path="TranslateWithDictCC.Tests/TranslateWithDictCC.Tests.csproj" Id="9541349c-e166-43b6-887c-514688b8445b">
+    <Platform Solution="*|ARM64" Project="ARM64" />
+    <Platform Solution="*|x64" Project="x64" />
+    <Platform Solution="*|x86" Project="x86" />
+  </Project>
   <Project Path="TranslateWithDictCC/TranslateWithDictCC.csproj">
     <Platform Solution="*|ARM64" Project="ARM64" />
     <Platform Solution="*|x64" Project="x64" />

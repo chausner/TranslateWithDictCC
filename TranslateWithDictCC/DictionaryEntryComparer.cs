@@ -8,14 +8,14 @@ namespace TranslateWithDictCC;
 
 partial class DictionaryEntryComparer : Comparer<DictionaryEntry>
 {
-    readonly string searchQuery;
+    readonly string[] searchTokens;
     readonly bool reverseSearch;
 
     readonly Dictionary<string, MatchInfo> matchInfos = [];
 
     public DictionaryEntryComparer(string searchQuery, bool reverseSearch)
     {
-        this.searchQuery = searchQuery;
+        searchTokens = MatchInfo.SplitSearchQueryIntoTokens(searchQuery);
         this.reverseSearch = reverseSearch;
     }
 
@@ -28,28 +28,17 @@ partial class DictionaryEntryComparer : Comparer<DictionaryEntry>
         if (y is null)
             return 1;
 
-        string searchResultX, searchResultY;
-
-        if (!reverseSearch)
-        {
-            searchResultX = x.Word1;
-            searchResultY = y.Word1;
-        }
-        else
-        {
-            searchResultX = x.Word2;
-            searchResultY = y.Word2;
-        }
+        var (searchResultX, searchResultY) = !reverseSearch ? (x.Word1, y.Word1) : (x.Word2, y.Word2);
 
         if (!matchInfos.TryGetValue(searchResultX, out MatchInfo? matchInfoX))
         {
-            matchInfoX = new MatchInfo(searchQuery, searchResultX, x.MatchSpans!);
+            matchInfoX = new MatchInfo(searchTokens, searchResultX, x.MatchSpans!);
             matchInfos.Add(searchResultX, matchInfoX);
         }
 
         if (!matchInfos.TryGetValue(searchResultY, out MatchInfo? matchInfoY))
         {
-            matchInfoY = new MatchInfo(searchQuery, searchResultY, y.MatchSpans!);
+            matchInfoY = new MatchInfo(searchTokens, searchResultY, y.MatchSpans!);
             matchInfos.Add(searchResultY, matchInfoY);
         }
 
@@ -90,57 +79,79 @@ partial class DictionaryEntryComparer : Comparer<DictionaryEntry>
             return string.Compare(searchResultX, searchResultY, StringComparison.Ordinal);
         }
     }
+}
 
-    private partial class MatchInfo
+internal partial class MatchInfo
+{
+    public bool IsCaseSensitiveMatch { get; }
+    public int AnnotationLength { get; }
+    public int AdditionalWordsLength { get; }
+    public int AdditionalWordCount { get; }
+    public bool IsMatchInAnnotation { get; }
+
+    public MatchInfo(string[] searchTokens, string searchResult, TextSpan[] matchSpans)
     {
-        public bool IsCaseSensitiveMatch { get; }
-        public int AnnotationLength { get; }
-        public int AdditionalWordsLength { get; }
-        public int AdditionalWordCount { get; }
-        public bool IsMatchInAnnotation { get; }
+        IsCaseSensitiveMatch = matchSpans.Length == searchTokens.Length &&
+            matchSpans
+            .Zip(searchTokens, (span, token) => searchResult.AsSpan(span.Offset, span.Length).Equals(token, StringComparison.InvariantCulture))
+            .All(result => result);
 
-        public MatchInfo(string searchQuery, string searchResult, TextSpan[] matchSpans)
+        TextSpan[] annotationSpans =
+            AnnotationsRegex().Matches(searchResult)
+            .Cast<Match>()
+            .Select(match => new TextSpan(match.Index, match.Length))
+            .ToArray();
+
+        AnnotationLength = annotationSpans.Sum(span => span.Length);
+
+        IsMatchInAnnotation = matchSpans.All(matchSpan => annotationSpans.Any(annotationSpan => annotationSpan.Contains(matchSpan)));
+
+        if (!IsMatchInAnnotation)
         {
-            IsCaseSensitiveMatch = matchSpans.Any(matchSpan => searchResult.AsSpan(matchSpan.Offset, matchSpan.Length).Equals(searchQuery, StringComparison.InvariantCulture));
+            bool currentlyInAdditionalWord = false;
 
-            TextSpan[] annotationSpans =
-                AnnotationsRegex().Matches(searchResult)
-                .Cast<Match>()
-                .Select(match => new TextSpan(match.Index, match.Length))
-                .ToArray();
-
-            AnnotationLength = annotationSpans.Sum(span => span.Length);
-
-            IsMatchInAnnotation = matchSpans.All(matchSpan => annotationSpans.Any(annotationSpan => annotationSpan.Contains(matchSpan)));
-
-            if (!IsMatchInAnnotation)
+            for (int i = 0; i < searchResult.Length; i++)
             {
-                AdditionalWordsLength = searchResult.Length - AnnotationLength - searchQuery.Length;
-
-                int lastSpaceIndex = -1;
-
-                for (int i = 0; i < searchResult.Length; i++)
+                if (matchSpans.FirstOrDefault(span => i == span.Offset) is var matchSpan && matchSpan != default)
                 {
-                    if (matchSpans.Any(span => i >= span.Offset && i < span.Offset + span.Length))
-                        continue;
+                    i = matchSpan.Offset + matchSpan.Length - 1;
+                    currentlyInAdditionalWord = false;
+                    continue;
+                }                    
 
-                    if (annotationSpans.Any(span => i >= span.Offset && i < span.Offset + span.Length))
-                        continue;
-
-                    if (!char.IsLetterOrDigit(searchResult[i]))
-                    {
-                        if (lastSpaceIndex != i - 1)
-                            AdditionalWordCount++;
-
-                        lastSpaceIndex = i;
-                    }
+                if (annotationSpans.FirstOrDefault(span => i == span.Offset) is var annotationSpan && annotationSpan != default)
+                {
+                    i = annotationSpan.Offset + annotationSpan.Length - 1;
+                    currentlyInAdditionalWord = false;
+                    continue;
                 }
 
-                AdditionalWordCount++;
+                if (char.IsLetterOrDigit(searchResult[i]))
+                {
+                    if (!currentlyInAdditionalWord)
+                    {
+                        AdditionalWordCount++;
+                        currentlyInAdditionalWord = true;
+                    }
+                    AdditionalWordsLength++;
+                }
+                else
+                {
+                    currentlyInAdditionalWord = false;                    
+                }
             }
         }
-
-        [GeneratedRegex(@"(\{.*?\})|(\[.*?\])|(\<.*?\>)", RegexOptions.ExplicitCapture)]
-        private static partial Regex AnnotationsRegex();
     }
+
+    public static string[] SplitSearchQueryIntoTokens(string searchQuery)
+    {
+        return SearchTokensRegex().Matches(searchQuery).Select(m => m.Value).ToArray();
+    }
+
+    // Matches Unicode61 tokenizer of SQLite
+    [GeneratedRegex(@"[\p{L}\p{N}\p{Co}]+")]
+    private static partial Regex SearchTokensRegex();
+
+    [GeneratedRegex(@"(\{.*?\})|(\[.*?\])|(\<.*?\>)", RegexOptions.ExplicitCapture)]
+    private static partial Regex AnnotationsRegex();
 }

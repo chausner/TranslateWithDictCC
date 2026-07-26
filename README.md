@@ -1,4 +1,6 @@
 # Translate with dict.cc
+<img src="TranslateWithDictCC/Assets/AboutLogo.png" align="right" width="10%">
+
 Windows app to search and manage [dict.cc](https://www.dict.cc/) offline dictionaries
 
 [![](https://img.shields.io/badge/Microsoft%20Store-Translate%20with%20dict.cc-blue)](https://www.microsoft.com/store/apps/9NBLGGH4SGKM)
@@ -6,7 +8,7 @@ Windows app to search and manage [dict.cc](https://www.dict.cc/) offline diction
 
 ## Features
 * Import offline dictionary files downloaded from dict.cc
-* All 27 language pairs of dict.cc are supported
+* All 27 languages of dict.cc are supported
 * Play back pronounciation samples (internet connection required)
 * Light and dark mode
 * Localized app for English and German

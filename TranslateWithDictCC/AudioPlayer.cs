@@ -14,14 +14,13 @@ class AudioPlayer
 {
     public static AudioPlayer Instance { get; } = new AudioPlayer();
 
-    DictionaryEntryViewModel? currentlyPlayingAudioRecording;
     bool currentlyPlayingAudioRecordingWord2;
 
     readonly MediaPlayer mediaPlayer = new MediaPlayer();
     readonly SemaphoreSlim audioPlayerSemaphore = new SemaphoreSlim(1);
     DispatcherQueue? dispatcherQueue = null;
 
-    public DictionaryEntryViewModel? CurrentlyPlayingAudioRecording => currentlyPlayingAudioRecording;
+    public DictionaryEntryViewModel? CurrentlyPlayingAudioRecording { get; private set; }
 
     private AudioPlayer()
     {
@@ -57,18 +56,18 @@ class AudioPlayer
         {
             await audioPlayerSemaphore.WaitAsync();
 
-            if (currentlyPlayingAudioRecording != null)
+            if (CurrentlyPlayingAudioRecording != null)
             {
                 mediaPlayer.Pause();
-                SetState(currentlyPlayingAudioRecording, currentlyPlayingAudioRecordingWord2, AudioRecordingState.Available);
-                currentlyPlayingAudioRecording = null;
+                SetState(CurrentlyPlayingAudioRecording, currentlyPlayingAudioRecordingWord2, AudioRecordingState.Available);
+                CurrentlyPlayingAudioRecording = null;
             }
 
             Uri? audioUri = await AudioRecordingFetcher.GetAudioRecordingUri(dictionaryEntryViewModel, word2);
 
             if (audioUri != null)
             {
-                currentlyPlayingAudioRecording = dictionaryEntryViewModel;
+                CurrentlyPlayingAudioRecording = dictionaryEntryViewModel;
                 currentlyPlayingAudioRecordingWord2 = word2;
 
                 mediaPlayer.SetUriSource(audioUri);
@@ -119,8 +118,8 @@ class AudioPlayer
     {
         dispatcherQueue!.TryEnqueue(() =>
         {
-            if (currentlyPlayingAudioRecording != null)
-                SetState(currentlyPlayingAudioRecording, currentlyPlayingAudioRecordingWord2, AudioRecordingState.Playing);
+            if (CurrentlyPlayingAudioRecording != null)
+                SetState(CurrentlyPlayingAudioRecording, currentlyPlayingAudioRecordingWord2, AudioRecordingState.Playing);
         });
     }
 
@@ -128,10 +127,10 @@ class AudioPlayer
     {
         dispatcherQueue!.TryEnqueue(() =>
         {
-            if (currentlyPlayingAudioRecording != null)
+            if (CurrentlyPlayingAudioRecording != null)
             {
-                SetState(currentlyPlayingAudioRecording, currentlyPlayingAudioRecordingWord2, AudioRecordingState.Available);
-                currentlyPlayingAudioRecording = null;
+                SetState(CurrentlyPlayingAudioRecording, currentlyPlayingAudioRecordingWord2, AudioRecordingState.Available);
+                CurrentlyPlayingAudioRecording = null;
             }
         });
     }
@@ -140,10 +139,10 @@ class AudioPlayer
     {
         dispatcherQueue!.TryEnqueue(() =>
         {
-            if (currentlyPlayingAudioRecording != null)
+            if (CurrentlyPlayingAudioRecording != null)
             {
-                SetState(currentlyPlayingAudioRecording, currentlyPlayingAudioRecordingWord2, AudioRecordingState.Unavailable);
-                currentlyPlayingAudioRecording = null;
+                SetState(CurrentlyPlayingAudioRecording, currentlyPlayingAudioRecordingWord2, AudioRecordingState.Unavailable);
+                CurrentlyPlayingAudioRecording = null;
             }
         });
     }
