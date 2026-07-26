@@ -24,7 +24,7 @@ partial class SearchResultsViewModel : ObservableObject
     readonly DialogService dialogService;
 
     [ObservableProperty]
-    public partial DirectionViewModel[] AvailableDirections { get; set; } = [];
+    public partial DirectionViewModel[] AvailableDirections { get; private set; } = [];
 
     [ObservableProperty]
     public partial DirectionViewModel? SelectedDirection { get; set; } = null;
@@ -33,12 +33,12 @@ partial class SearchResultsViewModel : ObservableObject
     public partial IReadOnlyList<DictionaryEntryViewModel> DictionaryEntries { get; private set; } = [];
 
     [ObservableProperty]
-    public partial bool IsSearchInProgress { get; set; }
+    public partial bool IsSearchInProgress { get; private set; }
 
     public ObservableCollection<SearchSuggestionViewModel> SearchSuggestions { get; }
 
     [ObservableProperty]
-    public partial bool IsOutdatedDictionariesInfoBarShown { get; set; }
+    public partial bool IsOutdatedDictionariesInfoBarShown { get; private set; }
 
     public ICommand SwitchDirectionOfTranslationCommand { get; }
     public ICommand GoToOptionsCommand { get; }

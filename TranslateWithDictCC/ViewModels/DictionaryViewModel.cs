@@ -33,19 +33,19 @@ partial class DictionaryViewModel : ObservableObject
     public partial DictionaryStatus Status { get; set; }
 
     [ObservableProperty]
-    public partial string StatusText { get; set; } = string.Empty;
+    public partial string StatusText { get; private set; } = string.Empty;
 
     [ObservableProperty]
     public partial double ImportProgress { get; set; }
 
     [ObservableProperty]
-    public partial Visibility ProgressBarVisibility { get; set; }
+    public partial Visibility ProgressBarVisibility { get; private set; }
 
     [ObservableProperty]
-    public partial Visibility AbortImportButtonVisibility { get; set; }
+    public partial Visibility AbortImportButtonVisibility { get; private set; }
 
     [ObservableProperty]
-    public partial Visibility RemoveDictionaryButtonVisibility { get; set; }
+    public partial Visibility RemoveDictionaryButtonVisibility { get; private set; }
 
     public Dictionary? Dictionary { get; set; }
     public WordlistReader? WordlistReader { get; set; }
