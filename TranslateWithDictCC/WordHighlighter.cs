@@ -11,7 +11,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using TranslateWithDictCC.Models;
 
-namespace TranslateWithDictCC.ViewModels;
+namespace TranslateWithDictCC;
 
 class FormattedWord
 {
@@ -33,7 +33,7 @@ enum FormattedWordFragmentKind
     QueryHighlightAnnotation
 }
 
-partial class WordHighlighting
+partial class WordHighlighter
 {
     readonly Settings settings;
 
@@ -43,7 +43,7 @@ partial class WordHighlighting
     [GeneratedRegex(@"(\{.*?\})|(\[.*?\])|(\<.*?\>)")]
     private static partial Regex AnnotationsRegex();
 
-    public WordHighlighting(Settings settings)
+    public WordHighlighter(Settings settings)
     {
         this.settings = settings;
 

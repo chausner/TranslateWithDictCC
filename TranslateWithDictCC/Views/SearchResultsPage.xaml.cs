@@ -28,7 +28,7 @@ public sealed partial class SearchResultsPage : Page
     SearchResultsViewModel ViewModel { get; }
     readonly MainViewModel mainViewModel;
     readonly DialogService dialogService;
-    readonly WordHighlighting wordHighlighting;
+    readonly WordHighlighter wordHighlighter;
     readonly NavigationService navigationService;
 
     readonly SolidColorBrush altBackgroundThemeBrush = (SolidColorBrush)Application.Current.Resources["DictionaryEntryAltBackgroundThemeBrush"];
@@ -44,7 +44,7 @@ public sealed partial class SearchResultsPage : Page
         ViewModel = ((App)App.Current).Host.Services.GetRequiredService<SearchResultsViewModel>();
         mainViewModel = ((App)App.Current).Host.Services.GetRequiredService<MainViewModel>();
         dialogService = ((App)App.Current).Host.Services.GetRequiredService<DialogService>();
-        wordHighlighting = ((App)App.Current).Host.Services.GetRequiredService<WordHighlighting>();
+        wordHighlighter = ((App)App.Current).Host.Services.GetRequiredService<WordHighlighter>();
         navigationService = ((App)App.Current).Host.Services.GetRequiredService<NavigationService>();
 
         ViewModel.PropertyChanged += ViewModel_PropertyChanged;
@@ -118,12 +118,12 @@ public sealed partial class SearchResultsPage : Page
         RichTextBlock richTextBlock = (RichTextBlock)sender;
         SearchSuggestionViewModel? searchSuggestionViewModel = args.NewValue as SearchSuggestionViewModel;
 
-        WordHighlighting.ClearRichTextBlockContent(richTextBlock);
+        WordHighlighter.ClearRichTextBlockContent(richTextBlock);
 
         if (searchSuggestionViewModel == null)
             return;
 
-        wordHighlighting.SetRichTextBlockContent(richTextBlock, searchSuggestionViewModel.Word);
+        wordHighlighter.SetRichTextBlockContent(richTextBlock, searchSuggestionViewModel.Word);
     }
 
     private void directionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -247,8 +247,8 @@ public sealed partial class SearchResultsPage : Page
         if (args.InRecycleQueue)
         {
             templateRoot.DataContext = null;
-            WordHighlighting.ClearRichTextBlockContent(templateParts.Word1RichTextBlock);
-            WordHighlighting.ClearRichTextBlockContent(templateParts.Word2RichTextBlock);
+            WordHighlighter.ClearRichTextBlockContent(templateParts.Word1RichTextBlock);
+            WordHighlighter.ClearRichTextBlockContent(templateParts.Word2RichTextBlock);
             ClearAttributes(templateParts.AttributesPanel);
             return;
         }
@@ -266,20 +266,20 @@ public sealed partial class SearchResultsPage : Page
                     templateParts.BackgroundBorder.ClearValue(Border.BackgroundProperty);
 
                 templateRoot.DataContext = viewModel;
-                WordHighlighting.ClearRichTextBlockContent(templateParts.Word1RichTextBlock);
-                WordHighlighting.ClearRichTextBlockContent(templateParts.Word2RichTextBlock);
+                WordHighlighter.ClearRichTextBlockContent(templateParts.Word1RichTextBlock);
+                WordHighlighter.ClearRichTextBlockContent(templateParts.Word2RichTextBlock);
                 ClearAttributes(templateParts.AttributesPanel);
 
                 args.RegisterUpdateCallback(ListView_ContainerContentChanging);
                 break;
 
             case 1:
-                wordHighlighting.SetRichTextBlockContent(templateParts.Word1RichTextBlock, viewModel.Word1);
+                wordHighlighter.SetRichTextBlockContent(templateParts.Word1RichTextBlock, viewModel.Word1);
                 args.RegisterUpdateCallback(ListView_ContainerContentChanging);
                 break;
 
             case 2:
-                wordHighlighting.SetRichTextBlockContent(templateParts.Word2RichTextBlock, viewModel.Word2);
+                wordHighlighter.SetRichTextBlockContent(templateParts.Word2RichTextBlock, viewModel.Word2);
 
                 if (viewModel.Attributes.Count != 0)
                     args.RegisterUpdateCallback(ListView_ContainerContentChanging);

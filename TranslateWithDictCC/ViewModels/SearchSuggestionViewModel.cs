@@ -6,7 +6,7 @@ namespace TranslateWithDictCC.ViewModels;
 
 class SearchSuggestionViewModel : ObservableObject
 {
-    readonly WordHighlighting wordHighlighting;
+    readonly WordHighlighter wordHighlighter;
 
     public DictionaryEntry DictionaryEntry { get; }
     public SearchContext SearchContext { get; }
@@ -32,17 +32,17 @@ class SearchSuggestionViewModel : ObservableObject
         }
     }
 
-    public SearchSuggestionViewModel(DictionaryEntry entry, SearchContext searchContext, WordHighlighting wordHighlighting)
+    public SearchSuggestionViewModel(DictionaryEntry entry, SearchContext searchContext, WordHighlighter wordHighlighter)
     {
         DictionaryEntry = entry;
         SearchContext = searchContext;
-        this.wordHighlighting = wordHighlighting;
+        this.wordHighlighter = wordHighlighter;
     }
 
     private void Initialize()
     {
         bool reverseSearch = SearchContext.SelectedDirection.ReverseSearch;
-        Word = wordHighlighting.FormatWord(reverseSearch ? DictionaryEntry.Word2 : DictionaryEntry.Word1, DictionaryEntry.MatchSpans!, false);
+        Word = wordHighlighter.FormatWord(reverseSearch ? DictionaryEntry.Word2 : DictionaryEntry.Word1, DictionaryEntry.MatchSpans!, false);
     }
 
     public Visibility GetWordClassVisibility(string wordClasses)

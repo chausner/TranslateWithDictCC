@@ -19,7 +19,7 @@ partial class SearchResultsViewModel : ObservableObject
     readonly Settings settings;
     readonly SubjectInfo subjectInfo;
     readonly AudioPlayer audioPlayer;
-    readonly WordHighlighting wordHighlighting;
+    readonly WordHighlighter wordHighlighter;
     readonly NavigationService navigationService;
     readonly DialogService dialogService;
 
@@ -54,7 +54,7 @@ partial class SearchResultsViewModel : ObservableObject
         Settings settings,
         SubjectInfo subjectInfo,
         AudioPlayer audioPlayer,
-        WordHighlighting wordHighlighting,
+        WordHighlighter wordHighlighter,
         NavigationService navigationService,
         DialogService dialogService)
     {
@@ -62,7 +62,7 @@ partial class SearchResultsViewModel : ObservableObject
         this.settings = settings;
         this.subjectInfo = subjectInfo;
         this.audioPlayer = audioPlayer;
-        this.wordHighlighting = wordHighlighting;
+        this.wordHighlighter = wordHighlighter;
         this.navigationService = navigationService;
         this.dialogService = dialogService;
 
@@ -213,7 +213,7 @@ partial class SearchResultsViewModel : ObservableObject
                         settings,
                         subjectInfo,
                         audioPlayer,
-                        wordHighlighting,
+                        wordHighlighter,
                         navigationService,
                         dialogService))
                     .ToList();
@@ -372,7 +372,7 @@ partial class SearchResultsViewModel : ObservableObject
             IEnumerable<SearchSuggestionViewModel> suggestions =
                 results
                 .DistinctBy(entry => reverseSearch ? entry.Word2 : entry.Word1)
-                .Select(entry => new SearchSuggestionViewModel(entry, searchContext, wordHighlighting))
+                .Select(entry => new SearchSuggestionViewModel(entry, searchContext, wordHighlighter))
                 .Take(maxSuggestionsShown);
 
             return suggestions.ToArray();

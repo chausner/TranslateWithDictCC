@@ -44,7 +44,7 @@ sealed partial class App : Application
         services.AddSingleton<MainViewModel>();
         services.AddSingleton<SearchResultsViewModel>();
         services.AddSingleton<SettingsViewModel>();
-        services.AddSingleton<WordHighlighting>();
+        services.AddSingleton<WordHighlighter>();
         services.AddSingleton<Settings>();
         services.AddSingleton<SubjectInfo>();
         services.AddSingleton<HttpClient>();

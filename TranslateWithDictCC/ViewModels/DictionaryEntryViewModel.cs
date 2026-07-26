@@ -19,7 +19,7 @@ partial class DictionaryEntryViewModel : ObservableObject
     readonly Settings settings;
     readonly SubjectInfo subjectInfo;
     readonly AudioPlayer audioPlayer;
-    readonly WordHighlighting wordHighlighting;
+    readonly WordHighlighter wordHighlighter;
     readonly NavigationService navigationService;
     readonly DialogService dialogService;
 
@@ -84,7 +84,7 @@ partial class DictionaryEntryViewModel : ObservableObject
         Settings settings,
         SubjectInfo subjectInfo,
         AudioPlayer audioPlayer,
-        WordHighlighting wordHighlighting,
+        WordHighlighter wordHighlighter,
         NavigationService navigationService,
         DialogService dialogService)
     {
@@ -94,7 +94,7 @@ partial class DictionaryEntryViewModel : ObservableObject
         this.settings = settings;
         this.subjectInfo = subjectInfo;
         this.audioPlayer = audioPlayer;
-        this.wordHighlighting = wordHighlighting;
+        this.wordHighlighter = wordHighlighter;
         this.navigationService = navigationService;
         this.dialogService = dialogService;
         AudioRecordingState1 = AudioRecordingState.Available;
@@ -108,8 +108,8 @@ partial class DictionaryEntryViewModel : ObservableObject
     private void Initialize()
     {
         bool reverseSearch = SearchContext.SelectedDirection.ReverseSearch;
-        Word1 = wordHighlighting.FormatWord(reverseSearch ? DictionaryEntry.Word2 : DictionaryEntry.Word1, DictionaryEntry.MatchSpans!, true);
-        Word2 = wordHighlighting.FormatWord(reverseSearch ? DictionaryEntry.Word1 : DictionaryEntry.Word2, DictionaryEntry.MatchSpans!, false);
+        Word1 = wordHighlighter.FormatWord(reverseSearch ? DictionaryEntry.Word2 : DictionaryEntry.Word1, DictionaryEntry.MatchSpans!, true);
+        Word2 = wordHighlighter.FormatWord(reverseSearch ? DictionaryEntry.Word1 : DictionaryEntry.Word2, DictionaryEntry.MatchSpans!, false);
 
         attributes = [];
 
@@ -193,7 +193,7 @@ partial class DictionaryEntryViewModel : ObservableObject
     {
         string word = (word2 ^ SearchContext.SelectedDirection.ReverseSearch) ? DictionaryEntry.Word2 : DictionaryEntry.Word1;
 
-        string searchTerm = WordHighlighting.RemoveAnnotations(word);
+        string searchTerm = WordHighlighter.RemoveAnnotations(word);
 
         if (word2)
             searchResultsViewModel.SwitchDirectionOfTranslationCommand.Execute(null);
