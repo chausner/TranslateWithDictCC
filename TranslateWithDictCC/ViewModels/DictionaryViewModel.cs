@@ -9,7 +9,7 @@ using TranslateWithDictCC.Models;
 
 namespace TranslateWithDictCC.ViewModels;
 
-class DictionaryViewModel : ObservableObject
+partial class DictionaryViewModel : ObservableObject
 {
     public string OriginLanguageCode { get; } = null!;
     public string DestinationLanguageCode { get; } = null!;
@@ -24,47 +24,26 @@ class DictionaryViewModel : ObservableObject
 
     public string CreationDateShort => CreationDate.ToString("dd/MM/yyyy");
 
-    public int NumberOfEntries
-    {
-        get;
-        set => SetProperty(ref field, value);
-    }
+    [ObservableProperty]
+    public partial int NumberOfEntries { get; set; }
 
-    public DictionaryStatus Status
-    {
-        get;
-        set => SetProperty(ref field, value);
-    }
+    [ObservableProperty]
+    public partial DictionaryStatus Status { get; set; }
 
-    public string StatusText
-    {
-        get;
-        set => SetProperty(ref field, value);
-    } = string.Empty;
+    [ObservableProperty]
+    public partial string StatusText { get; set; } = string.Empty;
 
-    public double ImportProgress
-    {
-        get;
-        set => SetProperty(ref field, value);
-    }
+    [ObservableProperty]
+    public partial double ImportProgress { get; set; }
 
-    public Visibility ProgressBarVisibility
-    {
-        get;
-        set => SetProperty(ref field, value);
-    }
+    [ObservableProperty]
+    public partial Visibility ProgressBarVisibility { get; set; }
 
-    public Visibility AbortImportButtonVisibility
-    {
-        get;
-        set => SetProperty(ref field, value);
-    }
+    [ObservableProperty]
+    public partial Visibility AbortImportButtonVisibility { get; set; }
 
-    public Visibility RemoveDictionaryButtonVisibility
-    {
-        get;
-        set => SetProperty(ref field, value);
-    }
+    [ObservableProperty]
+    public partial Visibility RemoveDictionaryButtonVisibility { get; set; }
 
     public Dictionary? Dictionary { get; set; }
     public WordlistReader? WordlistReader { get; set; }

@@ -16,23 +16,17 @@ using Windows.Globalization.DateTimeFormatting;
 
 namespace TranslateWithDictCC.ViewModels;
 
-class SettingsViewModel : ObservableObject
+partial class SettingsViewModel : ObservableObject
 {
     public static readonly SettingsViewModel Instance = new SettingsViewModel();
 
     public ObservableCollection<DictionaryViewModel> Dictionaries { get; }
 
-    public Visibility RestartAppTextBlockVisibility
-    {
-        get;
-        private set => SetProperty(ref field, value);
-    }
+    [ObservableProperty]
+    public partial Visibility RestartAppTextBlockVisibility { get; private set; }
 
-    public Visibility OutdatedDictionariesInfoBarVisibility
-    {
-        get;
-        private set => SetProperty(ref field, value);
-    }
+    [ObservableProperty]
+    public partial Visibility OutdatedDictionariesInfoBarVisibility { get; private set; }
 
     public ICommand ImportDictionaryCommand { get; }
 

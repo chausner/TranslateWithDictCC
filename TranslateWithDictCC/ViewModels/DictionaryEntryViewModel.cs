@@ -17,17 +17,11 @@ partial class DictionaryEntryViewModel : ObservableObject
     public DictionaryEntry DictionaryEntry { get; }
     public SearchContext SearchContext { get; }
 
-    public AudioRecordingState AudioRecordingState1
-    {
-        get;
-        set => SetProperty(ref field, value);
-    }
+    [ObservableProperty]
+    public partial AudioRecordingState AudioRecordingState1 { get; set; }
 
-    public AudioRecordingState AudioRecordingState2
-    {
-        get;
-        set => SetProperty(ref field, value);
-    }
+    [ObservableProperty]
+    public partial AudioRecordingState AudioRecordingState2 { get; set; }    
 
     List<DictionaryEntryAttribute>? attributes;
 
@@ -40,7 +34,6 @@ partial class DictionaryEntryViewModel : ObservableObject
 
             return field!;
         }
-
         private set;
     }
 
@@ -53,7 +46,6 @@ partial class DictionaryEntryViewModel : ObservableObject
 
             return field!;
         }
-
         private set;
     }
 

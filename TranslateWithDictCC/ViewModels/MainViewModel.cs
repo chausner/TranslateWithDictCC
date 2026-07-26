@@ -3,15 +3,12 @@ using System.Windows.Input;
 
 namespace TranslateWithDictCC.ViewModels;
 
-class MainViewModel : ObservableObject
+partial class MainViewModel : ObservableObject
 {
     public static readonly MainViewModel Instance = new MainViewModel();
 
-    public bool ShowNoDictionaryInstalledTeachingTip
-    {
-        get;
-        set => SetProperty(ref field, value);
-    }
+    [ObservableProperty]
+    public partial bool ShowNoDictionaryInstalledTeachingTip { get; set; }
 
     public bool NoDictionaryInstalledTeachingTipShown { get; set; }
 

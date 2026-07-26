@@ -12,41 +12,26 @@ using Windows.UI.StartScreen;
 
 namespace TranslateWithDictCC.ViewModels;
 
-class SearchResultsViewModel : ObservableObject
+partial class SearchResultsViewModel : ObservableObject
 {
     public static readonly SearchResultsViewModel Instance = new SearchResultsViewModel();
 
-    public DirectionViewModel[] AvailableDirections
-    {
-        get;
-        set => SetProperty(ref field, value);
-    } = [];
+    [ObservableProperty]
+    public partial DirectionViewModel[] AvailableDirections { get; set; } = [];
 
-    public DirectionViewModel? SelectedDirection
-    {
-        get;
-        set => SetProperty(ref field, value);
-    } = null;
+    [ObservableProperty]
+    public partial DirectionViewModel? SelectedDirection { get; set; } = null;
 
-    public IReadOnlyList<DictionaryEntryViewModel> DictionaryEntries
-    {
-        get;
-        private set => SetProperty(ref field, value);
-    } = Array.Empty<DictionaryEntryViewModel>();
+    [ObservableProperty]
+    public partial IReadOnlyList<DictionaryEntryViewModel> DictionaryEntries { get; private set; } = [];
 
-    public bool IsSearchInProgress
-    {
-        get;
-        set => SetProperty(ref field, value);
-    }
+    [ObservableProperty]
+    public partial bool IsSearchInProgress { get; set; }
 
     public ObservableCollection<SearchSuggestionViewModel> SearchSuggestions { get; }
 
-    public bool IsOutdatedDictionariesInfoBarShown
-    {
-        get;
-        set => SetProperty(ref field, value);
-    }
+    [ObservableProperty]
+    public partial bool IsOutdatedDictionariesInfoBarShown { get; set; }
 
     public ICommand SwitchDirectionOfTranslationCommand { get; }
     public ICommand GoToOptionsCommand { get; }
