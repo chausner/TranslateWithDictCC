@@ -4,12 +4,11 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.Windows.ApplicationModel.Resources;
 using System.ComponentModel;
 using System.IO;
-using TranslateWithDictCC.Views;
 using Windows.ApplicationModel;
 using Windows.UI;
 using WinUIEx;
 
-namespace TranslateWithDictCC;
+namespace TranslateWithDictCC.Views;
 
 public sealed partial class MainWindow : WindowEx
 {

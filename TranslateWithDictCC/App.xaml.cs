@@ -7,6 +7,7 @@ using System.IO;
 using System.Threading.Tasks;
 using TranslateWithDictCC.Services;
 using TranslateWithDictCC.ViewModels;
+using TranslateWithDictCC.Views;
 using Windows.Storage;
 using Windows.Web.Http;
 

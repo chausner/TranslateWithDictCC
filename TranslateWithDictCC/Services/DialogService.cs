@@ -1,6 +1,7 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Threading.Tasks;
+using TranslateWithDictCC.Views;
 
 namespace TranslateWithDictCC.Services;
 

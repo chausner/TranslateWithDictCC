@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using TranslateWithDictCC.Models;
 using TranslateWithDictCC.Services;
+using TranslateWithDictCC.Views;
 using Windows.Globalization.DateTimeFormatting;
 
 namespace TranslateWithDictCC.ViewModels;
