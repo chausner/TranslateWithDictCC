@@ -89,7 +89,21 @@ internal partial class MatchInfo
     public int AnnotationLength { get; }
     public int AdditionalWordsLength { get; }
     public int AdditionalWordCount { get; }
+    public bool IsAnyMatchInAnnotation { get; }
     public bool IsMatchInAnnotation { get; }
+
+    public DictionaryEntryMatchKind MatchKind
+    {
+        get
+        {
+            if (!IsAnyMatchInAnnotation && AdditionalWordCount == 0)
+                return DictionaryEntryMatchKind.Exact;
+            else if (!IsMatchInAnnotation)
+                return DictionaryEntryMatchKind.Partial;
+            else
+                return DictionaryEntryMatchKind.Annotation;
+        }
+    }
 
     public MatchInfo(string[] searchTokens, string searchResult, TextSpan[] matchSpans)
     {
@@ -106,6 +120,7 @@ internal partial class MatchInfo
 
         AnnotationLength = annotationSpans.Sum(span => span.Length);
 
+        IsAnyMatchInAnnotation = matchSpans.Any(matchSpan => annotationSpans.Any(annotationSpan => annotationSpan.Contains(matchSpan)));
         IsMatchInAnnotation = matchSpans.All(matchSpan => annotationSpans.Any(annotationSpan => annotationSpan.Contains(matchSpan)));
 
         if (!IsMatchInAnnotation)
@@ -156,4 +171,11 @@ internal partial class MatchInfo
 
     [GeneratedRegex(@"(\{.*?\})|(\[.*?\])|(\<.*?\>)", RegexOptions.ExplicitCapture)]
     private static partial Regex AnnotationsRegex();
+}
+
+internal enum DictionaryEntryMatchKind
+{
+    Exact,
+    Partial,
+    Annotation
 }

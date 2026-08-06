@@ -90,6 +90,10 @@
                 </AppBarButton>
             </Grid>
         </DataTemplate>        
+        <DataTemplate x:Key="DictionaryEntryGroupHeaderTemplate" x:DataType="viewmodels:DictionaryEntryGroupViewModel">
+            <TextBlock Text="{x:Bind GroupHeader}" Style="{StaticResource BodyStrongTextBlockStyle}" />
+        </DataTemplate>
+        <CollectionViewSource x:Name="GroupedDictionaryEntries" Source="{x:Bind ViewModel.DictionaryEntryGroups, Mode=OneWay}" IsSourceGrouped="True" ItemsPath="Entries" />
         <Storyboard x:Name="resultCountAnimation">
             <DoubleAnimation From="30" To="0" Duration="0:0:0.5" Storyboard.TargetName="resultCountBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)" />
         </Storyboard>
@@ -129,9 +133,13 @@
             </InfoBar.ActionButton>
         </InfoBar>
         
-        <ListView Grid.Row="2" ItemsSource="{x:Bind ViewModel.DictionaryEntries, Mode=OneWay}" ItemTemplate="{StaticResource DictionaryEntryDataTemplate}"
+        <ListView Grid.Row="2" ItemsSource="{Binding Source={StaticResource GroupedDictionaryEntries}}" ItemTemplate="{StaticResource DictionaryEntryDataTemplate}"
                   HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" ContainerContentChanging="ListView_ContainerContentChanging"
-                  SelectionMode="None" ShowsScrollingPlaceholders="False" />
+                  SelectionMode="None" ShowsScrollingPlaceholders="False">
+            <ListView.GroupStyle>
+                <GroupStyle HeaderTemplate="{StaticResource DictionaryEntryGroupHeaderTemplate}" />
+            </ListView.GroupStyle>
+        </ListView>
         <ProgressBar Grid.Row="2" IsIndeterminate="{x:Bind ViewModel.IsSearchInProgress, Mode=OneWay}" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="12"
                                  Background="Transparent" />
 

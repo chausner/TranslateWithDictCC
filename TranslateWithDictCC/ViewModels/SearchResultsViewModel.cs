@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System;
+using Microsoft.Windows.ApplicationModel.Resources;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -31,6 +32,9 @@ partial class SearchResultsViewModel : ObservableObject
 
     [ObservableProperty]
     public partial IReadOnlyList<DictionaryEntryViewModel> DictionaryEntries { get; private set; } = [];
+
+    [ObservableProperty]
+    public partial IReadOnlyList<DictionaryEntryGroupViewModel> DictionaryEntryGroups { get; private set; } = [];
 
     [ObservableProperty]
     public partial bool IsSearchInProgress { get; private set; }
@@ -203,11 +207,11 @@ partial class SearchResultsViewModel : ObservableObject
 
             SearchContext searchContext = new SearchContext(searchQuery, selectedDirection, dontSearchInBothDirections);
 
-            DictionaryEntries = await Task.Run(delegate ()
+            var (entries, groups) = await Task.Run(delegate ()
             {
-                return searchResult.Results
+                DictionaryEntryViewModel[] entries = searchResult.Results
                     .Select(entry => new DictionaryEntryViewModel(
-                        entry,
+                        entry, 
                         searchContext,
                         this,
                         settings,
@@ -216,8 +220,15 @@ partial class SearchResultsViewModel : ObservableObject
                         wordHighlighter,
                         navigationService,
                         dialogService))
-                    .ToList();
+                    .ToArray();
+
+                IReadOnlyList<DictionaryEntryGroupViewModel> groups = GroupEntries(searchQuery, selectedDirection.ReverseSearch, entries);
+
+                return (entries, groups);
             }, cancellationToken);
+
+            DictionaryEntries = entries;
+            DictionaryEntryGroups = groups;
         }
         finally
         {
@@ -230,6 +241,45 @@ partial class SearchResultsViewModel : ObservableObject
             if (querySemaphoreEntered)
                 querySemaphore.Release();
         }
+    }
+
+    private static IReadOnlyList<DictionaryEntryGroupViewModel> GroupEntries(string searchQuery, bool reverseSearch, IReadOnlyList<DictionaryEntryViewModel> entries)
+    {
+        string[] searchTokens = MatchInfo.SplitSearchQueryIntoTokens(searchQuery);
+
+        List<DictionaryEntryViewModel> exactMatches = [];
+        List<DictionaryEntryViewModel> partialMatches = [];
+        List<DictionaryEntryViewModel> annotationMatches = [];
+
+        foreach (DictionaryEntryViewModel entry in entries)
+        {
+            string searchResult = reverseSearch ? entry.DictionaryEntry.Word2 : entry.DictionaryEntry.Word1;
+            MatchInfo matchInfo = new MatchInfo(searchTokens, searchResult, entry.DictionaryEntry.MatchSpans!);
+
+            switch (matchInfo.MatchKind)
+            {
+                case DictionaryEntryMatchKind.Exact:
+                    exactMatches.Add(entry);
+                    break;
+                case DictionaryEntryMatchKind.Partial:
+                    partialMatches.Add(entry);
+                    break;
+                case DictionaryEntryMatchKind.Annotation:
+                    annotationMatches.Add(entry);
+                    break;
+            }
+        }
+
+        ResourceLoader resourceLoader = new ResourceLoader();
+
+        DictionaryEntryGroupViewModel[] groups =
+        [
+            new DictionaryEntryGroupViewModel(resourceLoader.GetString("SearchResultsPage_ExactMatchesGroupHeader"), exactMatches),
+            new DictionaryEntryGroupViewModel(resourceLoader.GetString("SearchResultsPage_PartialMatchesGroupHeader"), partialMatches),
+            new DictionaryEntryGroupViewModel(resourceLoader.GetString("SearchResultsPage_AnnotationMatchesGroupHeader"), annotationMatches)
+        ];
+
+        return groups.Where(group => group.Entries.Count != 0).ToArray();
     }
 
     private async Task UpdateSearchSuggestionsInner(string partialSearchQuery, CancellationToken cancellationToken)

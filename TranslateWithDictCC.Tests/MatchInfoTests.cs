@@ -103,6 +103,25 @@ public class MatchInfoTests
         Assert.Equal(additionalWordCount, matchInfo.AdditionalWordCount);
     }
 
+    [Theory]
+    [InlineData("word", "word", new[] { "word" }, "Exact")]
+    [InlineData("word", "word {annotation}", new[] { "word" }, "Exact")]
+    [InlineData("word", "another word", new[] { "word" }, "Partial")]
+    [InlineData("regional", "word [regional]", new[] { "regional" }, "Annotation")]
+    [InlineData("word regional", "word [regional]", new[] { "word", "regional" }, "Partial")]
+    public void MatchKindTest(string searchQuery, string searchResult, string[] matches, string matchKind)
+    {
+        // Arrange
+        string[] searchTokens = MatchInfo.SplitSearchQueryIntoTokens(searchQuery);
+        TextSpan[] matchSpans = GetMatchSpans(searchResult, matches);
+
+        // Act
+        MatchInfo matchInfo = new MatchInfo(searchTokens, searchResult, matchSpans);
+
+        // Assert
+        Assert.Equal(matchKind, matchInfo.MatchKind.ToString());
+    }
+
     private static TextSpan[] GetMatchSpans(string searchResult, string[] matches)
     {
         List<TextSpan> matchSpans = [];
