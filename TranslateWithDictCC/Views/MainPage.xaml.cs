@@ -51,9 +51,11 @@ public sealed partial class MainPage : Page
         NavigateToPage<SearchResultsPage>(searchContext);
     }
 
-    public void NavigateToPage<TPage>(object? parameter = null)
+    public void NavigateToPage<TPage>(object? parameter = null) where TPage : Page
     {
+#pragma warning disable WinUIEx1003 // Frame.Navigate target must inherit from Page
         contentFrame.Navigate(typeof(TPage), parameter, new SuppressNavigationTransitionInfo());
+#pragma warning restore WinUIEx1003 // Frame.Navigate target must inherit from Page
     }
 
     private void MainPage_PointerPressed(object sender, PointerRoutedEventArgs e)
