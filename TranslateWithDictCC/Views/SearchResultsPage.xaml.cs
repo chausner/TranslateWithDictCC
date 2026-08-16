@@ -205,21 +205,6 @@ public sealed partial class SearchResultsPage : Page
 
                 await dialogService.ShowDialogAsync(contentDialog);
             }
-
-            if (ViewModel.DictionaryEntries != null)
-            {
-                int resultCount = ViewModel.DictionaryEntries.Count;
-
-                if (resultCount == 1)
-                    statusTextBlock.Text = resourceLoader.GetString("SearchResultsPage_SingleResult");
-                else
-                    statusTextBlock.Text = string.Format(resourceLoader.GetString("SearchResultsPage_ResultCount"), ViewModel.DictionaryEntries.Count);
-
-                resultCountAnimation.Stop();
-                resultCountAnimation.Seek(TimeSpan.Zero);
-                await Task.Delay(250);
-                resultCountAnimation.Begin();
-            }
         }
 
         if (!mainViewModel.NoDictionaryInstalledTeachingTipShown && ViewModel.AvailableDirections.Length == 0)
@@ -349,12 +334,6 @@ public sealed partial class SearchResultsPage : Page
             ToolTipService.SetToolTip(border, attribute.ToolTipText);
 
         return border;
-    }
-
-    private void hideResultCountButton_Click(object sender, RoutedEventArgs e)
-    {
-        resultCountAnimation.Stop();
-        resultCountAnimation.Seek(TimeSpan.Zero);
     }
 
     private void Page_SizeChanged(object sender, SizeChangedEventArgs e)

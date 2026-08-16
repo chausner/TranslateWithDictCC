@@ -91,12 +91,12 @@
             </Grid>
         </DataTemplate>        
         <DataTemplate x:Key="DictionaryEntryGroupHeaderTemplate" x:DataType="viewmodels:DictionaryEntryGroupViewModel">
-            <TextBlock Text="{x:Bind GroupHeader}" Style="{StaticResource BodyStrongTextBlockStyle}" />
+            <StackPanel Orientation="Horizontal" Spacing="8">
+                <TextBlock Text="{x:Bind GroupHeader}" Style="{StaticResource BodyStrongTextBlockStyle}" VerticalAlignment="Center" />
+                <InfoBadge Value="{x:Bind Entries.Count}" VerticalAlignment="Center" />
+            </StackPanel>
         </DataTemplate>
         <CollectionViewSource x:Name="GroupedDictionaryEntries" Source="{x:Bind ViewModel.DictionaryEntryGroups, Mode=OneWay}" IsSourceGrouped="True" ItemsPath="Entries" />
-        <Storyboard x:Name="resultCountAnimation">
-            <DoubleAnimation From="30" To="0" Duration="0:0:0.5" Storyboard.TargetName="resultCountBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)" />
-        </Storyboard>
     </Page.Resources>
     <Grid Background="{ThemeResource SearchResultsPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
@@ -142,16 +142,5 @@
         </ListView>
         <ProgressBar Grid.Row="2" IsIndeterminate="{x:Bind ViewModel.IsSearchInProgress, Mode=OneWay}" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="12"
                                  Background="Transparent" />
-
-        <Border Grid.Row="2" Name="resultCountBorder" Background="{ThemeResource ResultCountBorderBackgroundThemeBrush}" CornerRadius="4,0,0,0" VerticalAlignment="Bottom" HorizontalAlignment="Right" Padding="8,4,4,4">
-            <Border.RenderTransform>
-                <TranslateTransform Y="100" />
-            </Border.RenderTransform>
-            <StackPanel Orientation="Horizontal" Spacing="4">
-                <TextBlock Name="statusTextBlock" Style="{StaticResource CaptionTextBlockStyle}" />
-                <Button Name="hideResultCountButton" Style="{StaticResource FlatButtonStyle}" Background="Transparent" FontSize="12" Padding="0"
-                        FontFamily="Segoe MDL2 Assets" Content="&#xE711;" Click="hideResultCountButton_Click" />
-            </StackPanel>
-        </Border>
     </Grid>
 </Page>
