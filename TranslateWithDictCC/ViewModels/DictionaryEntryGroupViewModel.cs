@@ -1,13 +1,12 @@
-﻿using System.Collections.Generic;
+﻿namespace TranslateWithDictCC.ViewModels;
 
-namespace TranslateWithDictCC.ViewModels;
-
-class DictionaryEntryGroupViewModel
+[WinRT.GeneratedBindableCustomProperty]
+partial class DictionaryEntryGroupViewModel
 {
     public string GroupHeader { get; }
-    public IReadOnlyList<DictionaryEntryViewModel> Entries { get; }
+    public DictionaryEntryViewModel[] Entries { get; }
 
-    public DictionaryEntryGroupViewModel(string groupHeader, IReadOnlyList<DictionaryEntryViewModel> entries)
+    public DictionaryEntryGroupViewModel(string groupHeader, DictionaryEntryViewModel[] entries)
     {
         GroupHeader = groupHeader;
         Entries = entries;

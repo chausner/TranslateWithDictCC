@@ -4,7 +4,8 @@ using TranslateWithDictCC.Models;
 
 namespace TranslateWithDictCC.ViewModels;
 
-class SearchSuggestionViewModel : ObservableObject
+[WinRT.GeneratedBindableCustomProperty]
+partial class SearchSuggestionViewModel : ObservableObject
 {
     readonly WordHighlighter wordHighlighter;
 

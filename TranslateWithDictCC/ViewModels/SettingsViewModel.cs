@@ -18,6 +18,7 @@ using Windows.Globalization.DateTimeFormatting;
 
 namespace TranslateWithDictCC.ViewModels;
 
+[WinRT.GeneratedBindableCustomProperty]
 partial class SettingsViewModel : ObservableObject
 {
     readonly DatabaseManager databaseManager;

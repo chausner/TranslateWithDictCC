@@ -6,7 +6,8 @@ using Windows.Storage;
 
 namespace TranslateWithDictCC;
 
-class Settings : ObservableObject
+[WinRT.GeneratedBindableCustomProperty]
+partial class Settings : ObservableObject
 {
     ApplicationDataCompositeValue? selectedDirection;
 

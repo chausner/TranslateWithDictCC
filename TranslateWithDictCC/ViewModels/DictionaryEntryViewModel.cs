@@ -13,6 +13,7 @@ using TranslateWithDictCC.Services;
 
 namespace TranslateWithDictCC.ViewModels;
 
+[WinRT.GeneratedBindableCustomProperty]
 partial class DictionaryEntryViewModel : ObservableObject
 {
     readonly SearchResultsViewModel searchResultsViewModel;

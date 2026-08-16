@@ -34,7 +34,7 @@ partial class SearchResultsViewModel : ObservableObject
     public partial IReadOnlyList<DictionaryEntryViewModel> DictionaryEntries { get; private set; } = [];
 
     [ObservableProperty]
-    public partial IReadOnlyList<DictionaryEntryGroupViewModel> DictionaryEntryGroups { get; private set; } = [];
+    public partial DictionaryEntryGroupViewModel[] DictionaryEntryGroups { get; private set; } = [];
 
     [ObservableProperty]
     public partial bool IsSearchInProgress { get; private set; }
@@ -222,7 +222,7 @@ partial class SearchResultsViewModel : ObservableObject
                         dialogService))
                     .ToArray();
 
-                IReadOnlyList<DictionaryEntryGroupViewModel> groups = GroupEntries(searchQuery, selectedDirection.ReverseSearch, entries);
+                DictionaryEntryGroupViewModel[] groups = GroupEntries(searchQuery, selectedDirection.ReverseSearch, entries);
 
                 return (entries, groups);
             }, cancellationToken);
@@ -243,7 +243,7 @@ partial class SearchResultsViewModel : ObservableObject
         }
     }
 
-    private static IReadOnlyList<DictionaryEntryGroupViewModel> GroupEntries(string searchQuery, bool reverseSearch, IReadOnlyList<DictionaryEntryViewModel> entries)
+    private static DictionaryEntryGroupViewModel[] GroupEntries(string searchQuery, bool reverseSearch, IReadOnlyList<DictionaryEntryViewModel> entries)
     {
         string[] searchTokens = MatchInfo.SplitSearchQueryIntoTokens(searchQuery);
 
@@ -274,12 +274,12 @@ partial class SearchResultsViewModel : ObservableObject
 
         DictionaryEntryGroupViewModel[] groups =
         [
-            new DictionaryEntryGroupViewModel(resourceLoader.GetString("SearchResultsPage_ExactMatchesGroupHeader"), exactMatches),
-            new DictionaryEntryGroupViewModel(resourceLoader.GetString("SearchResultsPage_PartialMatchesGroupHeader"), partialMatches),
-            new DictionaryEntryGroupViewModel(resourceLoader.GetString("SearchResultsPage_AnnotationMatchesGroupHeader"), annotationMatches)
+            new DictionaryEntryGroupViewModel(resourceLoader.GetString("SearchResultsPage_ExactMatchesGroupHeader"), [.. exactMatches]),
+            new DictionaryEntryGroupViewModel(resourceLoader.GetString("SearchResultsPage_PartialMatchesGroupHeader"), [.. partialMatches]),
+            new DictionaryEntryGroupViewModel(resourceLoader.GetString("SearchResultsPage_AnnotationMatchesGroupHeader"), [.. annotationMatches])
         ];
 
-        return groups.Where(group => group.Entries.Count != 0).ToArray();
+        return groups.Where(group => group.Entries.Length != 0).ToArray();
     }
 
     private async Task UpdateSearchSuggestionsInner(string partialSearchQuery, CancellationToken cancellationToken)

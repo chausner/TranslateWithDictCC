@@ -5,7 +5,7 @@ using System.Collections;
 
 namespace TranslateWithDictCC;
 
-class SourceNotEmptyValueConverter : IValueConverter
+partial class SourceNotEmptyValueConverter : IValueConverter
 {
     public object? Convert(object value, Type targetType, object parameter, string language)
     {
@@ -21,7 +21,7 @@ class SourceNotEmptyValueConverter : IValueConverter
     }
 }
 
-class AppThemeValueConverter : IValueConverter
+partial class AppThemeValueConverter : IValueConverter
 {
     public object? Convert(object value, Type targetType, object parameter, string language)
     {
