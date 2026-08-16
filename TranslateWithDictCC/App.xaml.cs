@@ -4,12 +4,12 @@ using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using System;
 using System.IO;
+using System.Net.Http;
 using System.Threading.Tasks;
 using TranslateWithDictCC.Services;
 using TranslateWithDictCC.ViewModels;
 using TranslateWithDictCC.Views;
 using Windows.Storage;
-using Windows.Web.Http;
 
 namespace TranslateWithDictCC;
 

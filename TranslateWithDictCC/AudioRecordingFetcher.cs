@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using TranslateWithDictCC.ViewModels;
-using Windows.Web.Http;
 
 namespace TranslateWithDictCC;
 
@@ -83,7 +83,7 @@ partial class AudioRecordingFetcher
             new KeyValuePair<string, string>("s", searchQuery)
         ];
 
-        string encodedParameters = new HttpFormUrlEncodedContent(urlParameters).ReadAsStringAsync().AsTask().Result;
+        string encodedParameters = new FormUrlEncodedContent(urlParameters).ReadAsStringAsync().GetAwaiter().GetResult();
 
         return new Uri(string.Format("http://{0}-{1}.dict.cc/?{2}", originLanguageCode.ToLower(), destinationLanguageCode.ToLower(), encodedParameters));
     }
@@ -97,7 +97,7 @@ partial class AudioRecordingFetcher
             new KeyValuePair<string, string>("lp", originLanguageCode.ToUpper() + destinationLanguageCode.ToUpper())
         ];
 
-        string encodedParameters = new HttpFormUrlEncodedContent(urlParameters).ReadAsStringAsync().AsTask().Result;
+        string encodedParameters = new FormUrlEncodedContent(urlParameters).ReadAsStringAsync().GetAwaiter().GetResult();
 
         return new Uri("http://audio.dict.cc/speak.audio.php?" + encodedParameters);
     }
