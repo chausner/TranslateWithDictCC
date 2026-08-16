@@ -7,9 +7,9 @@ class DictionaryEntryGroupViewModel
     public string GroupHeader { get; }
     public IReadOnlyList<DictionaryEntryViewModel> Entries { get; }
 
-    public DictionaryEntryGroupViewModel(string name, IReadOnlyList<DictionaryEntryViewModel> entries)
+    public DictionaryEntryGroupViewModel(string groupHeader, IReadOnlyList<DictionaryEntryViewModel> entries)
     {
-        GroupHeader = name;
+        GroupHeader = groupHeader;
         Entries = entries;
     }
 }
