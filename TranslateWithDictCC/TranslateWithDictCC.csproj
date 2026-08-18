@@ -12,6 +12,7 @@
     <FileVersion>2.3.1.0</FileVersion>
     <Nullable>enable</Nullable>
     <NeutralLanguage>en-US</NeutralLanguage>
+    <DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_MAIN</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Content Include="Assets\AboutLogo.png" />
