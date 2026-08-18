@@ -1,6 +1,6 @@
 ﻿namespace TranslateWithDictCC.ViewModels;
 
-class SubjectViewModel : ViewModel
+class SubjectViewModel
 {
     public int Count { get; }
     public string CanonicalSubject { get; }

@@ -9,24 +9,24 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <ScrollViewer>
         <StackPanel Margin="24,16">
-            <TextBlock x:Uid="AboutPage_TitleTextBlock" Style="{StaticResource SubheaderTextBlockStyle}" Text="About" Margin="0,0,0,16" />
+            <TextBlock x:Uid="AboutPage_TitleTextBlock" Style="{StaticResource TitleTextBlockStyle}" Text="About" Margin="0,0,0,32" />
             <Grid Margin="0,0,0,8">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
-                <Image Grid.Column="0" Source="/Assets/AboutLogo.png" Width="75" Margin="0,0,16,0" VerticalAlignment="Top" />
-                <StackPanel Grid.Column="1">
-                    <TextBlock x:Uid="AboutPage_DescriptionTextBlock" Text="Unofficial app to search and manage offline dictionaries downloaded from dict.cc." Margin="0,0,0,8" TextWrapping="WrapWholeWords" />
-                    <TextBlock Text="{x:Bind ViewModel.AppVersion}" Margin="0,0,0,8" />
-                    <TextBlock Text="Copyright © Christoph Hausner 2016, 2022-2026" Margin="0,0,0,8" />
+                <Image Grid.Column="0" Source="/Assets/AboutLogo.png" Width="75" Margin="-12,0,5,0" VerticalAlignment="Top" />
+                <StackPanel Grid.Column="1" Spacing="8">
+                    <TextBlock x:Uid="AboutPage_DescriptionTextBlock" Text="Unofficial app to search and manage offline dictionaries downloaded from dict.cc." TextWrapping="WrapWholeWords" />
+                    <TextBlock Text="{x:Bind ViewModel.AppVersion}" />
+                    <TextBlock Text="Copyright © Christoph Hausner 2016, 2022-2026" />
                 </StackPanel>
             </Grid>            
             <HyperlinkButton x:Uid="AboutPage_PrivacyStatementLink" Content="Privacy Statement" NavigateUri="http://www.dict.cc/?s=about:&amp;l=e" Margin="-12,8,0,16" />
             <Button x:Uid="AboutPage_GiveFeedbackButton" Content="Give feedback" Margin="0,0,0,32" Command="{x:Bind ViewModel.GiveFeedbackCommand}" />
 
-            <TextBlock x:Uid="AboutPage_KeyboardShortcutsTextBlock" Style="{StaticResource TitleTextBlockStyle}" Text="Keyboard shortcuts" Margin="0,0,0,16" />
-            <Grid HorizontalAlignment="Left" Margin="0,0,0,32">
+            <TextBlock x:Uid="AboutPage_KeyboardShortcutsTextBlock" Style="{StaticResource BodyStrongTextBlockStyle}" Text="Keyboard shortcuts" Margin="0,0,0,16" />
+            <Grid HorizontalAlignment="Left" Margin="0,0,0,32" ColumnSpacing="48" RowSpacing="8">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
                     <ColumnDefinition />
@@ -35,13 +35,13 @@
                     <RowDefinition />
                     <RowDefinition />
                 </Grid.RowDefinitions>
-                <controls:ShortcutView x:Uid="AboutPage_SetFocusOnSearchBarShortcutView" Grid.Row="0" Grid.Column="0" Text="Ctrl+E" Margin="0,0,48,8" />
-                <TextBlock x:Uid="AboutPage_SetFocusOnSearchBarTextBlock" Grid.Row="0" Grid.Column="1" Text="Set focus on search bar" Margin="0,0,0,8" VerticalAlignment="Center" />
-                <controls:ShortcutView x:Uid="AboutPage_SwitchDirectionOfTranslationShortcutView" Grid.Row="1" Grid.Column="0" Text="Ctrl+S" Margin="0,0,48,0" />
+                <controls:ShortcutView x:Uid="AboutPage_SetFocusOnSearchBarShortcutView" Grid.Row="0" Grid.Column="0" Text="Ctrl+E" />
+                <TextBlock x:Uid="AboutPage_SetFocusOnSearchBarTextBlock" Grid.Row="0" Grid.Column="1" Text="Set focus on search bar" VerticalAlignment="Center" />
+                <controls:ShortcutView x:Uid="AboutPage_SwitchDirectionOfTranslationShortcutView" Grid.Row="1" Grid.Column="0" Text="Ctrl+S" />
                 <TextBlock x:Uid="AboutPage_SwitchDirectionOfTranslationTextBlock" Grid.Row="1" Grid.Column="1" Text="Switch direction of translation" VerticalAlignment="Center" />
             </Grid>
 
-            <TextBlock x:Uid="AboutPage_LicensesTextBlock" Style="{StaticResource TitleTextBlockStyle}" Text="Licenses" Margin="0,0,0,16" />
+            <TextBlock x:Uid="AboutPage_LicensesTextBlock" Style="{StaticResource BodyStrongTextBlockStyle}" Text="Licenses" Margin="0,0,0,16" />
             <TextBlock>GoSquared Flag Icon Set</TextBlock>
             <TextBlock>Copyright (c) 2015 Go Squared Ltd. http://www.gosquared.com/</TextBlock>
             <HyperlinkButton x:Uid="AboutPage_MITLicenceLink" Content="MIT Licence" NavigateUri="https://github.com/gosquared/flags/blob/master/LICENSE.txt" Margin="-12,8,0,0" />

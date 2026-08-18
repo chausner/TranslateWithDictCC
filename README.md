@@ -1,4 +1,6 @@
 # Translate with dict.cc
+<img src="TranslateWithDictCC/Assets/AboutLogo.png" align="right" width="10%">
+
 Windows app to search and manage [dict.cc](https://www.dict.cc/) offline dictionaries
 
 [![](https://img.shields.io/badge/Microsoft%20Store-Translate%20with%20dict.cc-blue)](https://www.microsoft.com/store/apps/9NBLGGH4SGKM)
@@ -12,7 +14,7 @@ Windows app to search and manage [dict.cc](https://www.dict.cc/) offline diction
 * Localized app for English and German
 
 ## Screenshots
-![screenshots](https://user-images.githubusercontent.com/15180557/172071679-4942b4fa-d826-449b-b348-57e9d8f746aa.png)
+<img width="2994" height="1962" alt="Screenshots" src="https://github.com/user-attachments/assets/d69f437e-34e5-4730-99a7-5c2aed69270c" />
 
 ## License
 GPLv3, see [LICENSE](LICENSE)

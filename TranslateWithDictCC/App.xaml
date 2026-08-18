@@ -116,7 +116,7 @@
                     <SolidColorBrush x:Key="DictionaryEntryAltBackgroundThemeBrush" Color="#20FFFFFF" />
                     <SolidColorBrush x:Key="DictionaryEntryAnnotationThemeBrush" Color="#000080" />
                     <SolidColorBrush x:Key="DictionaryEntryQueryHighlightThemeBrush" Color="#40FFFFB0" />
-                    <SolidColorBrush x:Key="ResultCountBorderBackgroundThemeBrush" Color="#FF9800" />
+                    <SolidColorBrush x:Key="ResultCountBorderBackgroundThemeBrush" Color="DarkOrange" />
                     <SolidColorBrush x:Key="SearchResultsPageBackgroundThemeBrush" Color="#FF9800" />
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Dark">
@@ -137,7 +137,7 @@
                     <SolidColorBrush x:Key="DictionaryEntryAltBackgroundThemeBrush" Color="#20000000" />
                     <SolidColorBrush x:Key="DictionaryEntryAnnotationThemeBrush" Color="#367BD7" />
                     <SolidColorBrush x:Key="DictionaryEntryQueryHighlightThemeBrush" Color="DarkOrange" />
-                    <SolidColorBrush x:Key="ResultCountBorderBackgroundThemeBrush" Color="#373737" />
+                    <SolidColorBrush x:Key="ResultCountBorderBackgroundThemeBrush" Color="#2D2D2D" />
                     <SolidColorBrush x:Key="SearchResultsPageBackgroundThemeBrush" Color="#373737" />
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>

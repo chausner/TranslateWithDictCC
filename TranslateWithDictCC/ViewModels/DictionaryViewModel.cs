@@ -1,4 +1,6 @@
-﻿using Microsoft.UI.Xaml;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.Windows.ApplicationModel.Resources;
 using System;
@@ -7,8 +9,10 @@ using TranslateWithDictCC.Models;
 
 namespace TranslateWithDictCC.ViewModels;
 
-class DictionaryViewModel : ViewModel
+partial class DictionaryViewModel : ObservableObject
 {
+    readonly SettingsViewModel settingsViewModel;
+
     public string OriginLanguageCode { get; } = null!;
     public string DestinationLanguageCode { get; } = null!;
 
@@ -22,47 +26,26 @@ class DictionaryViewModel : ViewModel
 
     public string CreationDateShort => CreationDate.ToString("dd/MM/yyyy");
 
-    public int NumberOfEntries
-    {
-        get;
-        set => SetProperty(ref field, value);
-    }
+    [ObservableProperty]
+    public partial int NumberOfEntries { get; set; }
 
-    public DictionaryStatus Status
-    {
-        get;
-        set => SetProperty(ref field, value);
-    }
+    [ObservableProperty]
+    public partial DictionaryStatus Status { get; set; }
 
-    public string StatusText
-    {
-        get;
-        set => SetProperty(ref field, value);
-    } = string.Empty;
+    [ObservableProperty]
+    public partial string StatusText { get; private set; } = string.Empty;
 
-    public double ImportProgress
-    {
-        get;
-        set => SetProperty(ref field, value);
-    }
+    [ObservableProperty]
+    public partial double ImportProgress { get; set; }
 
-    public Visibility ProgressBarVisibility
-    {
-        get;
-        set => SetProperty(ref field, value);
-    }
+    [ObservableProperty]
+    public partial Visibility ProgressBarVisibility { get; private set; }
 
-    public Visibility AbortImportButtonVisibility
-    {
-        get;
-        set => SetProperty(ref field, value);
-    }
+    [ObservableProperty]
+    public partial Visibility AbortImportButtonVisibility { get; private set; }
 
-    public Visibility RemoveDictionaryButtonVisibility
-    {
-        get;
-        set => SetProperty(ref field, value);
-    }
+    [ObservableProperty]
+    public partial Visibility RemoveDictionaryButtonVisibility { get; private set; }
 
     public Dictionary? Dictionary { get; set; }
     public WordlistReader? WordlistReader { get; set; }
@@ -70,15 +53,17 @@ class DictionaryViewModel : ViewModel
     public ICommand AbortImportCommand { get; }
     public ICommand RemoveDictionaryCommand { get; }
 
-    private DictionaryViewModel()
+    private DictionaryViewModel(SettingsViewModel settingsViewModel)
     {
+        this.settingsViewModel = settingsViewModel;
+
         PropertyChanged += (sender, e) => { UpdateStatusText(); };
 
         AbortImportCommand = new RelayCommand(RunAbortImportCommand);
         RemoveDictionaryCommand = new RelayCommand(RunRemoveDictionaryCommand);
     }
 
-    public DictionaryViewModel(Dictionary dictionary) : this()
+    public DictionaryViewModel(Dictionary dictionary, SettingsViewModel settingsViewModel) : this(settingsViewModel)
     {
         Dictionary = dictionary;
         OriginLanguageCode = dictionary.OriginLanguageCode;
@@ -90,7 +75,7 @@ class DictionaryViewModel : ViewModel
         UpdateStatusText();
     }
 
-    public DictionaryViewModel(WordlistReader wordlistReader) : this()
+    public DictionaryViewModel(WordlistReader wordlistReader, SettingsViewModel settingsViewModel) : this(settingsViewModel)
     {
         WordlistReader = wordlistReader;
         OriginLanguageCode = wordlistReader.OriginLanguageCode;
@@ -131,12 +116,12 @@ class DictionaryViewModel : ViewModel
 
     private void RunAbortImportCommand()
     {
-        SettingsViewModel.Instance.AbortImport(this);
+        settingsViewModel.AbortImport(this);
     }
 
     private async void RunRemoveDictionaryCommand()
     {
-        await SettingsViewModel.Instance.RemoveDictionary(this);
+        await settingsViewModel.RemoveDictionary(this);
     }
 }
 

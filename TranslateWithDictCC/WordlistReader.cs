@@ -11,7 +11,6 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using TranslateWithDictCC.Models;
-using Windows.Storage;
 
 namespace TranslateWithDictCC;
 
@@ -19,7 +18,7 @@ partial class WordlistReader : IDisposable
 {
     private record WordlistHeader(string OriginLanguageCode, string DestinationLanguageCode, DateTimeOffset CreationDate);
 
-    readonly StorageFile wordlistFile;
+    readonly string path;
     StreamReader? streamReader;
     ZipArchive? zipArchive;
     long uncompressedSize;
@@ -45,20 +44,20 @@ partial class WordlistReader : IDisposable
     [GeneratedRegex(@"\s\s+")]
     private static partial Regex ConsecutiveSpacesRegex();
 
-    public WordlistReader(StorageFile wordlistFile)
+    public WordlistReader(string path)
     {
-        this.wordlistFile = wordlistFile;
+        this.path = path;
     }
 
     private async Task Open()
     {
-        Stream? stream = null;
+        FileStream? stream = null;
 
         try
         {
-            stream = await wordlistFile.OpenStreamForReadAsync();
+            stream = File.OpenRead(path);
 
-            if (wordlistFile.FileType.Equals(".zip", StringComparison.OrdinalIgnoreCase))
+            if (Path.GetExtension(path).Equals(".zip", StringComparison.OrdinalIgnoreCase))
             {
                 zipArchive = new ZipArchive(stream, ZipArchiveMode.Read, false);
 

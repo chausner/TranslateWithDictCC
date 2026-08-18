@@ -1,10 +1,13 @@
-﻿using Microsoft.UI.Xaml;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.UI.Xaml;
 using TranslateWithDictCC.Models;
 
 namespace TranslateWithDictCC.ViewModels;
 
-class SearchSuggestionViewModel : ViewModel
+class SearchSuggestionViewModel : ObservableObject
 {
+    readonly WordHighlighter wordHighlighter;
+
     public DictionaryEntry DictionaryEntry { get; }
     public SearchContext SearchContext { get; }
 
@@ -29,16 +32,17 @@ class SearchSuggestionViewModel : ViewModel
         }
     }
 
-    public SearchSuggestionViewModel(DictionaryEntry entry, SearchContext searchContext)
+    public SearchSuggestionViewModel(DictionaryEntry entry, SearchContext searchContext, WordHighlighter wordHighlighter)
     {
         DictionaryEntry = entry;
         SearchContext = searchContext;
+        this.wordHighlighter = wordHighlighter;
     }
 
     private void Initialize()
     {
         bool reverseSearch = SearchContext.SelectedDirection.ReverseSearch;
-        Word = WordHighlighting.FormatWord(reverseSearch ? DictionaryEntry.Word2 : DictionaryEntry.Word1, DictionaryEntry.MatchSpans!, false);
+        Word = wordHighlighter.FormatWord(reverseSearch ? DictionaryEntry.Word2 : DictionaryEntry.Word1, DictionaryEntry.MatchSpans!, false);
     }
 
     public Visibility GetWordClassVisibility(string wordClasses)

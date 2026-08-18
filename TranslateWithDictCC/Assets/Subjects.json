@@ -224,6 +224,10 @@
       "subject": "ави.",
       "description": "Авиация"
     },
+    "BS": {
+      "subject": "aviat.",
+      "description": "Avijacija, vazduhoplovstvo"
+    },
     "CS": {
       "subject": "let.",
       "description": "Letectví"
@@ -327,10 +331,6 @@
     "UK": {
       "subject": "авіац.",
       "description": "Авіація"
-    },
-    "BS": {
-      "subject": "aviat.",
-      "description": "Avijacija, vazduhoplovstvo"
     }
   },
   {
@@ -1213,7 +1213,7 @@
       "description": "Audiologi, Akustik"
     },
     "TR": {
-      "subject": "ses",
+      "subject": "ses.",
       "description": "Sesbilim, Akustik"
     }
   },
@@ -1319,7 +1319,7 @@
       "description": "Biblisk"
     },
     "TR": {
-      "subject": "İncil",
+      "subject": "incil.",
       "description": "İncil'den"
     },
     "UK": {
@@ -2094,7 +2094,7 @@
     },
     "TR": {
       "subject": "veterin.",
-      "description": "Veteriner Tıp"
+      "description": "Veterinerlik"
     },
     "UK": {
       "subject": "вет.мед.",
@@ -2203,8 +2203,8 @@
       "description": "Militärväsen"
     },
     "TR": {
-      "subject": "ordu",
-      "description": "Ordu"
+      "subject": "ask.",
+      "description": "Askeriye"
     },
     "UK": {
       "subject": "військ.",
@@ -2762,7 +2762,7 @@
     },
     "TR": {
       "subject": "diş",
-      "description": "Diş hekimi"
+      "description": "Diş hekimliği"
     },
     "UK": {
       "subject": "стомат.",
@@ -3953,6 +3953,10 @@
     "TR": {
       "subject": "oyuncak",
       "description": "Oyuncak"
+    },
+    "UK": {
+      "subject": "іграш.",
+      "description": "іграшки"
     }
   },
   {
@@ -4057,7 +4061,7 @@
       "description": "Spel"
     },
     "TR": {
-      "subject": "oyun",
+      "subject": "oyunlar",
       "description": "Oyunlar"
     },
     "UK": {
@@ -4701,8 +4705,8 @@
       "description": "Verktyg"
     },
     "TR": {
-      "subject": "alet",
-      "description": "Alet"
+      "subject": "aletler",
+      "description": "Aletler"
     },
     "UK": {
       "subject": "знаряд.",
@@ -4803,7 +4807,7 @@
       "description": "Internet"
     },
     "TR": {
-      "subject": "İnternet",
+      "subject": "internet",
       "description": "İnternet"
     },
     "UK": {
@@ -5667,8 +5671,8 @@
       "description": "Dil bilimi"
     },
     "UK": {
-      "subject": "лінґв.",
-      "description": "Лінґвістика"
+      "subject": "лінгв.",
+      "description": "Лінгвістика"
     }
   },
   {
@@ -5879,7 +5883,7 @@
       "description": "Jakt, jaga"
     },
     "TR": {
-      "subject": "avcı.",
+      "subject": "av",
       "description": "Avcılık"
     },
     "UK": {
@@ -5993,7 +5997,7 @@
       "description": "Matematik"
     },
     "TR": {
-      "subject": "mate.",
+      "subject": "mat.",
       "description": "Matematik"
     },
     "UK": {
@@ -6401,7 +6405,7 @@
       "description": "Medicinsk teknik"
     },
     "TR": {
-      "subject": "tıb.tek.",
+      "subject": "TıbTek.",
       "description": "Tıbbi teknoloji"
     }
   },
@@ -7289,7 +7293,7 @@
       "description": "Droger"
     },
     "TR": {
-      "subject": "ilaç",
+      "subject": "ilaçlar",
       "description": "İlaçlar"
     },
     "UK": {
@@ -7619,8 +7623,8 @@
       "description": "Giyim, Moda"
     },
     "UK": {
-      "subject": "одежа",
-      "description": "Одежа, мода"
+      "subject": "одяг",
+      "description": "Одяг, мода"
     }
   },
   {
@@ -8267,7 +8271,7 @@
       "description": "Tryck, Typografi"
     },
     "TR": {
-      "subject": "basım",
+      "subject": "basım.",
       "description": "Basımcılık, tipografi, mizanpaj"
     }
   },
@@ -8369,7 +8373,7 @@
       "description": "Ölbryggning"
     },
     "TR": {
-      "subject": "maya.",
+      "subject": "mayal.",
       "description": "Mayalama, Demleme"
     },
     "UK": {
@@ -8467,8 +8471,8 @@
       "description": "Brandkår & räddningstjänst"
     },
     "TR": {
-      "subject": "ItfKurta",
-      "description": "Itfaiye ve Kurtarma"
+      "subject": "İtfaKurt.",
+      "description": "İtfaiye ve Arama Kurtarma"
     },
     "UK": {
       "subject": "НС",
@@ -8695,8 +8699,8 @@
       "description": "Atasözü"
     },
     "UK": {
-      "subject": "приказка",
-      "description": "Приказка"
+      "subject": "прис.",
+      "description": "Прислів'я"
     }
   },
   {
@@ -8915,7 +8919,7 @@
       "description": "Arbete och arbetsmarknaden"
     },
     "TR": {
-      "subject": "meslek",
+      "subject": "mesl.",
       "description": "Meslekler, meslek açıklamaları"
     },
     "UK": {
@@ -9446,7 +9450,7 @@
     },
     "TR": {
       "subject": "maden",
-      "description": "Madencilik ve Sondaj Tekniği"
+      "description": "Madencilik ve Sondaj Teknikleri"
     },
     "UK": {
       "subject": "гірництв",
@@ -9640,17 +9644,17 @@
       "subject": "spec.",
       "description": "Term teknik"
     },
+    "SR": {
+      "subject": "стручн.",
+      "description": "Стручни израз"
+    },
     "SV": {
       "subject": "fackspr.",
       "description": "Fackspråkligt uttryck"
     },
     "TR": {
-      "subject": "bil.ter.",
-      "description": "Bilim Terimleri"
-    },
-    "SR": {
-      "subject": "стручн.",
-      "description": "Стручни израз"
+      "subject": "terim",
+      "description": "Teknik terimler"
     }
   },
   {
@@ -9963,8 +9967,8 @@
       "description": "Byggnadskonstruktion"
     },
     "TR": {
-      "subject": "yapı",
-      "description": "Yapı, Konstruktion, Inşaat"
+      "subject": "inşaat",
+      "description": "İnşaat"
     },
     "UK": {
       "subject": "буд.",
@@ -10240,6 +10244,10 @@
       "subject": "RadioTV",
       "description": "Televisione e radio"
     },
+    "LA": {
+      "subject": "RadioTV",
+      "description": "Radiophonum et Televisio"
+    },
     "NL": {
       "subject": "TV",
       "description": "Televisie en Radio"
@@ -10281,8 +10289,8 @@
       "description": "Television och Radio"
     },
     "TR": {
-      "subject": "TV",
-      "description": "Televizyon ile radyo"
+      "subject": "RadyoTV",
+      "description": "Radyo ve Televizyon"
     },
     "UK": {
       "subject": "РадіоТБ",
@@ -12002,7 +12010,7 @@
     },
     "TR": {
       "subject": "foto.",
-      "description": "Fotografi"
+      "description": "Fotoğrafçılık"
     },
     "UK": {
       "subject": "фотогр.",
@@ -12641,8 +12649,12 @@
       "description": "Ur, Klockor"
     },
     "TR": {
-      "subject": "saat",
-      "description": "Saat, Saatler"
+      "subject": "saatler",
+      "description": "Saatler"
+    },
+    "UK": {
+      "subject": "годин.",
+      "description": "годинники"
     }
   },
   {
@@ -12723,7 +12735,7 @@
       "description": "Vokabulär kopplad till turism och resand"
     },
     "TR": {
-      "subject": "TurTerim",
+      "subject": "TurTer.",
       "description": "Turizm Terimleri"
     }
   },
@@ -13093,6 +13105,10 @@
     "TR": {
       "subject": "kütüp.",
       "description": "Kütüphanecilik"
+    },
+    "UK": {
+      "subject": "бібліо.",
+      "description": "бібліотекознавство"
     }
   },
   {
@@ -13171,6 +13187,10 @@
     "TR": {
       "subject": "çiz.",
       "description": "Çizgi roman ve çizgi film"
+    },
+    "SR": {
+      "subject": "стрип",
+      "description": "Стрипови, Цртани филмови"
     }
   },
   {
@@ -13403,7 +13423,7 @@
       "description": "Journalistik"
     },
     "TR": {
-      "subject": "gazete.",
+      "subject": "gazetec.",
       "description": "Gazetecilik"
     },
     "UK": {
@@ -13562,6 +13582,10 @@
       "subject": "UDM",
       "description": "UNESCO Dünya Mirası"
     },
+    "UK": {
+      "subject": "ССЮ",
+      "description": "Світова спадщина ЮНЕСКО"
+    },
     "ES": {
       "subject": "UPM",
       "description": "UNESCO Patrimonio Mundial"
@@ -13657,7 +13681,7 @@
       "description": "Urbanism, Stadsplanering"
     },
     "TR": {
-      "subject": "şehir",
+      "subject": "ŞehPlan.",
       "description": "Şehir ve Bölge Planlama"
     },
     "UK": {

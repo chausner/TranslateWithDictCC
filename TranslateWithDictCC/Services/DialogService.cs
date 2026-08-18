@@ -1,0 +1,15 @@
+﻿using Microsoft.UI.Xaml.Controls;
+using System;
+using System.Threading.Tasks;
+using TranslateWithDictCC.Views;
+
+namespace TranslateWithDictCC.Services;
+
+class DialogService
+{
+    public async Task<ContentDialogResult> ShowDialogAsync(ContentDialog contentDialog)
+    {
+        contentDialog.XamlRoot = MainWindow.Instance.Content.XamlRoot;
+        return await contentDialog.ShowAsync();
+    }
+}

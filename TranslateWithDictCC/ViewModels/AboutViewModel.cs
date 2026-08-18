@@ -1,4 +1,6 @@
-﻿using Microsoft.Windows.ApplicationModel.Resources;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Microsoft.Windows.ApplicationModel.Resources;
 using System;
 using System.Reflection;
 using System.Windows.Input;
@@ -6,7 +8,7 @@ using Windows.System;
 
 namespace TranslateWithDictCC.ViewModels;
 
-class AboutViewModel : ViewModel
+class AboutViewModel : ObservableObject
 {
     public string AppVersion { get; }
 

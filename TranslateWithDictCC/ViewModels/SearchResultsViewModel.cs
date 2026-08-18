@@ -1,4 +1,7 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using System;
+using Microsoft.Windows.ApplicationModel.Resources;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -6,49 +9,44 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using TranslateWithDictCC.Models;
+using TranslateWithDictCC.Services;
 using Windows.UI.StartScreen;
 
 namespace TranslateWithDictCC.ViewModels;
 
-class SearchResultsViewModel : ViewModel
+partial class SearchResultsViewModel : ObservableObject
 {
-    public static readonly SearchResultsViewModel Instance = new SearchResultsViewModel();
+    readonly DatabaseManager databaseManager;
+    readonly Settings settings;
+    readonly SubjectInfo subjectInfo;
+    readonly AudioPlayer audioPlayer;
+    readonly WordHighlighter wordHighlighter;
+    readonly NavigationService navigationService;
+    readonly DialogService dialogService;
 
     SearchContext? searchContext;
     List<DictionaryEntry> results = [];
     readonly HashSet<string> activeSubjectFilters = new HashSet<string>(StringComparer.Ordinal);
 
-    public DirectionViewModel[] AvailableDirections
-    {
-        get;
-        set => SetProperty(ref field, value);
-    } = [];
+    [ObservableProperty]
+    public partial DirectionViewModel[] AvailableDirections { get; private set; } = [];
 
-    public DirectionViewModel? SelectedDirection
-    {
-        get;
-        set => SetProperty(ref field, value);
-    } = null;
+    [ObservableProperty]
+    public partial DirectionViewModel? SelectedDirection { get; set; } = null;
 
-    public IReadOnlyList<DictionaryEntryViewModel> DictionaryEntries
-    {
-        get;
-        private set => SetProperty(ref field, value);
-    } = Array.Empty<DictionaryEntryViewModel>();
+    [ObservableProperty]
+    public partial IReadOnlyList<DictionaryEntryViewModel> DictionaryEntries { get; private set; } = [];
 
-    public bool IsSearchInProgress
-    {
-        get;
-        set => SetProperty(ref field, value);
-    }
+    [ObservableProperty]
+    public partial IReadOnlyList<DictionaryEntryGroupViewModel> DictionaryEntryGroups { get; private set; } = [];
+
+    [ObservableProperty]
+    public partial bool IsSearchInProgress { get; private set; }
 
     public ObservableCollection<SearchSuggestionViewModel> SearchSuggestions { get; }
 
-    public bool IsOutdatedDictionariesInfoBarShown
-    {
-        get;
-        set => SetProperty(ref field, value);
-    }
+    [ObservableProperty]
+    public partial bool IsOutdatedDictionariesInfoBarShown { get; private set; }
 
     public ObservableCollection<SubjectViewModel> Subjects { get; }
 
@@ -57,17 +55,34 @@ class SearchResultsViewModel : ViewModel
 
     readonly SemaphoreSlim querySemaphore = new SemaphoreSlim(1);
 
+    CancellationTokenSource? searchQueryCancellationTokenSource;
     CancellationTokenSource? searchSuggestionCancellationTokenSource;
 
-    private SearchResultsViewModel()
+    public SearchResultsViewModel(
+        DatabaseManager databaseManager,
+        SettingsViewModel settingsViewModel,
+        Settings settings,
+        SubjectInfo subjectInfo,
+        AudioPlayer audioPlayer,
+        WordHighlighter wordHighlighter,
+        NavigationService navigationService,
+        DialogService dialogService)
     {
+        this.databaseManager = databaseManager;
+        this.settings = settings;
+        this.subjectInfo = subjectInfo;
+        this.audioPlayer = audioPlayer;
+        this.wordHighlighter = wordHighlighter;
+        this.navigationService = navigationService;
+        this.dialogService = dialogService;
+
         SearchSuggestions = new ObservableCollection<SearchSuggestionViewModel>();
         Subjects = new ObservableCollection<SubjectViewModel>();
 
         SwitchDirectionOfTranslationCommand = new RelayCommand(SwitchDirectionOfTranslation, CanSwitchDirectionOfTranslation);
         GoToOptionsCommand = new RelayCommand(GoToOptions);
 
-        SettingsViewModel.Instance.DictionariesChanged += SettingsViewModel_DictionariesChanged;
+        settingsViewModel.DictionariesChanged += SettingsViewModel_DictionariesChanged;
     }
 
     private async void SettingsViewModel_DictionariesChanged(object? sender, EventArgs e)
@@ -81,36 +96,36 @@ class SearchResultsViewModel : ViewModel
 
         LoadSettings();
 
-        bool hasOutdatedDictionaries = await DatabaseManager.Instance.HasOutdatedDictionaries();
+        bool hasOutdatedDictionaries = await databaseManager.HasOutdatedDictionaries();
 
-        if (!Settings.Instance.OutdatedDictionariesNoticeRead)
+        if (!settings.OutdatedDictionariesNoticeRead)
         {
             IsOutdatedDictionariesInfoBarShown = hasOutdatedDictionaries;
-            Settings.Instance.OutdatedDictionariesNoticeRead = hasOutdatedDictionaries;
+            settings.OutdatedDictionariesNoticeRead = hasOutdatedDictionaries;
         }
         else
         {
             IsOutdatedDictionariesInfoBarShown = false;
+
             if (!hasOutdatedDictionaries)
-                Settings.Instance.OutdatedDictionariesNoticeRead = false;
+                settings.OutdatedDictionariesNoticeRead = false;
         }
     }
 
     public void LoadSettings()
     {
-        Settings.Instance.GetSelectedDirection(out string? originLanguageCode, out string? destinationLanguageCode);
+        settings.GetSelectedDirection(out string? originLanguageCode, out string? destinationLanguageCode);
 
         SelectedDirection = AvailableDirections.FirstOrDefault(dvm =>
             dvm.OriginLanguageCode == originLanguageCode &&
             dvm.DestinationLanguageCode == destinationLanguageCode);
 
-        if (SelectedDirection == null)
-            SelectedDirection = AvailableDirections.FirstOrDefault();
+        SelectedDirection ??= AvailableDirections.FirstOrDefault();
     }
 
     public void SaveSettings()
     {
-        Settings.Instance.SetSelectedDirection(SelectedDirection?.OriginLanguageCode, SelectedDirection?.DestinationLanguageCode);
+        settings.SetSelectedDirection(SelectedDirection?.OriginLanguageCode, SelectedDirection?.DestinationLanguageCode);
     }
 
     private void SwitchDirectionOfTranslation()
@@ -128,24 +143,24 @@ class SearchResultsViewModel : ViewModel
 
     private void GoToOptions()
     {
-        MainViewModel.Instance.NavigateToPageCommand.Execute(Tuple.Create<string, object?>("SettingsPage", null));
+        navigationService.NavigateToSettingsPage();
     }
 
-    private async Task<(List<DictionaryEntry> Results, bool DirectionSwitched)> PerformQueryInner(string searchQuery, bool dontSearchInBothDirections)
+    private async Task<(List<DictionaryEntry> Results, bool DirectionSwitched)> PerformQueryInner(string searchQuery, DirectionViewModel selectedDirection, bool dontSearchInBothDirections, CancellationToken cancellationToken)
     {
         bool directionSwitched = false;
 
-        List<DictionaryEntry> results = await DatabaseManager.Instance.QueryEntries(SelectedDirection!.Dictionary, searchQuery, SelectedDirection.ReverseSearch);
+        List<DictionaryEntry> results = await databaseManager.QueryEntries(selectedDirection.Dictionary, searchQuery, selectedDirection.ReverseSearch, cancellationToken: cancellationToken);
 
         if (results.Count == 0 && !dontSearchInBothDirections)
         {
-            results = await DatabaseManager.Instance.QueryEntries(SelectedDirection.Dictionary, searchQuery, !SelectedDirection.ReverseSearch);
+            results = await databaseManager.QueryEntries(selectedDirection.Dictionary, searchQuery, !selectedDirection.ReverseSearch, cancellationToken: cancellationToken);
 
             if (results.Count != 0)
                 directionSwitched = true;
         }
 
-        results.Sort(new DictionaryEntryComparer(searchQuery, SelectedDirection.ReverseSearch ^ directionSwitched));
+        results.Sort(new DictionaryEntryComparer(searchQuery, selectedDirection.ReverseSearch ^ directionSwitched, settings.CaseSensitiveSearch));
 
         return (results, directionSwitched);
     }
@@ -153,10 +168,21 @@ class SearchResultsViewModel : ViewModel
     public async Task PerformQuery(string searchQuery, bool dontSearchInBothDirections = false)
     {
         searchSuggestionCancellationTokenSource?.Cancel();
+        searchQueryCancellationTokenSource?.Cancel();
+
+        CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+        searchQueryCancellationTokenSource = cancellationTokenSource;
+        CancellationToken cancellationToken = cancellationTokenSource.Token;
+
+        // capture the current value of SelectedDirection since it may change while the query is running
+        DirectionViewModel selectedDirection = SelectedDirection!;
+
+        bool querySemaphoreEntered = false;
 
         try
         {
-            await querySemaphore.WaitAsync();
+            await querySemaphore.WaitAsync(cancellationToken);
+            querySemaphoreEntered = true;
 
             // it may happen that the AutoSuggestBox does not hide search suggestions automatically after
             // performing a query. For these cases, clear the suggestions manually
@@ -164,8 +190,8 @@ class SearchResultsViewModel : ViewModel
 
             Task<(List<DictionaryEntry> Results, bool DirectionSwitched)> searchTask = Task.Run(async delegate ()
             {
-                return await PerformQueryInner(searchQuery, dontSearchInBothDirections);
-            });
+                return await PerformQueryInner(searchQuery, selectedDirection, dontSearchInBothDirections, cancellationToken);
+            }, cancellationToken);
 
             Task animationDelayTask = Task.Delay(250);
 
@@ -174,21 +200,45 @@ class SearchResultsViewModel : ViewModel
             if (finishedTask == animationDelayTask)
             {
                 IsSearchInProgress = true;
-                await searchTask;
             }
 
-            if (searchTask.Result.DirectionSwitched)
-                SwitchDirectionOfTranslation();
+            (List<DictionaryEntry> Results, bool DirectionSwitched) searchResult = await searchTask;
 
-            searchContext = new SearchContext(searchQuery, SelectedDirection!, dontSearchInBothDirections);
+            cancellationToken.ThrowIfCancellationRequested();
 
-            results = searchTask.Result.Results;
+            if (searchResult.DirectionSwitched)
+            {
+                selectedDirection = AvailableDirections.First(dvm => dvm.EqualsReversed(selectedDirection));
+                SelectedDirection = selectedDirection;
+            }
+
+            results = searchResult.Results;
+            searchContext = new SearchContext(searchQuery, selectedDirection, dontSearchInBothDirections);
+
             activeSubjectFilters.Clear();
 
-            DictionaryEntries = await Task.Run(delegate ()
+            var (entries, groups) = await Task.Run(delegate ()
             {
-                return results.Select(entry => new DictionaryEntryViewModel(entry, searchContext)).ToList();
-            });
+                DictionaryEntryViewModel[] entries = searchResult.Results
+                    .Select(entry => new DictionaryEntryViewModel(
+                        entry, 
+                        searchContext,
+                        this,
+                        settings,
+                        subjectInfo,
+                        audioPlayer,
+                        wordHighlighter,
+                        navigationService,
+                        dialogService))
+                    .ToArray();
+
+                IReadOnlyList<DictionaryEntryGroupViewModel> groups = GroupEntries(searchQuery, selectedDirection.ReverseSearch, entries);
+
+                return (entries, groups);
+            }, cancellationToken);
+
+            DictionaryEntries = entries;
+            DictionaryEntryGroups = groups;
 
             Subjects.Clear();
             var subjects =
@@ -201,7 +251,7 @@ class SearchResultsViewModel : ViewModel
 
             foreach (var grouping in subjects)
             {
-                var subject = SubjectInfo.Instance.LookupSubject(SelectedDirection!.OriginLanguageCode, SelectedDirection.DestinationLanguageCode, grouping.Key);
+                var subject = subjectInfo.LookupSubject(SelectedDirection!.OriginLanguageCode, SelectedDirection.DestinationLanguageCode, grouping.Key);
 
                 if (subject != null)
                     Subjects.Add(new SubjectViewModel(grouping.Count(), grouping.Key, subject.Value.LocalizedSubject, subject.Value.Description));
@@ -209,10 +259,54 @@ class SearchResultsViewModel : ViewModel
         }
         finally
         {
-            IsSearchInProgress = false;
+            if (ReferenceEquals(searchQueryCancellationTokenSource, cancellationTokenSource))
+            {
+                IsSearchInProgress = false;
+                searchQueryCancellationTokenSource = null;
+            }
 
-            querySemaphore.Release();
+            if (querySemaphoreEntered)
+                querySemaphore.Release();
         }
+    }
+
+    private static IReadOnlyList<DictionaryEntryGroupViewModel> GroupEntries(string searchQuery, bool reverseSearch, IReadOnlyList<DictionaryEntryViewModel> entries)
+    {
+        string[] searchTokens = MatchInfo.SplitSearchQueryIntoTokens(searchQuery);
+
+        List<DictionaryEntryViewModel> exactMatches = [];
+        List<DictionaryEntryViewModel> partialMatches = [];
+        List<DictionaryEntryViewModel> annotationMatches = [];
+
+        foreach (DictionaryEntryViewModel entry in entries)
+        {
+            string searchResult = reverseSearch ? entry.DictionaryEntry.Word2 : entry.DictionaryEntry.Word1;
+            MatchInfo matchInfo = new MatchInfo(searchTokens, searchResult, entry.DictionaryEntry.MatchSpans!);
+
+            switch (matchInfo.MatchKind)
+            {
+                case DictionaryEntryMatchKind.Exact:
+                    exactMatches.Add(entry);
+                    break;
+                case DictionaryEntryMatchKind.Partial:
+                    partialMatches.Add(entry);
+                    break;
+                case DictionaryEntryMatchKind.Annotation:
+                    annotationMatches.Add(entry);
+                    break;
+            }
+        }
+
+        ResourceLoader resourceLoader = new ResourceLoader();
+
+        DictionaryEntryGroupViewModel[] groups =
+        [
+            new DictionaryEntryGroupViewModel(resourceLoader.GetString("SearchResultsPage_ExactMatchesGroupHeader"), exactMatches),
+            new DictionaryEntryGroupViewModel(resourceLoader.GetString("SearchResultsPage_PartialMatchesGroupHeader"), partialMatches),
+            new DictionaryEntryGroupViewModel(resourceLoader.GetString("SearchResultsPage_AnnotationMatchesGroupHeader"), annotationMatches)
+        ];
+
+        return groups.Where(group => group.Entries.Count != 0).ToArray();
     }
 
     public void UpdateSubjectFilter(IEnumerable<SubjectViewModel> selectedSubjects)
@@ -225,7 +319,7 @@ class SearchResultsViewModel : ViewModel
         ApplySubjectFilter();
     }
 
-    private void ApplySubjectFilter()
+    private async void ApplySubjectFilter()
     {
         if (querySemaphore.Wait(0))
         {
@@ -255,7 +349,28 @@ class SearchResultsViewModel : ViewModel
                             .ToList();
                     }
 
-                    DictionaryEntries = filteredResults.Select(entry => new DictionaryEntryViewModel(entry, searchContext)).ToList();
+                    var (entries, groups) = await Task.Run(delegate ()
+                    {
+                        DictionaryEntryViewModel[] entries = filteredResults
+                            .Select(entry => new DictionaryEntryViewModel(
+                                entry,
+                                searchContext,
+                                this,
+                                settings,
+                                subjectInfo,
+                                audioPlayer,
+                                wordHighlighter,
+                                navigationService,
+                                dialogService))
+                            .ToArray();
+
+                        IReadOnlyList<DictionaryEntryGroupViewModel> groups = GroupEntries(searchContext.SearchQuery!, searchContext.SelectedDirection.ReverseSearch, entries);
+
+                        return (entries, groups);
+                    }, CancellationToken.None);
+
+                    DictionaryEntries = entries;
+                    DictionaryEntryGroups = groups;
                 }
             }
             finally
@@ -269,10 +384,12 @@ class SearchResultsViewModel : ViewModel
     {
         IList<SearchSuggestionViewModel>? suggestions;
         bool reverseSearch;
+        bool querySemaphoreEntered = false;
 
         try
         {
             await querySemaphore.WaitAsync(cancellationToken);
+            querySemaphoreEntered = true;
 
             (suggestions, reverseSearch) = await GetSearchSuggestions(partialSearchQuery, cancellationToken);
         }
@@ -283,7 +400,8 @@ class SearchResultsViewModel : ViewModel
         }
         finally
         {
-            querySemaphore.Release();
+            if (querySemaphoreEntered)
+                querySemaphore.Release();
         }
 
         if (suggestions != null)
@@ -303,7 +421,7 @@ class SearchResultsViewModel : ViewModel
 
     private void UpdateSearchSuggestions(IList<SearchSuggestionViewModel> suggestions, bool reverseSearch)
     {
-        SearchSuggestionViewModelComparer comparer = new SearchSuggestionViewModelComparer(reverseSearch, Settings.Instance.ShowWordClasses);
+        SearchSuggestionViewModelComparer comparer = new SearchSuggestionViewModelComparer(reverseSearch, settings.ShowWordClasses);
 
         for (int i = 0; i < SearchSuggestions.Count; i++)
             if (!suggestions.Contains(SearchSuggestions[i], comparer))
@@ -378,14 +496,14 @@ class SearchResultsViewModel : ViewModel
 
         bool reverseSearch = SelectedDirection!.ReverseSearch;
 
-        List<DictionaryEntry> results = await DatabaseManager.Instance.QueryEntries(SelectedDirection.Dictionary, searchQuery, reverseSearch, maxResults + 1);
+        List<DictionaryEntry> results = await databaseManager.QueryEntries(SelectedDirection.Dictionary, searchQuery, reverseSearch, maxResults + 1, cancellationToken);
 
         cancellationToken.ThrowIfCancellationRequested();
 
         if (results.Count == 0)
         {
             reverseSearch = !reverseSearch;
-            results = await DatabaseManager.Instance.QueryEntries(SelectedDirection.Dictionary, searchQuery, reverseSearch, maxResults + 1);
+            results = await databaseManager.QueryEntries(SelectedDirection.Dictionary, searchQuery, reverseSearch, maxResults + 1, cancellationToken);
         }
 
         if (results.Count == 0 || results.Count > maxResults)
@@ -395,14 +513,14 @@ class SearchResultsViewModel : ViewModel
 
         SearchSuggestionViewModel[] suggestions = await Task.Run(delegate ()
         {
-            results.Sort(new DictionaryEntryComparer(searchQuery, reverseSearch));
+            results.Sort(new DictionaryEntryComparer(searchQuery, reverseSearch, settings.CaseSensitiveSearch));
 
             SearchContext searchContext = new SearchContext(searchQuery, new DirectionViewModel(SelectedDirection.Dictionary, reverseSearch), false);
 
             IEnumerable<SearchSuggestionViewModel> suggestions =
                 results
                 .DistinctBy(entry => reverseSearch ? entry.Word2 : entry.Word1)
-                .Select(entry => new SearchSuggestionViewModel(entry, searchContext))
+                .Select(entry => new SearchSuggestionViewModel(entry, searchContext, wordHighlighter))
                 .Take(maxSuggestionsShown);
 
             return suggestions.ToArray();
@@ -418,7 +536,7 @@ class SearchResultsViewModel : ViewModel
         SelectedDirection = null;
 
         AvailableDirections =
-            (await DatabaseManager.Instance.GetDictionaries())
+            (await databaseManager.GetDictionaries())
             .SelectMany(dict => new[] { new DirectionViewModel(dict, false), new DirectionViewModel(dict, true) })
             .OrderBy(dvm => dvm.OriginLanguage)
             .ToArray();
@@ -428,8 +546,7 @@ class SearchResultsViewModel : ViewModel
         if (previouslySelected != null)
             SelectedDirection = AvailableDirections.FirstOrDefault(dvm => dvm.Equals(previouslySelected));
 
-        if (SelectedDirection == null)
-            SelectedDirection = AvailableDirections.FirstOrDefault();
+        SelectedDirection ??= AvailableDirections.FirstOrDefault();
 
         await UpdateJumpList();
     }

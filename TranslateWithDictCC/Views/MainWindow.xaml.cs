@@ -1,27 +1,28 @@
-﻿using Microsoft.UI;
-using Microsoft.UI.Windowing;
+﻿using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.Windows.ApplicationModel.Resources;
-using System;
 using System.ComponentModel;
 using System.IO;
-using TranslateWithDictCC.Views;
 using Windows.ApplicationModel;
 using Windows.UI;
-using WinRT.Interop;
 using WinUIEx;
 
-namespace TranslateWithDictCC;
+namespace TranslateWithDictCC.Views;
 
 public sealed partial class MainWindow : WindowEx
 {
+    readonly Settings settings;
+
     public static MainWindow Instance { get; private set; } = null!;
 
-    public UIElement ApplicationFrame => applicationFrame;
+    public Frame ApplicationFrame => applicationFrame;
 
-    public MainWindow(string? launchArguments)
+    internal MainWindow(Settings settings, string? launchArguments)
     {
         InitializeComponent();
+
+        this.settings = settings;
 
         Instance = this;
 
@@ -34,7 +35,7 @@ public sealed partial class MainWindow : WindowEx
 
         applicationFrame.Navigate(typeof(MainPage), launchArguments);
 
-        Settings.Instance.PropertyChanged += Settings_PropertyChanged;
+        settings.PropertyChanged += Settings_PropertyChanged;
     }
 
     private void Settings_PropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -45,23 +46,19 @@ public sealed partial class MainWindow : WindowEx
 
     private void SetTheme()
     {
-        applicationFrame.RequestedTheme = Settings.Instance.AppTheme;
+        applicationFrame.RequestedTheme = settings.AppTheme;
 
         SetTitleBarColorsAndIcon();
     }
 
     private void SetTitleBarColorsAndIcon()
     {
-        IntPtr hWnd = WindowNative.GetWindowHandle(this);
-        Microsoft.UI.WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
-        AppWindow appWindow = AppWindow.GetFromWindowId(windowId);
-
         // Title bar customization is not supported on Windows 10
         if (AppWindowTitleBar.IsCustomizationSupported())
         {
-            AppWindowTitleBar titleBar = appWindow.TitleBar;
+            AppWindowTitleBar titleBar = AppWindow.TitleBar;
 
-            ResourceDictionary dictionary = Settings.Instance.AppTheme switch
+            ResourceDictionary dictionary = settings.AppTheme switch
             {
                 ElementTheme.Default => Application.Current.Resources,
                 ElementTheme.Light => (ResourceDictionary)Application.Current.Resources.ThemeDictionaries["Light"],
@@ -84,7 +81,7 @@ public sealed partial class MainWindow : WindowEx
         }
 
         string packagePath = Package.Current.InstalledLocation.Path;
-        appWindow.SetIcon(Path.Combine(packagePath, @"Assets\Logo.ico"));
+        AppWindow.SetIcon(Path.Combine(packagePath, @"Assets\Logo.ico"));
     }
 
     private void SetWindowSizeAndLocation()

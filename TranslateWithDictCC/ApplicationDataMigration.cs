@@ -5,17 +5,24 @@ using Windows.Storage;
 
 namespace TranslateWithDictCC;
 
-static class ApplicationDataMigration
+class ApplicationDataMigration
 {
     const uint Version = 3;
 
-    public static async Task Migrate()
+    readonly DatabaseManager databaseManager;
+
+    public ApplicationDataMigration(DatabaseManager databaseManager)
+    {
+        this.databaseManager = databaseManager;
+    }
+
+    public async Task Migrate()
     {
         if (ApplicationData.Current.Version != Version)
             await ApplicationData.Current.SetVersionAsync(Version, SetVersionHandler);
     }
 
-    private static async void SetVersionHandler(SetVersionRequest setVersionRequest)
+    private async void SetVersionHandler(SetVersionRequest setVersionRequest)
     {
         SetVersionDeferral deferral = setVersionRequest.GetDeferral();
 
@@ -36,10 +43,10 @@ static class ApplicationDataMigration
             // remove left-over Dictionary entries that are not associated with a table
             if (setVersionRequest.CurrentVersion <= 1 && setVersionRequest.DesiredVersion > 1)
             {
-                await DatabaseManager.Instance.InitializeDb();
+                await databaseManager.InitializeDb();
 
                 List<(int ID, string OriginLanguageCode, string DestinationLanguageCode)> dictionaries =
-                    await DatabaseManager.Instance.ExecuteReader("SELECT * FROM Dictionaries", dataReader =>
+                    await databaseManager.ExecuteReader("SELECT * FROM Dictionaries", dataReader =>
                     {
                         int id = dataReader.GetInt32(0);
                         string originLanguageCode = dataReader.GetString(1);
@@ -54,16 +61,16 @@ static class ApplicationDataMigration
                 {
                     string tableName = string.Format("Dictionary{0}{1}", dictionary.OriginLanguageCode, dictionary.DestinationLanguageCode);
 
-                    object? result = await DatabaseManager.Instance.ExecuteScalar($"SELECT name FROM sqlite_master WHERE type='table' AND name='{tableName}'");
+                    object? result = await databaseManager.ExecuteScalar($"SELECT name FROM sqlite_master WHERE type='table' AND name='{tableName}'");
 
                     if (result == null)
-                        await DatabaseManager.Instance.ExecuteNonQuery($"DELETE FROM Dictionaries WHERE ID = {dictionary.ID}");
+                        await databaseManager.ExecuteNonQuery($"DELETE FROM Dictionaries WHERE ID = {dictionary.ID}");
                 }
             }
 
             // add AppVersionWhenCreated column to the Dictionaries table
             if (setVersionRequest.CurrentVersion <= 2 && setVersionRequest.DesiredVersion > 2)
-                await DatabaseManager.Instance.ExecuteNonQuery("ALTER TABLE Dictionaries ADD COLUMN AppVersionWhenCreated VARCHAR(255)");
+                await databaseManager.ExecuteNonQuery("ALTER TABLE Dictionaries ADD COLUMN AppVersionWhenCreated VARCHAR(255)");
         }
 
         deferral.Complete();

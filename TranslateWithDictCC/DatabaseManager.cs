@@ -2,14 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using TranslateWithDictCC.Models;
-using Windows.Storage;
 
 namespace TranslateWithDictCC;
 
@@ -17,11 +15,9 @@ class DatabaseManager
 {
     public string DatabasePath { get; }
 
-    public static readonly DatabaseManager Instance = new DatabaseManager(Path.Combine(ApplicationData.Current.LocalFolder.Path, "dictionaries.db"));
-
     bool initialized = false;
 
-    private DatabaseManager(string databasePath)
+    public DatabaseManager(string databasePath)
     {
         DatabasePath = databasePath;
     }
@@ -124,23 +120,23 @@ class DatabaseManager
         return await command.ExecuteScalarAsync().ConfigureAwait(false);
     }
 
-    public Task<List<T>> ExecuteReader<T>(string commandText, Func<DbDataReader, T> dataReaderFunc)
+    public Task<List<T>> ExecuteReader<T>(string commandText, Func<DbDataReader, T> dataReaderFunc, CancellationToken cancellationToken = default)
     {
-        return ExecuteReader(command => { command.CommandText = commandText; }, dataReaderFunc);
+        return ExecuteReader(command => { command.CommandText = commandText; }, dataReaderFunc, cancellationToken);
     }
 
-    public async Task<List<T>> ExecuteReader<T>(Action<DbCommand> commandFunc, Func<DbDataReader, T> dataReaderFunc)
+    public async Task<List<T>> ExecuteReader<T>(Action<DbCommand> commandFunc, Func<DbDataReader, T> dataReaderFunc, CancellationToken cancellationToken = default)
     {
         await using DbConnection connection = await OpenConnection().ConfigureAwait(false);
         await using DbCommand command = connection.CreateCommand();
 
         commandFunc(command);
 
-        await using DbDataReader dataReader = await command.ExecuteReaderAsync().ConfigureAwait(false);
+        await using DbDataReader dataReader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
 
         List<T> results = [];
 
-        while (await dataReader.ReadAsync().ConfigureAwait(false))
+        while (await dataReader.ReadAsync(cancellationToken).ConfigureAwait(false))
         {
             T result = dataReaderFunc(dataReader);
             results.Add(result);
@@ -275,12 +271,7 @@ class DatabaseManager
         }).ConfigureAwait(false);
     }
 
-    public Task<List<DictionaryEntry>> QueryEntries(Dictionary dictionary, string searchQuery, bool reverseSearch)
-    {
-        return QueryEntries(dictionary, searchQuery, reverseSearch, -1);
-    }
-
-    public async Task<List<DictionaryEntry>> QueryEntries(Dictionary dictionary, string searchQuery, bool reverseSearch, int maxResults)
+    public async Task<List<DictionaryEntry>> QueryEntries(Dictionary dictionary, string searchQuery, bool reverseSearch, int maxResults = -1, CancellationToken cancellationToken = default)
     {
         string tableName = GetDictionaryTableName(dictionary.OriginLanguageCode, dictionary.DestinationLanguageCode);
         string column = reverseSearch ? "Word2" : "Word1";
@@ -320,18 +311,19 @@ class DatabaseManager
             TextSpan[] matchSpans = GetMatchSpans(reverseSearch ? word2 : word1, offsets);
 
             return new DictionaryEntry { Word1 = word1, Word2 = word2, WordClasses = wordClasses, Subjects = subjects, MatchSpans = matchSpans };
-        }).ConfigureAwait(false);
+        }, cancellationToken).ConfigureAwait(false);
     }
 
     private static TextSpan[] GetMatchSpans(string word, string[] offsets)
     {
         TextSpan[] matchSpans = new TextSpan[offsets.Length / 4];
 
-        int[]? byteCounts = null;
+        scoped Span<int> byteCounts = [];
 
         if (Encoding.UTF8.GetByteCount(word) != word.Length)
         {
-            byteCounts = new int[word.Length + 1];
+            byteCounts = stackalloc int[word.Length + 1];
+            byteCounts[0] = 0;
 
             for (int i = 0; i < word.Length; i++)
                 byteCounts[i + 1] = byteCounts[i] + Encoding.UTF8.GetByteCount(word, i, 1);
@@ -342,10 +334,10 @@ class DatabaseManager
             int offset = Convert.ToInt32(offsets[4 * i + 2]);
             int length = Convert.ToInt32(offsets[4 * i + 3]);
 
-            if (byteCounts != null)
+            if (!byteCounts.IsEmpty)
             {
-                int adjustedOffset = Array.BinarySearch(byteCounts, offset);
-                int adjustedLength = Array.BinarySearch(byteCounts, offset + length) - adjustedOffset;
+                int adjustedOffset = byteCounts.BinarySearch(offset);
+                int adjustedLength = byteCounts.BinarySearch(offset + length) - adjustedOffset;
                 offset = adjustedOffset;
                 length = adjustedLength;
             }

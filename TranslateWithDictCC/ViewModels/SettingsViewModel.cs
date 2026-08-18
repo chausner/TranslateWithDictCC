@@ -1,8 +1,10 @@
-﻿using Microsoft.UI.Xaml;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Windows.ApplicationModel.Resources;
+using Microsoft.Windows.Storage.Pickers;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -10,29 +12,25 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using TranslateWithDictCC.Models;
+using TranslateWithDictCC.Services;
+using TranslateWithDictCC.Views;
 using Windows.Globalization.DateTimeFormatting;
-using Windows.Storage;
-using Windows.Storage.Pickers;
 
 namespace TranslateWithDictCC.ViewModels;
 
-class SettingsViewModel : ViewModel
+partial class SettingsViewModel : ObservableObject
 {
-    public static readonly SettingsViewModel Instance = new SettingsViewModel();
+    readonly DatabaseManager databaseManager;
+    readonly Settings settings;
+    readonly DialogService dialogService;
 
     public ObservableCollection<DictionaryViewModel> Dictionaries { get; }
 
-    public Visibility RestartAppTextBlockVisibility
-    {
-        get;
-        private set => SetProperty(ref field, value);
-    }
+    [ObservableProperty]
+    public partial Visibility RestartAppTextBlockVisibility { get; private set; }
 
-    public Visibility OutdatedDictionariesInfoBarVisibility
-    {
-        get;
-        private set => SetProperty(ref field, value);
-    }
+    [ObservableProperty]
+    public partial Visibility OutdatedDictionariesInfoBarVisibility { get; private set; }
 
     public ICommand ImportDictionaryCommand { get; }
 
@@ -53,8 +51,12 @@ class SettingsViewModel : ViewModel
 
     readonly ElementTheme appThemeAtStartup;
 
-    private SettingsViewModel()
+    public SettingsViewModel(DatabaseManager databaseManager, Settings settings, DialogService dialogService)
     {
+        this.databaseManager = databaseManager;
+        this.settings = settings;
+        this.dialogService = dialogService;
+
         Dictionaries = new ObservableCollection<DictionaryViewModel>();
 
         RestartAppTextBlockVisibility = Visibility.Collapsed;
@@ -64,21 +66,21 @@ class SettingsViewModel : ViewModel
 
         ImportDictionaryCommand = new RelayCommand(RunImportDictionaryCommand);
 
-        appThemeAtStartup = Settings.Instance.AppTheme;
+        appThemeAtStartup = settings.AppTheme;
 
-        Settings.Instance.PropertyChanged += Settings_PropertyChanged;
+        settings.PropertyChanged += Settings_PropertyChanged;
     }
 
     private async void SettingsViewModel_DictionariesChanged(object? sender, EventArgs e)
     {
-        bool hasOutdatedDictionaries = await DatabaseManager.Instance.HasOutdatedDictionaries();
+        bool hasOutdatedDictionaries = await databaseManager.HasOutdatedDictionaries();
         OutdatedDictionariesInfoBarVisibility = hasOutdatedDictionaries ? Visibility.Visible : Visibility.Collapsed;
     }
 
     private void Settings_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(Settings.AppTheme))
-            if (Settings.Instance.AppTheme != appThemeAtStartup)
+            if (settings.AppTheme != appThemeAtStartup)
                 RestartAppTextBlockVisibility = Visibility.Visible;
             else
                 RestartAppTextBlockVisibility = Visibility.Collapsed;
@@ -88,30 +90,30 @@ class SettingsViewModel : ViewModel
     {
         Dictionaries.Clear();
 
-        foreach (Dictionary dictionary in await DatabaseManager.Instance.GetDictionaries())
-            Dictionaries.Add(new DictionaryViewModel(dictionary));
+        foreach (Dictionary dictionary in await databaseManager.GetDictionaries())
+            Dictionaries.Add(new DictionaryViewModel(dictionary, this));
 
         DictionariesChanged?.Invoke(this, EventArgs.Empty);
     }
 
     private async void RunImportDictionaryCommand()
     {
-        FileOpenPicker fileOpenPicker = new FileOpenPicker();
+        FileOpenPicker fileOpenPicker = new FileOpenPicker(MainWindow.Instance.AppWindow.Id);
 
         fileOpenPicker.FileTypeFilter.Add(".txt");
         fileOpenPicker.FileTypeFilter.Add(".zip");
 
-        IntPtr hwnd = WinRT.Interop.WindowNative.GetWindowHandle(MainWindow.Instance);
-        WinRT.Interop.InitializeWithWindow.Initialize(fileOpenPicker, hwnd);
+        string[] paths = 
+            (await fileOpenPicker.PickMultipleFilesAsync())
+            .Select(pickFileResult => pickFileResult.Path)
+            .ToArray();
 
-        IReadOnlyList<StorageFile>? wordlistFiles = await fileOpenPicker.PickMultipleFilesAsync();
-
-        if (wordlistFiles == null)
+        if (paths.Length == 0)
             return;
 
-        foreach (StorageFile wordlistFile in wordlistFiles)
+        foreach (string path in paths)
         {
-            WordlistReader wordlistReader = new WordlistReader(wordlistFile);
+            WordlistReader wordlistReader = new WordlistReader(path);
 
             try
             {
@@ -124,12 +126,11 @@ class SettingsViewModel : ViewModel
                 ContentDialog contentDialog = new ContentDialog()
                 {
                     Title = resourceLoader.GetString("Import_Header_Error_Title"),
-                    Content = string.Format(resourceLoader.GetString("Import_Header_Error_Body"), wordlistFile.Name),
-                    CloseButtonText = "OK",
-                    XamlRoot = MainWindow.Instance.Content.XamlRoot
+                    Content = string.Format(resourceLoader.GetString("Import_Header_Error_Body"), path),
+                    CloseButtonText = "OK"
                 };
 
-                await contentDialog.ShowAsync();
+                await dialogService.ShowDialogAsync(contentDialog);
                 continue;
             }
 
@@ -137,7 +138,7 @@ class SettingsViewModel : ViewModel
 
             if (allConflictsResolved)
             {
-                DictionaryViewModel dictionaryViewModel = new DictionaryViewModel(wordlistReader);
+                DictionaryViewModel dictionaryViewModel = new DictionaryViewModel(wordlistReader, this);
 
                 Dictionaries.Add(dictionaryViewModel);
             }
@@ -177,11 +178,10 @@ class SettingsViewModel : ViewModel
             Content = content,
             PrimaryButtonText = resourceLoader.GetString("Import_Conflict_Replace"),
             CloseButtonText = resourceLoader.GetString("Import_Conflict_Skip"),
-            DefaultButton = ContentDialogButton.Primary,
-            XamlRoot = MainWindow.Instance.Content.XamlRoot
+            DefaultButton = ContentDialogButton.Primary
         };
 
-        bool replace = await contentDialog.ShowAsync() == ContentDialogResult.Primary;
+        bool replace = await dialogService.ShowDialogAsync(contentDialog) == ContentDialogResult.Primary;
 
         if (replace)
         {
@@ -217,9 +217,9 @@ class SettingsViewModel : ViewModel
                 // run on the thread pool for better UI responsiveness
                 await Task.Run(async delegate ()
                 {
-                    dictionaryViewModel.Dictionary = await DatabaseManager.Instance.ImportWordlist(dictionaryViewModel.WordlistReader!, progress, cancellationTokenSource!.Token);
+                    dictionaryViewModel.Dictionary = await databaseManager.ImportWordlist(dictionaryViewModel.WordlistReader!, progress, cancellationTokenSource!.Token);
 
-                    await DatabaseManager.Instance.OptimizeTable(dictionaryViewModel.Dictionary!);
+                    await databaseManager.OptimizeTable(dictionaryViewModel.Dictionary!);
                 });
             }
             catch (OperationCanceledException)
@@ -234,11 +234,10 @@ class SettingsViewModel : ViewModel
                 {
                     Title = resourceLoader.GetString("Import_Error_Title"),
                     Content = string.Format(resourceLoader.GetString("Import_Error_Body"), dictionaryViewModel.OriginLanguage, dictionaryViewModel.DestinationLanguage),
-                    CloseButtonText = "OK",
-                    XamlRoot = MainWindow.Instance.Content.XamlRoot
+                    CloseButtonText = "OK"
                 };
 
-                await contentDialog.ShowAsync();
+                await dialogService.ShowDialogAsync(contentDialog);
 
                 Dictionaries.Remove(dictionaryViewModel);
                 continue;
@@ -266,18 +265,17 @@ class SettingsViewModel : ViewModel
             {
                 Title = resourceLoader.GetString("Import_In_Progress_Title"),
                 Content = resourceLoader.GetString("Import_In_Progress_Body"),
-                CloseButtonText = "OK",
-                XamlRoot = MainWindow.Instance.Content.XamlRoot
+                CloseButtonText = "OK"
             };
 
-            await contentDialog.ShowAsync();
+            await dialogService.ShowDialogAsync(contentDialog);
             return false;
         }
 
         // run on the thread pool for better UI responsiveness
         await Task.Run(async delegate ()
         {
-            await DatabaseManager.Instance.DeleteDictionary(dictionaryViewModel.Dictionary!);
+            await databaseManager.DeleteDictionary(dictionaryViewModel.Dictionary!);
         });
 
         Dictionaries.Remove(dictionaryViewModel);

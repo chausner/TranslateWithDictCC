@@ -843,6 +843,15 @@
   <data name="SearchResultsPage_SingleResult" xml:space="preserve">
     <value>1 Treffer</value>
   </data>
+  <data name="SearchResultsPage_ExactMatchesGroupHeader" xml:space="preserve">
+    <value>Exakte Treffer</value>
+  </data>
+  <data name="SearchResultsPage_PartialMatchesGroupHeader" xml:space="preserve">
+    <value>Ähnliche Treffer</value>
+  </data>
+  <data name="SearchResultsPage_AnnotationMatchesGroupHeader" xml:space="preserve">
+    <value>Weitere Treffer</value>
+  </data>
   <data name="SettingsPage_AbortImportButton.[using:Microsoft.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Import abbrechen</value>
   </data>
