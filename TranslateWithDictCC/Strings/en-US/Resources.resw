@@ -136,7 +136,7 @@
     <value>Privacy Statement</value>
   </data>
   <data name="AboutPage_PrivacyStatementLink.NavigateUri" xml:space="preserve">
-    <value>http://www.dict.cc/?s=about:&amp;amp;l=e</value>
+    <value>https://www.dict.cc/?s=about:&amp;amp;l=e</value>
   </data>
   <data name="AboutPage_SetFocusOnSearchBarShortcutView.Text" xml:space="preserve">
     <value>Ctrl+E</value>
@@ -874,7 +874,7 @@
     <value>Get dictionaries from dict.cc</value>
   </data>
   <data name="SettingsPage_GetDictionariesLink.NavigateUri" xml:space="preserve">
-    <value>http://www1.dict.cc/translation_file_request.php?l=e</value>
+    <value>https://www1.dict.cc/translation_file_request.php?l=e</value>
   </data>
   <data name="SettingsPage_ImportDictionaryButton.Content" xml:space="preserve">
     <value>Import dictionary</value>

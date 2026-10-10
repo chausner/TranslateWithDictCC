@@ -85,7 +85,7 @@ partial class AudioRecordingFetcher
 
         string encodedParameters = new FormUrlEncodedContent(urlParameters).ReadAsStringAsync().GetAwaiter().GetResult();
 
-        return new Uri(string.Format("http://{0}-{1}.dict.cc/?{2}", originLanguageCode.ToLower(), destinationLanguageCode.ToLower(), encodedParameters));
+        return new Uri(string.Format("https://{0}-{1}.dict.cc/?{2}", originLanguageCode.ToLower(), destinationLanguageCode.ToLower(), encodedParameters));
     }
 
     private static Uri GetAudioRecordingUri(int id, string originLanguageCode, string destinationLanguageCode, string recordingLanguageCode)
@@ -99,7 +99,7 @@ partial class AudioRecordingFetcher
 
         string encodedParameters = new FormUrlEncodedContent(urlParameters).ReadAsStringAsync().GetAwaiter().GetResult();
 
-        return new Uri("http://audio.dict.cc/speak.audio.php?" + encodedParameters);
+        return new Uri("https://audio.dict.cc/speak.audio.php?" + encodedParameters);
     }
 
     private static DictCCSearchResult[] ExtractDictCCSearchResults(string html, string originLanguageCode, string destinationLanguageCode)

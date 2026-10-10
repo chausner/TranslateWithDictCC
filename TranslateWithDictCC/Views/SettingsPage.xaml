@@ -123,7 +123,7 @@
             <TextBlock x:Uid="SettingsPage_RestartAppTextBlock" Margin="0,8,0,0" Text="Restart the app for the theme change to take full effect." Visibility="{x:Bind ViewModel.RestartAppTextBlockVisibility, Mode=OneWay}" />
             <TextBlock x:Uid="SettingsPage_DictionariesTextBlock" Style="{StaticResource BodyStrongTextBlockStyle}" Text="Dictionaries" Margin="0,32,0,8" />
             <TextBlock x:Uid="SettingsPage_AcquireDictionariesTextBlock" TextWrapping="WrapWholeWords" Margin="0,0,0,8">Follow the link below to acquire dictionaries from dict.cc. Then, click on "Import dictionary" and select the downloaded files to start the import process.</TextBlock>
-            <HyperlinkButton x:Uid="SettingsPage_GetDictionariesLink" NavigateUri="http://www1.dict.cc/translation_file_request.php?l=e" Margin="-12,0,0,16">Get dictionaries from dict.cc</HyperlinkButton>
+            <HyperlinkButton x:Uid="SettingsPage_GetDictionariesLink" NavigateUri="https://www1.dict.cc/translation_file_request.php?l=e" Margin="-12,0,0,16">Get dictionaries from dict.cc</HyperlinkButton>
             <Button x:Uid="SettingsPage_ImportDictionaryButton" Margin="0,0,0,16" Command="{x:Bind ViewModel.ImportDictionaryCommand}">Import dictionary</Button>
             <InfoBar x:Uid="SettingsPage_OutdatedDictionariesInfoBar" Margin="0,0,0,16" IsOpen="True" IsClosable="False"
                      Message="Some of your dictionaries were imported with a previous version of this app. Newer app features may not be available for these dictionaries until they are reimported."

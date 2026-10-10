@@ -136,7 +136,7 @@
     <value>Datenschutzbestimmungen</value>
   </data>
   <data name="AboutPage_PrivacyStatementLink.NavigateUri" xml:space="preserve">
-    <value>http://www.dict.cc/?s=about:&amp;amp;l=d</value>
+    <value>https://www.dict.cc/?s=about:&amp;amp;l=d</value>
   </data>
   <data name="AboutPage_SetFocusOnSearchBarShortcutView.Text" xml:space="preserve">
     <value>Strg+E</value>
@@ -874,7 +874,7 @@
     <value>Wörterbücher herunterladen von dict.cc</value>
   </data>
   <data name="SettingsPage_GetDictionariesLink.NavigateUri" xml:space="preserve">
-    <value>http://www1.dict.cc/translation_file_request.php?l=d</value>
+    <value>https://www1.dict.cc/translation_file_request.php?l=d</value>
   </data>
   <data name="SettingsPage_ImportDictionaryButton.Content" xml:space="preserve">
     <value>Wörterbuch importieren</value>

@@ -22,7 +22,7 @@
                     <TextBlock Text="Copyright © Christoph Hausner 2016, 2022-2026" />
                 </StackPanel>
             </Grid>            
-            <HyperlinkButton x:Uid="AboutPage_PrivacyStatementLink" Content="Privacy Statement" NavigateUri="http://www.dict.cc/?s=about:&amp;l=e" Margin="-12,8,0,16" />
+            <HyperlinkButton x:Uid="AboutPage_PrivacyStatementLink" Content="Privacy Statement" NavigateUri="https://www.dict.cc/?s=about:&amp;l=e" Margin="-12,8,0,16" />
             <Button x:Uid="AboutPage_GiveFeedbackButton" Content="Give feedback" Margin="0,0,0,32" Command="{x:Bind ViewModel.GiveFeedbackCommand}" />
 
             <TextBlock x:Uid="AboutPage_KeyboardShortcutsTextBlock" Style="{StaticResource BodyStrongTextBlockStyle}" Text="Keyboard shortcuts" Margin="0,0,0,16" />
